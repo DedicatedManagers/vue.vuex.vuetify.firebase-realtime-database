@@ -6,7 +6,13 @@
       </v-btn>
       <v-toolbar-title>Foster Kinship Client Database</v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-toolbar-items>
+        <v-btn flat @click='login' v-if="!this.$store.state.userIsAuthenticated">Sign In</v-btn>
+        <v-btn flat @click='logout' v-if="this.$store.state.userIsAuthenticated">Sign Out</v-btn>
+      </v-toolbar-items>
     </v-toolbar>
+
+
     <v-content>
       <router-view/>
     </v-content>
@@ -17,11 +23,22 @@
 </template>
 
 <script>
+import firebase from 'firebase/app';
+import router from '@/router';
+
 export default {
+  name: 'App',
   data() {
     return {
     };
   },
-  name: 'App',
+  methods:{
+    login(){
+      router.push('/login');
+    },
+    logout(){
+      this.$store.dispatch('logout');
+    }
+  }
 };
 </script>

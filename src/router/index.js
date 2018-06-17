@@ -1,6 +1,7 @@
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import Router from 'vue-router';
 import Vue from 'vue';
+import Client from '@/components/Client';
 import Dashboard from '@/components/Dashboard';
 import Login from '@/components/Login';
 import SignUp from '@/components/SignUp';
@@ -23,6 +24,14 @@ const router = new Router({
       component: Login,
     },
     {
+      path: '/client',
+      name: 'Client',
+      component: Client,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
       path: '/signup',
       name: 'SignUp',
       component: SignUp,
@@ -40,13 +49,11 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
+  console.log(to);
   const currentUser = firebase.auth().currentUser;
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 
-  console.log('Requires Auth?:', requiresAuth, 'Current User:', currentUser);
-
   if (requiresAuth && !currentUser) next('/login');
-  else if (!requiresAuth && currentUser) next('/dashboard');
   else next();
 });
 

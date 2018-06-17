@@ -2,11 +2,13 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue';
 import Vuetify from 'vuetify';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/database';
 import 'vuetify/dist/vuetify.min.css';
 import App from './App';
 import router from './router';
-
+import {store} from './store/store'
 
 // Initialize Firebase
 const config = {
@@ -19,6 +21,7 @@ const config = {
 };
 
 firebase.initializeApp(config);
+
 
 Vue.use(Vuetify, { theme: {
   primary: '#ee44aa',
@@ -35,9 +38,17 @@ Vue.config.productionTip = false;
 let app;
 
 firebase.auth().onAuthStateChanged(function(user) {
+  console.log('onAuthStateChanged',user);
+  if(user){
+    store.commit('setUserIsAuthenticated', true);
+  }
+  else{
+    store.commit('setUserIsAuthenticated', false);
+  }
   if (!app) {
     /* eslint-disable no-new */
     app = new Vue({
+      store:store,
       el: '#app',
       router,
       components: { App },

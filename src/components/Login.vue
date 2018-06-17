@@ -3,7 +3,7 @@
     <v-slide-y-transition mode="out-in">
       <v-layout row>
         <v-flex xs12 md6 offset-md3>
-          <v-form v-model="valid">
+          <v-form v-model="valid" v-on:submit.prevent="onSubmit">
             <h1>Sign In</h1>
             <v-text-field v-model="username" label="User Name"></v-text-field>
             <v-text-field
@@ -17,7 +17,7 @@
               min="8"
               counter
             ></v-text-field>
-            <v-btn :disabled="!valid" @click="signin">Sign In</v-btn>
+            <v-btn :disabled="!valid" @click.prevent="signin" type="submit">Sign In</v-btn>
             Don't Have an Account? <router-link to="/signup">Create An Account</router-link>
           </v-form>
         </v-flex>
@@ -28,7 +28,8 @@
 
 
 <script>
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import router from '@/router';
 
 export default {
   name: 'Login',
@@ -41,17 +42,12 @@ export default {
     };
   },
   methods:{
-    signin:function(){
-      firebase.auth().signInWithEmailAndPassword(this.username, this.password).then(
-        function(user){
-          alert('connected!')
-        },
-        function(error){
-          alert(error.message)
-        }
-      )
+    signin:function(){ 
+      this.$store.dispatch('login', {
+        username: this.username,
+        password: this.password
+      });
     }
-
   }
 };
 </script>

@@ -14,7 +14,8 @@
     "firebase": "^5.0.4",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
-    "vuetify": "^1.0.0"
+    "vuetify": "^1.0.0",
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
@@ -35,7 +36,7 @@
     "eslint-friendly-formatter": "^3.0.0",
     "eslint-import-resolver-webpack": "^0.8.3",
     "eslint-loader": "^1.7.1",
-    "eslint-plugin-html": "^3.0.0",
+    "eslint-plugin-html": "^4.0.3",
     "eslint-plugin-import": "^2.7.0",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^1.1.4",
