@@ -1,7 +1,7 @@
 <template>
-  <v-container fluid>
-    <v-slide-y-transition mode="out-in">
-      <v-layout row>
+  <v-slide-y-transition mode="out-in">
+    <v-container fluid>
+      <v-layout row wrap>
         <v-flex xs12 md6 offset-md3>
           <v-form v-model="valid" v-on:submit.prevent="onSubmit">
             <h1>Sign In</h1>
@@ -18,12 +18,11 @@
               counter
             ></v-text-field>
             <v-btn :disabled="!valid" @click.prevent="signin" type="submit">Sign In</v-btn>
-            Don't Have an Account? <router-link to="/signup">Create An Account</router-link>
           </v-form>
         </v-flex>
       </v-layout>
-    </v-slide-y-transition>
-  </v-container>
+    </v-container>
+  </v-slide-y-transition>
 </template>
 
 

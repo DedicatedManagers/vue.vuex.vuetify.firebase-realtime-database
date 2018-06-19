@@ -4,7 +4,6 @@ import Vue from 'vue';
 import Client from '@/components/Client';
 import Dashboard from '@/components/Dashboard';
 import Login from '@/components/Login';
-import SignUp from '@/components/SignUp';
 
 Vue.use(Router);
 
@@ -31,11 +30,6 @@ const router = new Router({
       meta: {
         requiresAuth: true,
       },
-    },
-    {
-      path: '/signup',
-      name: 'SignUp',
-      component: SignUp,
     },
     {
       path: '/dashboard',
