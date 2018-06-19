@@ -46,9 +46,17 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   const currentUser = firebase.auth().currentUser;
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+console.log(to);
 
-  if (requiresAuth && !currentUser) next('/login');
-  else next();
+  if (requiresAuth && !currentUser){
+    next('/login');
+  }
+  else if(currentUser && to.matched.some(record=>record.path == "/login")){
+    next('/dashboard');
+  } 
+  else {
+    next();
+  }
 });
 
 export default router;
