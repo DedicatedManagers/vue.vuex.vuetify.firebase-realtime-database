@@ -25,15 +25,17 @@ firebase.initializeApp(config);
 const firestore = firebase.firestore();
 firestore.settings({timestampsInSnapshots: true,});
 
-Vue.use(Vuetify, { theme: {
-  primary: '#ee44aa',
-  secondary: '#424242',
-  accent: '#82B1FF',
-  error: '#FF5252',
-  info: '#2196F3',
-  success: '#4CAF50',
-  warning: '#FFC107',
-} });
+Vue.use(Vuetify, { 
+  // theme: {
+  //   primary: '#ee44aa',
+  //   secondary: '#424242',
+  //   accent: '#82B1FF',
+  //   error: '#FF5252',
+  //   info: '#2196F3',
+  //   success: '#4CAF50',
+  //   warning: '#FFC107',
+  // } 
+});
 
 Vue.config.productionTip = false;
 
@@ -42,13 +44,10 @@ let app;
 firebase.auth().onAuthStateChanged(function(user) {
   console.log('onAuthStateChanged.  user:');
   console.log(user);
-  if(user){
-    store.commit('setUserIsAuthenticated', true);
-  }
-  else{
-    store.commit('setUserIsAuthenticated', false);
-  }
-  if (!app) {
+  store.commit('setUserIsAuthenticated', user?true:null);
+  store.commit('setUser', user);
+
+    if (!app) {
     /* eslint-disable no-new */
     app = new Vue({
       store:store,

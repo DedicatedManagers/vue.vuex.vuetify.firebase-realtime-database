@@ -7,6 +7,7 @@ Vue.use(Vuex);
 
 export const store = new Vuex.Store({
     state:{
+        user:null,
         userIsAuthenticated:false,
         QUERY_PrimaryRelativeCaregiverById:false,
         current_PrimaryRelativeCaregiver:false,
@@ -17,12 +18,15 @@ export const store = new Vuex.Store({
         setUserIsAuthenticated(state, replace){
             state.userIsAuthenticated = replace;
         },
+        setUser(state, replace){
+            state.user = replace;
+        }
     },
     actions:{
         login(context, credentials){
             firebase.auth().signInWithEmailAndPassword(credentials.username, credentials.password)
             .then(data=>{
-                console.log('Logged in.  Response: ' + data);
+                console.log('Logged in.');
                 router.push('/dashboard');
             })
             .catch(e=>{
@@ -33,7 +37,7 @@ export const store = new Vuex.Store({
         logout(context){
             firebase.auth().signOut()
             .then(data=>{
-              console.log('Logged out.  Response: ' + data);
+              console.log('Logged out.');
               router.push('/login');
             })
             .catch(e=>{

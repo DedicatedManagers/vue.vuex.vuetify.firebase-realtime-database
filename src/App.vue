@@ -7,8 +7,8 @@
       <v-toolbar-title>Foster Kinship Client Database</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
-        <v-btn flat @click='login' v-if="!this.$store.state.userIsAuthenticated">Sign In</v-btn>
-        <v-btn flat @click='logout' v-if="this.$store.state.userIsAuthenticated">Sign Out</v-btn>
+        <v-btn flat @click='login' v-if="!userIsAuthenticated">Sign In</v-btn>
+        <v-btn flat @click='logout' v-if="userIsAuthenticated">Sign Out</v-btn>
       </v-toolbar-items>
     </v-toolbar>
 
@@ -31,6 +31,11 @@ export default {
   data() {
     return {
     };
+  },
+  computed:{
+    userIsAuthenticated: function(){
+      return this.$store.state.userIsAuthenticated;
+    },
   },
   methods:{
     login(){
