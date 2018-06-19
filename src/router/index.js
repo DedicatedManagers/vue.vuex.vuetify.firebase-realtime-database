@@ -24,7 +24,8 @@ const router = new Router({
       component: Login,
     },
     {
-      path: '/client',
+      path: '/client/:clientId',
+      props: true,
       name: 'Client',
       component: Client,
       meta: {
@@ -49,7 +50,6 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  console.log(to);
   const currentUser = firebase.auth().currentUser;
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 

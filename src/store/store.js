@@ -10,6 +10,7 @@ export const store = new Vuex.Store({
         userIsAuthenticated:false,
         QUERY_PrimaryRelativeCaregiverById:false,
         current_PrimaryRelativeCaregiver:false,
+        current_PrimaryRelativeCaregivers:false,
 
     },
     mutations:{
@@ -60,5 +61,17 @@ export const store = new Vuex.Store({
                     console.error("Error writing document: ", error);
                 });
         },
+
+        getPrimaryRelativeCaregivers(context){
+            firebase.firestore().collection('PrimaryRelativeCaregiver').get().then(function(querySnapshot){
+                let PrimaryRelativeCaregiverOBJ = {};
+                querySnapshot.forEach(function(doc){
+                    PrimaryRelativeCaregiverOBJ[doc.id] = doc.data();
+                });
+                context.state.current_PrimaryRelativeCaregivers=PrimaryRelativeCaregiverOBJ;
+            }).catch(function(error) {
+                console.error("Error retrieving clients: ", error);
+            });
+        }
     }
 })

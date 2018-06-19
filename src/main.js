@@ -19,7 +19,6 @@ const config = {
   projectId: 'foster-kinship-clients',
   storageBucket: 'foster-kinship-clients.appspot.com',
   messagingSenderId: '186407844577',
-  //timestampsInSnapshots: true,
 };
 
 firebase.initializeApp(config);
@@ -41,7 +40,8 @@ Vue.config.productionTip = false;
 let app;
 
 firebase.auth().onAuthStateChanged(function(user) {
-  console.log('onAuthStateChanged',user);
+  console.log('onAuthStateChanged.  user:');
+  console.log(user);
   if(user){
     store.commit('setUserIsAuthenticated', true);
   }

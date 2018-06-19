@@ -1,8 +1,8 @@
 <template>
   <v-app>
     <v-toolbar app clipped>
-      <v-btn icon>
-        <v-icon>web</v-icon>
+      <v-btn icon to="/dashboard">
+        <v-icon>dashboard</v-icon>
       </v-btn>
       <v-toolbar-title>Foster Kinship Client Database</v-toolbar-title>
       <v-spacer></v-spacer>
