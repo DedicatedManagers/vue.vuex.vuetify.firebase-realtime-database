@@ -3,18 +3,11 @@
     <v-slide-y-transition mode="out-in">
       <v-layout row>
         <v-flex xs12>
-            <h1>Client</h1>
-            <v-form>
-                <v-text-field
-                v-model="name"
-                label="Name"
-                required
-                ></v-text-field>
-                <v-btn
-                @click="submit"
-                >
-                submit
-                </v-btn>
+            <h1>Primary Caregiver</h1>
+            <v-form v-if="current_PrimaryRelativeCaregiver">
+                <v-text-field v-model="current_PrimaryRelativeCaregiver.data.FirstName" label="Name" required ></v-text-field>
+                <v-text-field v-model="current_PrimaryRelativeCaregiver.data.LastName" label="Name" required ></v-text-field>
+                <v-btn @click="submit">submit</v-btn>
             </v-form>
         </v-flex>
 
@@ -34,17 +27,21 @@ export default {
         name:"",
     };
   },
+  computed:{
+    current_PrimaryRelativeCaregiver(){
+      return this.$store.state.current_PrimaryRelativeCaregiver;
+    }
+  },
   methods:{
       submit(){
-        firebase.database().ref('names/').set({
-            Name:this.name,
-        }).then(snapshot=>{
-            console.log(snapshot);
-        }).catch(e=>{
-            console.log(e);
-        })
+        console.log(this.$store.state.current_PrimaryRelativeCaregiver);
+        console.log(this.current_PrimaryRelativeCaregiver);
+        this.$store.dispatch('setPrimaryRelativeCaregiverById', this.current_PrimaryRelativeCaregiver)
       }
-  }
+  },
+  created(){
+    this.$store.dispatch('getPrimaryRelativeCaregiverById', "jEgHuKWvGvjuJOq7hjNC");
+  },
 };
 </script>
  

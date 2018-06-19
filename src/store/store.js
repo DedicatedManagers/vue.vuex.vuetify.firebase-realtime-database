@@ -8,6 +8,9 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
     state:{
         userIsAuthenticated:false,
+        QUERY_PrimaryRelativeCaregiverById:false,
+        current_PrimaryRelativeCaregiver:false,
+
     },
     mutations:{
         setUserIsAuthenticated(state, replace){
@@ -35,6 +38,27 @@ export const store = new Vuex.Store({
             .catch(e=>{
               console.log('Logout failed: ', e);
             });
+        },
+        getPrimaryRelativeCaregiverById(context, PrimaryRelativeCaregiverId){
+            if(context.state.QUERY_PrimaryRelativeCaregiverById){
+                context.state.QUERY_PrimaryRelativeCaregiverById();
+            }
+
+            context.state.QUERY_PrimaryRelativeCaregiverById = firebase.firestore().collection('PrimaryRelativeCaregiver').doc(PrimaryRelativeCaregiverId).onSnapshot(function(doc){
+                context.state.current_PrimaryRelativeCaregiver = {
+                    id: PrimaryRelativeCaregiverId,
+                    data: doc.data(),
+                }
+            });            
+        },
+        setPrimaryRelativeCaregiverById(context, current_PrimaryRelativeCaregiver){
+            firebase.firestore().collection('PrimaryRelativeCaregiver').doc(current_PrimaryRelativeCaregiver.id).set(current_PrimaryRelativeCaregiver.data)
+                .then(function() {
+                    console.log("Document successfully written!");
+                })
+                .catch(function(error) {
+                    console.error("Error writing document: ", error);
+                });
         },
     }
 })

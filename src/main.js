@@ -5,6 +5,7 @@ import Vuetify from 'vuetify';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
+import 'firebase/firestore';
 import 'vuetify/dist/vuetify.min.css';
 import App from './App';
 import router from './router';
@@ -18,10 +19,12 @@ const config = {
   projectId: 'foster-kinship-clients',
   storageBucket: 'foster-kinship-clients.appspot.com',
   messagingSenderId: '186407844577',
+  //timestampsInSnapshots: true,
 };
 
 firebase.initializeApp(config);
-
+const firestore = firebase.firestore();
+firestore.settings({timestampsInSnapshots: true,});
 
 Vue.use(Vuetify, { theme: {
   primary: '#ee44aa',
