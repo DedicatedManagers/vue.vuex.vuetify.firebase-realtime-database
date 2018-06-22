@@ -62,6 +62,7 @@ export const store = new Vuex.Store({
             }
             // Create New
             if(PrimaryRelativeCaregiverId == "add"){
+                context.commit('initialize_currentPrimaryRelativeCaregiver', null);
                 context.dispatch('fcommit_PrimaryRelativeCaregiverById');
             }
             // Get existing
