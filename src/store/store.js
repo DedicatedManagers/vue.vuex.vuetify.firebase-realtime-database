@@ -60,27 +60,49 @@ export const store = new Vuex.Store({
             if(context.state.QUERY_PrimaryRelativeCaregiverById){
                 context.state.QUERY_PrimaryRelativeCaregiverById();
             }
-            // Set up the new query & listener
-            context.state.QUERY_PrimaryRelativeCaregiverById = firebase.firestore().collection('PrimaryRelativeCaregiver').doc(PrimaryRelativeCaregiverId).onSnapshot(function(doc){
-                // Only update if receiving new data from the firebase server. 
-                // - commits to firebase from our app will also call this listener and we can ignore since its just putting the data back where it came from
-                if(!doc.metadata.hasPendingWrites){
-                    context.commit('initialize_currentPrimaryRelativeCaregiver', {
-                        id: PrimaryRelativeCaregiverId,
-                        data: doc.data(),
-                    })
-                }
-            });            
+            // Create New
+            if(PrimaryRelativeCaregiverId == "add"){
+                context.dispatch('fcommit_PrimaryRelativeCaregiverById');
+            }
+            // Get existing
+            else{
+                // Set up the new query & listener
+                context.state.QUERY_PrimaryRelativeCaregiverById = firebase.firestore().collection('PrimaryRelativeCaregiver').doc(PrimaryRelativeCaregiverId).onSnapshot(function(doc){
+                    // Only update if receiving new data from the firebase server. 
+                    // - commits to firebase from our app will also call this listener and we can ignore since its just putting the data back where it came from
+                    if(!doc.metadata.hasPendingWrites){
+                        context.commit('initialize_currentPrimaryRelativeCaregiver', {
+                            id: PrimaryRelativeCaregiverId,
+                            data: doc.data(),
+                        })
+                    }
+                });            
+            }
         },
         // Commit changes to firebase
         fcommit_PrimaryRelativeCaregiverById(context){
-            firebase.firestore().collection('PrimaryRelativeCaregiver').doc(context.state.currentPrimaryRelativeCaregiver.id).set(context.state.currentPrimaryRelativeCaregiver.data)
-            .then(function() {
-                //console.log("Document successfully written!");
-            })
-            .catch(function(error) {
-                console.error("Error writing document: ", error);
-            });
+            // Updating an entry
+            if(context.state.currentPrimaryRelativeCaregiver && context.state.currentPrimaryRelativeCaregiver.hasOwnProperty('id') && context.state.currentPrimaryRelativeCaregiver.id){
+                firebase.firestore().collection('PrimaryRelativeCaregiver').doc(context.state.currentPrimaryRelativeCaregiver.id).update(context.state.currentPrimaryRelativeCaregiver.data)
+                .then(function() {
+                    //console.log("Document successfully written!");
+                })
+                .catch(function(error) {
+                    console.error("Error writing document: ", error);
+                });    
+            }
+            // Creating a new entry
+            else{
+                console.log('creating new');
+                firebase.firestore().collection('PrimaryRelativeCaregiver').add({})
+                .then(function(docRef) {
+                    context.dispatch('getPrimaryRelativeCaregiverById', docRef.id);
+                    router.replace('/client/' + docRef.id);               
+                })
+                .catch(function(error) {
+                    console.error("Error writing document: ", error);
+                });    
+            }
         },
 
         getPrimaryRelativeCaregivers(context){

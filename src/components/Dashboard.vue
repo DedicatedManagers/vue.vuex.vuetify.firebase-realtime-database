@@ -11,6 +11,10 @@
               <router-link :to="'/client/'+id">{{client.LastName}}, {{client.FirstName}} {{client.MiddleName}}</router-link>
             </div>
           </div>
+          <div>
+            <br>
+            <v-btn :to="'/client/add'">+ Add New Client</v-btn>
+          </div>
         </v-flex>
       </v-layout>
     </v-container>
