@@ -54,6 +54,7 @@ export const store = new Vuex.Store({
               console.log('Logout failed: ', e);
             });
         },
+        // Retrieve data from firebase
         getPrimaryRelativeCaregiverById(context, PrimaryRelativeCaregiverId){
             // If there is already a listener for this query, unsubscribe it
             if(context.state.QUERY_PrimaryRelativeCaregiverById){
@@ -61,13 +62,17 @@ export const store = new Vuex.Store({
             }
             // Set up the new query & listener
             context.state.QUERY_PrimaryRelativeCaregiverById = firebase.firestore().collection('PrimaryRelativeCaregiver').doc(PrimaryRelativeCaregiverId).onSnapshot(function(doc){
-                context.commit('initialize_currentPrimaryRelativeCaregiver', {
-                    id: PrimaryRelativeCaregiverId,
-                    data: doc.data(),
-                })
+                // Only update if receiving new data from the firebase server. 
+                // - commits to firebase from our app will also call this listener and we can ignore since its just putting the data back where it came from
+                if(!doc.metadata.hasPendingWrites){
+                    context.commit('initialize_currentPrimaryRelativeCaregiver', {
+                        id: PrimaryRelativeCaregiverId,
+                        data: doc.data(),
+                    })
+                }
             });            
         },
-        // firebase commit
+        // Commit changes to firebase
         fcommit_PrimaryRelativeCaregiverById(context){
             firebase.firestore().collection('PrimaryRelativeCaregiver').doc(context.state.currentPrimaryRelativeCaregiver.id).set(context.state.currentPrimaryRelativeCaregiver.data)
             .then(function() {
