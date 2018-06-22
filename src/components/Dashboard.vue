@@ -27,7 +27,7 @@ export default {
   },
   computed:{
     clients(){
-      return this.$store.state.current_PrimaryRelativeCaregivers;
+      return this.$store.state.currentPrimaryRelativeCaregivers;
     }
   },
   created(){

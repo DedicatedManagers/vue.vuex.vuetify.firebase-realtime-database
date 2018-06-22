@@ -10,8 +10,8 @@ export const store = new Vuex.Store({
         user:null,
         userIsAuthenticated:false,
         QUERY_PrimaryRelativeCaregiverById:false,
-        current_PrimaryRelativeCaregiver:false,
-        current_PrimaryRelativeCaregivers:false,
+        currentPrimaryRelativeCaregiver:null,
+        currentPrimaryRelativeCaregivers:false,
 
     },
     mutations:{
@@ -20,7 +20,17 @@ export const store = new Vuex.Store({
         },
         setUser(state, replace){
             state.user = replace;
-        }
+        },
+        initialize_currentPrimaryRelativeCaregiver(state, PrimaryRelativeCaregiver){
+            state.currentPrimaryRelativeCaregiver = PrimaryRelativeCaregiver;
+        },
+        update_currentPrimaryRelativeCaregiver_byObject(state, dataProperty){
+            for (var key in dataProperty) {
+                if (dataProperty.hasOwnProperty(key)) {
+                    state.currentPrimaryRelativeCaregiver.data[key] = dataProperty[key];
+                }
+            }
+        },
     },
     actions:{
         login(context, credentials){
@@ -51,16 +61,17 @@ export const store = new Vuex.Store({
             }
             // Set up the new query & listener
             context.state.QUERY_PrimaryRelativeCaregiverById = firebase.firestore().collection('PrimaryRelativeCaregiver').doc(PrimaryRelativeCaregiverId).onSnapshot(function(doc){
-                context.state.current_PrimaryRelativeCaregiver = {
+                context.commit('initialize_currentPrimaryRelativeCaregiver', {
                     id: PrimaryRelativeCaregiverId,
                     data: doc.data(),
-                }
+                })
             });            
         },
-        setPrimaryRelativeCaregiverById(context, current_PrimaryRelativeCaregiver){
-            firebase.firestore().collection('PrimaryRelativeCaregiver').doc(current_PrimaryRelativeCaregiver.id).set(current_PrimaryRelativeCaregiver.data)
+        // firebase commit
+        fcommit_PrimaryRelativeCaregiverById(context){
+            firebase.firestore().collection('PrimaryRelativeCaregiver').doc(context.state.currentPrimaryRelativeCaregiver.id).set(context.state.currentPrimaryRelativeCaregiver.data)
             .then(function() {
-                console.log("Document successfully written!");
+                //console.log("Document successfully written!");
             })
             .catch(function(error) {
                 console.error("Error writing document: ", error);
@@ -74,7 +85,7 @@ export const store = new Vuex.Store({
                 querySnapshot.forEach(function(doc){
                     PrimaryRelativeCaregiverOBJ[doc.id] = doc.data();
                 });
-                context.state.current_PrimaryRelativeCaregivers=PrimaryRelativeCaregiverOBJ;
+                context.state.currentPrimaryRelativeCaregivers=PrimaryRelativeCaregiverOBJ;
             })
             .catch(function(error) {
                 console.error("Error retrieving clients: ", error);

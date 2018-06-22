@@ -4,11 +4,10 @@
         <v-layout row wrap>
           <v-flex xs12>
               <h1>Primary Caregiver</h1>
-              <v-form v-if="current_PrimaryRelativeCaregiver">
-                  <v-text-field v-model="current_PrimaryRelativeCaregiver.data.FirstName" label="First Name" required ></v-text-field>
-                  <v-text-field v-model="current_PrimaryRelativeCaregiver.data.MiddleName" label="Middle Name" required ></v-text-field>
-                  <v-text-field v-model="current_PrimaryRelativeCaregiver.data.LastName" label="Last Name" required ></v-text-field>
-                  <v-btn @click="submit">submit</v-btn>
+              <v-form>
+                  <v-text-field @keyup="submit" v-model="FirstName" label="First Name" required ></v-text-field>
+                  <v-text-field @keyup="submit" v-model="MiddleName" label="Middle Name" required ></v-text-field>
+                  <v-text-field @keyup="submit" v-model="LastName" label="Last Name" required ></v-text-field>
               </v-form>
           </v-flex>
 
@@ -26,21 +25,41 @@ export default {
   props:['clientId'],
   data() {
     return {
-        name:"",
     };
   },
   computed:{
-    current_PrimaryRelativeCaregiver(){
-      return this.$store.state.current_PrimaryRelativeCaregiver;
-    }
+    FirstName:{
+      get(){
+        return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.FirstName:"";
+      },
+      set(newValue){
+        this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {FirstName: newValue});
+      },
+    },
+    MiddleName:{
+      get(){
+        return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.MiddleName:"";
+      },
+      set(newValue){
+        this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {MiddleName: newValue});
+      },
+    },
+    LastName:{
+      get(){
+        return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.LastName:"";
+      },
+      set(newValue){
+        this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {LastName: newValue});
+      },
+    },
   },
   methods:{
       submit(){
-        this.$store.dispatch('setPrimaryRelativeCaregiverById', this.current_PrimaryRelativeCaregiver)
+        this.$store.dispatch('fcommit_PrimaryRelativeCaregiverById')
       }
   },
   created(){
-    console.log('created function in client.vue');
+    console.log('created function in client.vue. dispatching getPrimaryRelativeCaregiverById');
     this.$store.dispatch('getPrimaryRelativeCaregiverById', this.clientId);
   },
 };
