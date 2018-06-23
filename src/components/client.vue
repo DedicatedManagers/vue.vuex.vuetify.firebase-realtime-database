@@ -10,7 +10,9 @@
                   <v-text-field @keyup="submit" v-model="LastName" label="Last Name" required ></v-text-field>
                   <v-text-field @keyup="submit" v-model="PrimaryStreetAddress" label="Primary Street Address" required ></v-text-field>
               </v-form>
+              <v-btn class="error" @click="fDelete">Delete Client</v-btn>
           </v-flex>
+
 
         </v-layout>
     </v-container>
@@ -66,10 +68,12 @@ export default {
   methods:{
       submit(){
         this.$store.dispatch('fcommit_PrimaryRelativeCaregiverById')
+      },
+      fDelete(){
+        this.$store.dispatch('fdelete_PrimaryRelativeCaregiverById')
       }
   },
   created(){
-    console.log('created function in client.vue. dispatching getPrimaryRelativeCaregiverById');
     this.$store.dispatch('getPrimaryRelativeCaregiverById', this.clientId);
   },
 };

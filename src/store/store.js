@@ -69,9 +69,12 @@ export const store = new Vuex.Store({
             else{
                 // Set up the new query & listener
                 context.state.QUERY_PrimaryRelativeCaregiverById = firebase.firestore().collection('PrimaryRelativeCaregiver').doc(PrimaryRelativeCaregiverId).onSnapshot(function(doc){
+                    if(!doc.exists){
+                        context.commit('initialize_currentPrimaryRelativeCaregiver', null);
+                    }
                     // Only update if receiving new data from the firebase server. 
                     // - commits to firebase from our app will also call this listener and we can ignore since its just putting the data back where it came from
-                    if(!doc.metadata.hasPendingWrites){
+                    else if(!doc.metadata.hasPendingWrites){
                         context.commit('initialize_currentPrimaryRelativeCaregiver', {
                             id: PrimaryRelativeCaregiverId,
                             data: doc.data(),
@@ -104,6 +107,16 @@ export const store = new Vuex.Store({
                     console.error("Error writing document: ", error);
                 });    
             }
+        },
+        // Delete Client
+        fdelete_PrimaryRelativeCaregiverById(context){
+            firebase.firestore().collection('PrimaryRelativeCaregiver').doc(context.state.currentPrimaryRelativeCaregiver.id).delete()
+                .then(function(docRef) {
+                    router.replace('/dashboard');               
+                })
+                .catch(function(error) {
+                    console.error("Error deleting document: ", error);
+                }); 
         },
 
         getPrimaryRelativeCaregivers(context){
