@@ -8,6 +8,7 @@
                   <v-text-field @keyup="submit" v-model="FirstName" label="First Name" required ></v-text-field>
                   <v-text-field @keyup="submit" v-model="MiddleName" label="Middle Name" required ></v-text-field>
                   <v-text-field @keyup="submit" v-model="LastName" label="Last Name" required ></v-text-field>
+                  <v-text-field @keyup="submit" v-model="PrimaryStreetAddress" label="Primary Street Address" required ></v-text-field>
               </v-form>
           </v-flex>
 
@@ -52,6 +53,15 @@ export default {
         this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {LastName: newValue});
       },
     },
+    PrimaryStreetAddress:{
+      get(){
+        return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.PrimaryStreetAddress:"";
+      },
+      set(newValue){
+        this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {PrimaryStreetAddress: newValue});
+      },
+    },
+    
   },
   methods:{
       submit(){
