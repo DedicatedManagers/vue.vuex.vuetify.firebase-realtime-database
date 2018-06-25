@@ -10,38 +10,31 @@
                   <v-text-field @keyup="submit" v-model="LastName" label="Last Name" required ></v-text-field>
                   <v-text-field @keyup="submit" v-model="PrimaryStreetAddress" label="Primary Street Address" required ></v-text-field>
               </v-form>
-              <v-btn class="error" @click="deleteClientConfirmationModalVisiblity=true">Delete Client</v-btn>
+              <v-btn class="error" @click="confirmDialogVisiblility=true">Delete Client</v-btn>
+              <dialog-confirm confirmType="error" :confirmVisibilty="confirmDialogVisiblility" @confirmAccept="fDelete" @confirmCancel="confirmDialogVisiblility=false">
+                <template slot="title">Confirm Delete</template>
+                <template slot="text">Are you sure you want to delete this client?</template>
+                <template slot="confirmButton">Confirm Delete</template>
+              </dialog-confirm>
           </v-flex>
-
-
-        </v-layout>
-
-        <v-layout row justify-center>
-          <v-dialog v-model="deleteClientConfirmationModalVisiblity" persistent max-width="290">
-            <v-card>
-              <v-card-title class="error headline" style="font-weight:bold; color:white;">Confirm Delete</v-card-title>
-              <v-card-text>Are you sure you want to delete this client?</v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn flat @click="deleteClientConfirmationModalVisiblity = false">Cancel</v-btn>
-                <v-btn color="error" flat @click="fDelete">Confirm Delete</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </v-layout>
+        </v-layout> 
     </v-container>
   </v-slide-y-transition>
 </template>
 
 <script>
 import firebase from 'firebase/app';
+import DialogConfirm from '@/components/shared/DialogConfirm';
 
 export default {
   name: 'Client',
   props:['clientId'],
+  components:{
+    'dialog-confirm':DialogConfirm
+  },
   data() {
     return {
-      deleteClientConfirmationModalVisiblity:false,
+      confirmDialogVisiblility:false,
     };
   },
   computed:{
