@@ -77,7 +77,7 @@ export default {
         this.$store.dispatch('fcommit_PrimaryRelativeCaregiverById')
       },
       fDelete(){
-        this.deleteClientConfirmationModalVisiblity = false;
+        this.confirmDialogVisiblility = false;
         this.$store.dispatch('fdelete_PrimaryRelativeCaregiverById')
       }
   },
