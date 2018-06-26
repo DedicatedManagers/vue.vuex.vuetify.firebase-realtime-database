@@ -131,6 +131,6 @@ export const store = new Vuex.Store({
             .catch(function(error) {
                 console.error("Error retrieving clients: ", error);
             });
-        }
+        },
     }
 })

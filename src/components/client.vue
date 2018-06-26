@@ -16,8 +16,8 @@
                   </v-menu>
 
               </v-form>
-              <v-btn class="error" @click="confirmDialogVisiblility=true">Delete Client</v-btn>
-              <dialog-confirm confirmType="error" :confirmVisibilty="confirmDialogVisiblility" @confirmAccept="fDelete" @confirmCancel="confirmDialogVisiblility=false">
+              <v-btn class="error" @click="confirmDialogVisibility=true">Delete Client</v-btn>
+              <dialog-confirm confirmType="error" :confirmVisibilty="confirmDialogVisibility" @confirmAccept="fDelete" @confirmCancel="confirmDialogVisibility=false">
                 <template slot="title">Confirm Delete</template>
                 <template slot="text">Are you sure you want to delete this client?</template>
                 <template slot="confirmButton">Confirm Delete</template>
@@ -40,7 +40,7 @@ export default {
   },
   data() {
     return {
-      confirmDialogVisiblility:false,
+      confirmDialogVisibility:false,
       BirthDateMenuVisibility:false,
 
     };
@@ -88,7 +88,7 @@ export default {
         this.$store.dispatch('fcommit_PrimaryRelativeCaregiverById')
       },
       fDelete(){
-        this.confirmDialogVisiblility = false;
+        this.confirmDialogVisibility = false;
         this.$store.dispatch('fdelete_PrimaryRelativeCaregiverById')
       },
       changeBirthDate(newValue){
