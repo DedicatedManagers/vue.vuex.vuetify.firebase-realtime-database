@@ -9,6 +9,12 @@
                   <v-text-field @keyup="submit" v-model="MiddleName" label="Middle Name" required ></v-text-field>
                   <v-text-field @keyup="submit" v-model="LastName" label="Last Name" required ></v-text-field>
                   <v-text-field @keyup="submit" v-model="PrimaryStreetAddress" label="Primary Street Address" required ></v-text-field>
+
+                  <v-menu v-model="BirthDateMenuVisibility" :nudge-right="40" lazy transition="scale-transition" offset-y full-width min-width="290px">
+                    <v-text-field slot="activator" :value="BirthDateLocal" label="Birth Date" prepend-icon="event" readonly ></v-text-field>
+                    <v-date-picker :value="BirthDateLocal" @input="changeBirthDate($event)"></v-date-picker>
+                  </v-menu>
+
               </v-form>
               <v-btn class="error" @click="confirmDialogVisiblility=true">Delete Client</v-btn>
               <dialog-confirm confirmType="error" :confirmVisibilty="confirmDialogVisiblility" @confirmAccept="fDelete" @confirmCancel="confirmDialogVisiblility=false">
@@ -35,9 +41,14 @@ export default {
   data() {
     return {
       confirmDialogVisiblility:false,
+      BirthDateMenuVisibility:false,
+
     };
   },
   computed:{
+    BirthDateLocal(){
+      return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.BirthDate:'';
+    },
     FirstName:{
       get(){
         return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.FirstName:"";
@@ -79,6 +90,10 @@ export default {
       fDelete(){
         this.confirmDialogVisiblility = false;
         this.$store.dispatch('fdelete_PrimaryRelativeCaregiverById')
+      },
+      changeBirthDate(newValue){
+        this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {BirthDate: newValue});
+        this.$store.dispatch('fcommit_PrimaryRelativeCaregiverById');
       }
   },
   created(){
