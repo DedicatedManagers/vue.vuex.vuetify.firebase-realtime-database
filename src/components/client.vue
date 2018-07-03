@@ -10,9 +10,9 @@
                   <v-text-field @keyup="submit" v-model="LastName" label="Last Name" required ></v-text-field>
                   <v-text-field @keyup="submit" v-model="PrimaryStreetAddress" label="Primary Street Address" required ></v-text-field>
 
-                  <v-menu v-model="BirthDateMenuVisibility" :nudge-right="40" lazy transition="scale-transition" offset-y full-width min-width="290px">
-                    <v-text-field slot="activator" :value="BirthDateLocal" label="Birth Date" prepend-icon="event" readonly ></v-text-field>
-                    <v-date-picker :value="BirthDateLocal" @input="changeBirthDate($event)"></v-date-picker>
+                  <v-menu ref="BirthDateMenuRef" :return-value.sync="BirthDateLocal" v-model="BirthDateMenuVisibility" :nudge-right="40" lazy transition="scale-transition" offset-y full-width min-width="290px">
+                    <v-text-field slot="activator" v-model="BirthDateLocal" label="Birth Date" prepend-icon="event" readonly ></v-text-field>
+                    <v-date-picker v-model="BirthDateLocal" @input="$refs.BirthDateMenuRef.save(BirthDateLocal);submit();"></v-date-picker>
                   </v-menu>
 
               </v-form>
@@ -46,8 +46,13 @@ export default {
     };
   },
   computed:{
-    BirthDateLocal(){
-      return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.BirthDate:'';
+    BirthDateLocal:{
+      get(){
+        return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.BirthDate:null;
+      },
+      set(newValue){
+        this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {BirthDate: newValue});
+      },
     },
     FirstName:{
       get(){
@@ -91,10 +96,6 @@ export default {
         this.confirmDialogVisibility = false;
         this.$store.dispatch('fdelete_PrimaryRelativeCaregiverById')
       },
-      changeBirthDate(newValue){
-        this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {BirthDate: newValue});
-        this.$store.dispatch('fcommit_PrimaryRelativeCaregiverById');
-      }
   },
   created(){
     this.$store.dispatch('getPrimaryRelativeCaregiverById', this.clientId);
