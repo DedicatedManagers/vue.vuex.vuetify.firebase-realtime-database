@@ -16,14 +16,21 @@
                   </v-menu>
 
               </v-form>
-              <v-btn class="error" @click="confirmDialogVisibility=true">Delete Client</v-btn>
+          </v-flex>
+        </v-layout> 
+
+        <v-layout row>
+            <v-spacer></v-spacer>
+            <v-btn class="error" @click="confirmDialogVisibility=true">Delete Client</v-btn>
+            <template v-if="confirmDialogVisibility">
               <dialog-confirm confirmType="error" :confirmVisibilty="confirmDialogVisibility" @confirmAccept="fDelete" @confirmCancel="confirmDialogVisibility=false">
                 <template slot="title">Confirm Delete</template>
                 <template slot="text">Are you sure you want to delete this client?</template>
                 <template slot="confirmButton">Confirm Delete</template>
               </dialog-confirm>
-          </v-flex>
+            </template>
         </v-layout> 
+
     </v-container>
   </v-slide-y-transition>
 </template>
@@ -46,14 +53,6 @@ export default {
     };
   },
   computed:{
-    BirthDateLocal:{
-      get(){
-        return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.BirthDate:null;
-      },
-      set(newValue){
-        this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {BirthDate: newValue});
-      },
-    },
     FirstName:{
       get(){
         return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.FirstName:"";
@@ -84,6 +83,14 @@ export default {
       },
       set(newValue){
         this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {PrimaryStreetAddress: newValue});
+      },
+    },
+    BirthDateLocal:{
+      get(){
+        return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.BirthDate:null;
+      },
+      set(newValue){
+        this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {BirthDate: newValue});
       },
     },
     
