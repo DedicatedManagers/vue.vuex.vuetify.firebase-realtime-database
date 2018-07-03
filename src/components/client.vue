@@ -17,6 +17,11 @@
 
                   <v-checkbox @change="submit" v-model="NavigatorProgram" label="Navigator Program"></v-checkbox>
 
+
+                  <v-select  @change="submit" v-model="ClientTypeAtIntake" :items="ClientTypeAtIntakeValues" label="Client Type At Intake" ></v-select>
+
+                  
+
               </v-form>
           </v-flex>
         </v-layout> 
@@ -51,6 +56,21 @@ export default {
     return {
       confirmDialogVisibility:false,
       BirthDateMenuVisibility:false,
+
+      ClientTypeAtIntakeValues:[
+        "1- Formal/Licensed",
+        "2- Formal/Licensing in progress",
+        "3- Formal/Unable to be licensed; blood relative",
+        "4- Formal/Unable to be licensed; fictive",
+        "5- Informal/Guardianship; blood relative",
+        "6- Informal/Guardianship; fictive",
+        "7- Informal/Temp guardianship; blood relative",
+        "8- Informal/Temp guardianship; fictive",
+        "9- Informal/No guardianship; blood relative",
+        "10- Informal/No guardianship; fictive",
+        "11-Adoptive Parent",
+        "12-No Custody",
+      ],
 
     };
   },
@@ -101,6 +121,15 @@ export default {
       },
       set(newValue){
         this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {NavigatorProgram: newValue});
+      },
+    },
+    
+    ClientTypeAtIntake:{
+      get(){
+        return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.ClientTypeAtIntake:null;
+      },
+      set(newValue){
+        this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {ClientTypeAtIntake: newValue});
       },
     },
     
