@@ -15,6 +15,8 @@
                     <v-date-picker v-model="BirthDateLocal" @input="$refs.BirthDateMenuRef.save(BirthDateLocal);submit();"></v-date-picker>
                   </v-menu>
 
+                  <v-checkbox @change="submit" v-model="NavigatorProgram" label="Navigator Program"></v-checkbox>
+
               </v-form>
           </v-flex>
         </v-layout> 
@@ -93,7 +95,17 @@ export default {
         this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {BirthDate: newValue});
       },
     },
+    NavigatorProgram:{
+      get(){
+        return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.NavigatorProgram:null;
+      },
+      set(newValue){
+        this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {NavigatorProgram: newValue});
+      },
+    },
     
+
+
   },
   methods:{
       submit(){
