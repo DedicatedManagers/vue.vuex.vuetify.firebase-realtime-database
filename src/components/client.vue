@@ -10,7 +10,7 @@
                   <v-text-field  v-model="LastName" label="Last Name" required ></v-text-field>
                   <v-text-field  v-model="PrimaryStreetAddress" label="Primary Street Address" required ></v-text-field>
 
-                  <v-menu ref="BirthDateMenuRef" :return-value.sync="BirthDateLocal" v-model="BirthDateMenuVisibility" :nudge-right="40" lazy transition="scale-transition" offset-y full-width min-width="290px">
+                  <v-menu ref="BirthDateMenuRef" :return-value.sync="BirthDateLocal" v-model="BirthDateMenuVisibility" :close-on-content-click="false" :nudge-right="40" lazy transition="scale-transition" offset-y full-width min-width="290px">
                     <v-text-field slot="activator" v-model="BirthDateLocal" label="Birth Date" prepend-icon="event" readonly ></v-text-field>
                     <v-date-picker v-model="BirthDateLocal" @input="$refs.BirthDateMenuRef.save(BirthDateLocal);"></v-date-picker>
                   </v-menu>
