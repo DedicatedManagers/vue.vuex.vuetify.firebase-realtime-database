@@ -53,9 +53,12 @@ export const store = new Vuex.Store({
             if(context.state.QUERY_PrimaryRelativeCaregiverById){
                 context.state.QUERY_PrimaryRelativeCaregiverById();
             }
+
+            // Remove any old info so it is not shown prior to async call returning info
+            context.commit('initialize_currentPrimaryRelativeCaregiver', null);
+
             // Create New
             if(PrimaryRelativeCaregiverId == "add"){
-                context.commit('initialize_currentPrimaryRelativeCaregiver', null);
                 context.dispatch('fcommit_PrimaryRelativeCaregiverById');
             }
             // Get existing
