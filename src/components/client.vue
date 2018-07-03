@@ -5,20 +5,20 @@
           <v-flex xs12>
               <h1>Primary Caregiver</h1>
               <v-form>
-                  <v-text-field @keyup="submit" v-model="FirstName" label="First Name" required ></v-text-field>
-                  <v-text-field @keyup="submit" v-model="MiddleName" label="Middle Name" required ></v-text-field>
-                  <v-text-field @keyup="submit" v-model="LastName" label="Last Name" required ></v-text-field>
-                  <v-text-field @keyup="submit" v-model="PrimaryStreetAddress" label="Primary Street Address" required ></v-text-field>
+                  <v-text-field  v-model="FirstName" label="First Name" required ></v-text-field>
+                  <v-text-field  v-model="MiddleName" label="Middle Name" required ></v-text-field>
+                  <v-text-field  v-model="LastName" label="Last Name" required ></v-text-field>
+                  <v-text-field  v-model="PrimaryStreetAddress" label="Primary Street Address" required ></v-text-field>
 
                   <v-menu ref="BirthDateMenuRef" :return-value.sync="BirthDateLocal" v-model="BirthDateMenuVisibility" :nudge-right="40" lazy transition="scale-transition" offset-y full-width min-width="290px">
                     <v-text-field slot="activator" v-model="BirthDateLocal" label="Birth Date" prepend-icon="event" readonly ></v-text-field>
-                    <v-date-picker v-model="BirthDateLocal" @input="$refs.BirthDateMenuRef.save(BirthDateLocal);submit();"></v-date-picker>
+                    <v-date-picker v-model="BirthDateLocal" @input="$refs.BirthDateMenuRef.save(BirthDateLocal);"></v-date-picker>
                   </v-menu>
 
-                  <v-checkbox @change="submit" v-model="NavigatorProgram" label="Navigator Program"></v-checkbox>
+                  <v-checkbox v-model="NavigatorProgram" label="Navigator Program"></v-checkbox>
 
 
-                  <v-select  @change="submit" v-model="ClientTypeAtIntake" :items="ClientTypeAtIntakeValues" label="Client Type At Intake" ></v-select>
+                  <v-select v-model="ClientTypeAtIntake" :items="ClientTypeAtIntakeValues" label="Client Type At Intake" ></v-select>
 
                   
 
@@ -80,7 +80,7 @@ export default {
         return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.FirstName:"";
       },
       set(newValue){
-        this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {FirstName: newValue});
+        this.$store.dispatch('update_currentPrimaryRelativeCaregiver_byObject', {FirstName: newValue});
       },
     },
     MiddleName:{
@@ -88,7 +88,7 @@ export default {
         return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.MiddleName:"";
       },
       set(newValue){
-        this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {MiddleName: newValue});
+        this.$store.dispatch('update_currentPrimaryRelativeCaregiver_byObject', {MiddleName: newValue});
       },
     },
     LastName:{
@@ -96,7 +96,7 @@ export default {
         return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.LastName:"";
       },
       set(newValue){
-        this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {LastName: newValue});
+        this.$store.dispatch('update_currentPrimaryRelativeCaregiver_byObject', {LastName: newValue});
       },
     },
     PrimaryStreetAddress:{
@@ -104,7 +104,7 @@ export default {
         return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.PrimaryStreetAddress:"";
       },
       set(newValue){
-        this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {PrimaryStreetAddress: newValue});
+        this.$store.dispatch('update_currentPrimaryRelativeCaregiver_byObject', {PrimaryStreetAddress: newValue});
       },
     },
     BirthDateLocal:{
@@ -112,7 +112,7 @@ export default {
         return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.BirthDate:null;
       },
       set(newValue){
-        this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {BirthDate: newValue});
+        this.$store.dispatch('update_currentPrimaryRelativeCaregiver_byObject', {BirthDate: newValue});
       },
     },
     NavigatorProgram:{
@@ -120,7 +120,7 @@ export default {
         return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.NavigatorProgram:null;
       },
       set(newValue){
-        this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {NavigatorProgram: newValue});
+        this.$store.dispatch('update_currentPrimaryRelativeCaregiver_byObject', {NavigatorProgram: newValue});
       },
     },
     
@@ -129,7 +129,7 @@ export default {
         return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.ClientTypeAtIntake:null;
       },
       set(newValue){
-        this.$store.commit('update_currentPrimaryRelativeCaregiver_byObject', {ClientTypeAtIntake: newValue});
+        this.$store.dispatch('update_currentPrimaryRelativeCaregiver_byObject', {ClientTypeAtIntake: newValue});
       },
     },
     
@@ -137,9 +137,6 @@ export default {
 
   },
   methods:{
-      submit(){
-        this.$store.dispatch('fcommit_PrimaryRelativeCaregiverById')
-      },
       fDelete(){
         this.confirmDialogVisibility = false;
         this.$store.dispatch('fdelete_PrimaryRelativeCaregiverById')

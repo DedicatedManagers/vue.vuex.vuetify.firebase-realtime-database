@@ -24,13 +24,6 @@ export const store = new Vuex.Store({
         initialize_currentPrimaryRelativeCaregiver(state, PrimaryRelativeCaregiver){
             state.currentPrimaryRelativeCaregiver = PrimaryRelativeCaregiver;
         },
-        update_currentPrimaryRelativeCaregiver_byObject(state, dataProperty){
-            for (var key in dataProperty) {
-                if (dataProperty.hasOwnProperty(key)) {
-                    state.currentPrimaryRelativeCaregiver.data[key] = dataProperty[key];
-                }
-            }
-        },
     },
     actions:{
         login(context, credentials){
@@ -82,6 +75,15 @@ export const store = new Vuex.Store({
                     }
                 });            
             }
+        },
+        // update the local and remote storage for the caregiver
+        update_currentPrimaryRelativeCaregiver_byObject(context, dataProperty){
+            for (var key in dataProperty) {
+                if (dataProperty.hasOwnProperty(key)) {
+                    context.state.currentPrimaryRelativeCaregiver.data[key] = dataProperty[key];
+                }
+            };
+            context.dispatch('fcommit_PrimaryRelativeCaregiverById');
         },
         // Commit changes to firebase
         fcommit_PrimaryRelativeCaregiverById(context){
