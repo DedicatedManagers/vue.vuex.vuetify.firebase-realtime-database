@@ -9,10 +9,9 @@ export const store = new Vuex.Store({
     state:{
         user:null,
         userIsAuthenticated:false,
-        QUERY_PrimaryRelativeCaregiverById:false,
-        currentPrimaryRelativeCaregiver:null,
+        entityListeners:null,
+        currentEntity:{PrimaryRelativeCaregiver:null},  // Required for Reactivity - Example: https://stackoverflow.com/questions/41851711/vuex-store-properties-not-reactive-when-using-computed-property
         currentPrimaryRelativeCaregivers:false,
-
     },
     mutations:{
         setUserIsAuthenticated(state, replace){
@@ -21,8 +20,14 @@ export const store = new Vuex.Store({
         setUser(state, replace){
             state.user = replace;
         },
-        initialize_currentPrimaryRelativeCaregiver(state, PrimaryRelativeCaregiver){
-            state.currentPrimaryRelativeCaregiver = PrimaryRelativeCaregiver;
+        // Initialize an Entity
+        // Receives: entityContainer{name:'',docContainer:''}
+        initialize_currentEntity_byEntityContainer(state, entityContainer){
+            if(!state.currentEntity) state.currentEntity={}; // initialize the holder if its not yet initialized
+            state.currentEntity[entityContainer.name] = entityContainer.docContainer;
+        },
+        initialize_entityListeners(state){
+            state.entityListeners={};
         },
     },
     actions:{
@@ -47,52 +52,66 @@ export const store = new Vuex.Store({
               console.log('Logout failed: ', e);
             });
         },
-        // Retrieve data from firebase
-        getPrimaryRelativeCaregiverById(context, PrimaryRelativeCaregiverId){
-            // If there is already a listener for this query, unsubscribe it
-            if(context.state.QUERY_PrimaryRelativeCaregiverById){
-                context.state.QUERY_PrimaryRelativeCaregiverById();
+        // Retrieve an Entity data from firebase
+        // Receives Object: entityContainer{docId:'',collectionId:''}
+        getEntity_ByEntityContainer(context, entityContainer){
+            // Initialize the listeners array if not initialized yet
+            if(!context.state.entityListeners){
+                context.commit('initialize_entityListeners');
+            }
+            // If there is already a listener for this collection, unsubscribe it
+            if(context.state.entityListeners[entityContainer.collectionId]){
+                context.state.entityListeners[entityContainer.collectionId]();
             }
 
             // Remove any old info so it is not shown prior to async call returning info
-            context.commit('initialize_currentPrimaryRelativeCaregiver', null);
+            context.commit('initialize_currentEntity_byEntityContainer', {name:entityContainer.collectionId,docContainer:null,});
 
             // Create New
-            if(PrimaryRelativeCaregiverId == "add"){
-                context.dispatch('fcommit_PrimaryRelativeCaregiverById');
+            if(entityContainer.docId == "add"){
+                context.dispatch('fcommit_Entity_byCollectionId', entityContainer.collectionId);
+                console.log('Creating new entity: ' + entityContainer.collectionId);
             }
             // Get existing
             else{
                 // Set up the new query & listener
-                context.state.QUERY_PrimaryRelativeCaregiverById = firebase.firestore().collection('PrimaryRelativeCaregiver').doc(PrimaryRelativeCaregiverId).onSnapshot(function(doc){
+                context.state.entityListeners[entityContainer.collectionId] = firebase.firestore().collection(entityContainer.collectionId).doc(entityContainer.docId).onSnapshot(function(doc){
                     if(!doc.exists){
-                        context.commit('initialize_currentPrimaryRelativeCaregiver', null);
+                        context.commit('initialize_currentEntity_byEntityContainer', {name:entityContainer.collectionId,docContainer:null,});
+                        console.log('listener doc does not exist');
                     }
                     // Only update if receiving new data from the firebase server. 
                     // - commits to firebase from our app will also call this listener and we can ignore since its just putting the data back where it came from
                     else if(!doc.metadata.hasPendingWrites){
-                        context.commit('initialize_currentPrimaryRelativeCaregiver', {
-                            id: PrimaryRelativeCaregiverId,
-                            data: doc.data(),
+                        context.commit('initialize_currentEntity_byEntityContainer', {
+                            name:entityContainer.collectionId,
+                            docContainer:{
+                                id: entityContainer.docId,
+                                data: doc.data(),    
+                            }
                         })
                     }
                 });            
             }
         },
         // update the local and remote storage for the caregiver
-        update_currentPrimaryRelativeCaregiver_byObject(context, dataProperty){
-            for (var key in dataProperty) {
-                if (dataProperty.hasOwnProperty(key)) {
-                    context.state.currentPrimaryRelativeCaregiver.data[key] = dataProperty[key];
+        // Receives: entityPropertyContainer{ collectionId:'',propertiesObject:{} }
+        update_currentEntity_byEntityPropertyContainer(context, entityPropertyContainer){
+            for (var key in entityPropertyContainer.propertiesObject) {
+                if (entityPropertyContainer.propertiesObject.hasOwnProperty(key)) {
+                    context.state.currentEntity[entityPropertyContainer.collectionId].data[key] = entityPropertyContainer.propertiesObject[key];
                 }
             };
-            context.dispatch('fcommit_PrimaryRelativeCaregiverById');
+            context.dispatch('fcommit_Entity_byCollectionId', entityPropertyContainer.collectionId);
         },
         // Commit changes to firebase
-        fcommit_PrimaryRelativeCaregiverById(context){
+        fcommit_Entity_byCollectionId(context, collectionId){
             // Updating an entry
-            if(context.state.currentPrimaryRelativeCaregiver && context.state.currentPrimaryRelativeCaregiver.hasOwnProperty('id') && context.state.currentPrimaryRelativeCaregiver.id){
-                firebase.firestore().collection('PrimaryRelativeCaregiver').doc(context.state.currentPrimaryRelativeCaregiver.id).update(context.state.currentPrimaryRelativeCaregiver.data)
+            if( context.state.currentEntity &&
+                context.state.currentEntity[collectionId] && 
+                context.state.currentEntity[collectionId].hasOwnProperty('id') && 
+                context.state.currentEntity[collectionId].id){
+                firebase.firestore().collection(collectionId).doc(context.state.currentEntity[collectionId].id).update(context.state.currentEntity[collectionId].data)
                 .then(function() {
                     //console.log("Document successfully written!");
                 })
@@ -103,9 +122,9 @@ export const store = new Vuex.Store({
             // Creating a new entry
             else{
                 console.log('creating new');
-                firebase.firestore().collection('PrimaryRelativeCaregiver').add({})
-                .then(function(docRef) {
-                    context.dispatch('getPrimaryRelativeCaregiverById', docRef.id);
+                firebase.firestore().collection(collectionId).add({})
+                .then(function(docRef) {    
+                    context.dispatch('getEntity_ByEntityContainer', {docId:docRef.id,collectionId:collectionId,});
                     router.replace('/client/' + docRef.id);               
                 })
                 .catch(function(error) {
@@ -114,8 +133,8 @@ export const store = new Vuex.Store({
             }
         },
         // Delete Client
-        fdelete_PrimaryRelativeCaregiverById(context){
-            firebase.firestore().collection('PrimaryRelativeCaregiver').doc(context.state.currentPrimaryRelativeCaregiver.id).delete()
+        fdelete_Entity_byCollectionId(context, collectionId){
+            firebase.firestore().collection(collectionId).doc(context.state.currentEntity[collectionId].id).delete()
                 .then(function(docRef) {
                     router.replace('/dashboard');               
                 })
