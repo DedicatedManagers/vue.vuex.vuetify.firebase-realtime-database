@@ -54,6 +54,7 @@ export default {
   },
   data() {
     return {
+      componentCollectionId:'PrimaryRelativeCaregiver',
       confirmDialogVisibility:false,
       BirthDateMenuVisibility:false,
 
@@ -77,60 +78,60 @@ export default {
   computed:{
     FirstName:{
       get(){
-        return this.$store.state.currentEntity['PrimaryRelativeCaregiver']?this.$store.state.currentEntity['PrimaryRelativeCaregiver'].data.FirstName:"";
+        return this.$store.state.currentEntity[this.componentCollectionId]?this.$store.state.currentEntity[this.componentCollectionId].data.FirstName:"";
       },
       set(newValue){
-        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:'PrimaryRelativeCaregiver',propertiesObject:{FirstName: newValue}});
+        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:this.componentCollectionId,propertiesObject:{FirstName: newValue}});
       },
     },
     MiddleName:{
       get(){
-        return (this.$store.state.currentEntity && this.$store.state.currentEntity['PrimaryRelativeCaregiver'] && this.$store.state.currentEntity['PrimaryRelativeCaregiver'].data)?this.$store.state.currentEntity['PrimaryRelativeCaregiver'].data.MiddleName:"";
+        return (this.$store.state.currentEntity && this.$store.state.currentEntity[this.componentCollectionId] && this.$store.state.currentEntity[this.componentCollectionId].data)?this.$store.state.currentEntity[this.componentCollectionId].data.MiddleName:"";
       },
       set(newValue){
-        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:'PrimaryRelativeCaregiver',propertiesObject:{MiddleName: newValue}});
+        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:this.componentCollectionId,propertiesObject:{MiddleName: newValue}});
       },
     },
     LastName:{
       get(){
-        return this.$store.state.currentEntity['PrimaryRelativeCaregiver']?this.$store.state.currentEntity['PrimaryRelativeCaregiver'].data.LastName:"";
+        return this.$store.state.currentEntity[this.componentCollectionId]?this.$store.state.currentEntity[this.componentCollectionId].data.LastName:"";
       },
       set(newValue){
-        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:'PrimaryRelativeCaregiver',propertiesObject:{LastName: newValue}});
+        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:this.componentCollectionId,propertiesObject:{LastName: newValue}});
       },
     },
     PrimaryStreetAddress:{
       get(){
-        return this.$store.state.currentEntity['PrimaryRelativeCaregiver']?this.$store.state.currentEntity['PrimaryRelativeCaregiver'].data.PrimaryStreetAddress:"";
+        return this.$store.state.currentEntity[this.componentCollectionId]?this.$store.state.currentEntity[this.componentCollectionId].data.PrimaryStreetAddress:"";
       },
       set(newValue){
-        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:'PrimaryRelativeCaregiver',propertiesObject:{PrimaryStreetAddress: newValue}});
+        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:this.componentCollectionId,propertiesObject:{PrimaryStreetAddress: newValue}});
       },
     },
     BirthDateLocal:{
       get(){
-        return this.$store.state.currentEntity['PrimaryRelativeCaregiver']?this.$store.state.currentEntity['PrimaryRelativeCaregiver'].data.BirthDate:"";
+        return this.$store.state.currentEntity[this.componentCollectionId]?this.$store.state.currentEntity[this.componentCollectionId].data.BirthDate:"";
       },
       set(newValue){
         console.log('BirthDateLocal Setter: ' + newValue);
-        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:'PrimaryRelativeCaregiver',propertiesObject:{BirthDate: newValue}});
+        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:this.componentCollectionId,propertiesObject:{BirthDate: newValue}});
       },
     },
     NavigatorProgram:{
       get(){
-        return this.$store.state.currentEntity['PrimaryRelativeCaregiver']?this.$store.state.currentEntity['PrimaryRelativeCaregiver'].data.NavigatorProgram:"";
+        return this.$store.state.currentEntity[this.componentCollectionId]?this.$store.state.currentEntity[this.componentCollectionId].data.NavigatorProgram:"";
       },
       set(newValue){
-        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:'PrimaryRelativeCaregiver',propertiesObject:{NavigatorProgram: newValue}});
+        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:this.componentCollectionId,propertiesObject:{NavigatorProgram: newValue}});
       },
     },
     
     ClientTypeAtIntake:{
       get(){
-        return this.$store.state.currentEntity['PrimaryRelativeCaregiver']?this.$store.state.currentEntity['PrimaryRelativeCaregiver'].data.ClientTypeAtIntake:"";
+        return this.$store.state.currentEntity[this.componentCollectionId]?this.$store.state.currentEntity[this.componentCollectionId].data.ClientTypeAtIntake:"";
       },
       set(newValue){
-        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:'PrimaryRelativeCaregiver',propertiesObject:{ClientTypeAtIntake: newValue}});
+        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:this.componentCollectionId,propertiesObject:{ClientTypeAtIntake: newValue}});
       },
     },
     
@@ -140,11 +141,11 @@ export default {
   methods:{
       fDelete(){
         this.confirmDialogVisibility = false;
-        this.$store.dispatch('fdelete_Entity_byCollectionId','PrimaryRelativeCaregiver')
+        this.$store.dispatch('fdelete_Entity_byCollectionId',this.componentCollectionId)
       },
   },
   created(){
-    this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.clientId, collectionId:'PrimaryRelativeCaregiver'});
+    this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.clientId, collectionId:this.componentCollectionId});
   },
 };
 </script>
