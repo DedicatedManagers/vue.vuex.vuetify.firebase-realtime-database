@@ -10,7 +10,7 @@ export const store = new Vuex.Store({
         user:null,
         userIsAuthenticated:false,
         entityListeners:null,
-        currentEntity:{PrimaryRelativeCaregiver:null},  // Required for Reactivity - Example: https://stackoverflow.com/questions/41851711/vuex-store-properties-not-reactive-when-using-computed-property
+        currentEntity:null,
         currentPrimaryRelativeCaregivers:false,
     },
     mutations:{
@@ -21,13 +21,10 @@ export const store = new Vuex.Store({
             state.user = replace;
         },
         // Initialize an Entity
-        // Receives: entityContainer{name:'',docContainer:''}
+        // Receives: entityContainer{collectionId:'',docContainer:''}
         initialize_currentEntity_byEntityContainer(state, entityContainer){
             if(!state.currentEntity) state.currentEntity={}; // initialize the holder if its not yet initialized
-            state.currentEntity[entityContainer.name] = entityContainer.docContainer;
-        },
-        initialize_entityListeners(state){
-            state.entityListeners={};
+            Vue.set(state.currentEntity, entityContainer.collectionId, entityContainer.docContainer); // requred when adding property to an object to make it reactive
         },
     },
     actions:{
@@ -57,7 +54,7 @@ export const store = new Vuex.Store({
         getEntity_ByEntityContainer(context, entityContainer){
             // Initialize the listeners array if not initialized yet
             if(!context.state.entityListeners){
-                context.commit('initialize_entityListeners');
+                context.state.entityListeners={};
             }
             // If there is already a listener for this collection, unsubscribe it
             if(context.state.entityListeners[entityContainer.collectionId]){
@@ -65,7 +62,7 @@ export const store = new Vuex.Store({
             }
 
             // Remove any old info so it is not shown prior to async call returning info
-            context.commit('initialize_currentEntity_byEntityContainer', {name:entityContainer.collectionId,docContainer:null,});
+            context.commit('initialize_currentEntity_byEntityContainer', {collectionId:entityContainer.collectionId,docContainer:null,});
 
             // Create New
             if(entityContainer.docId == "add"){
@@ -77,14 +74,14 @@ export const store = new Vuex.Store({
                 // Set up the new query & listener
                 context.state.entityListeners[entityContainer.collectionId] = firebase.firestore().collection(entityContainer.collectionId).doc(entityContainer.docId).onSnapshot(function(doc){
                     if(!doc.exists){
-                        context.commit('initialize_currentEntity_byEntityContainer', {name:entityContainer.collectionId,docContainer:null,});
+                        context.commit('initialize_currentEntity_byEntityContainer', {collectionId:entityContainer.collectionId,docContainer:null,});
                         console.log('listener doc does not exist');
                     }
                     // Only update if receiving new data from the firebase server. 
                     // - commits to firebase from our app will also call this listener and we can ignore since its just putting the data back where it came from
                     else if(!doc.metadata.hasPendingWrites){
                         context.commit('initialize_currentEntity_byEntityContainer', {
-                            name:entityContainer.collectionId,
+                            collectionId:entityContainer.collectionId,
                             docContainer:{
                                 id: entityContainer.docId,
                                 data: doc.data(),    
@@ -94,7 +91,7 @@ export const store = new Vuex.Store({
                 });            
             }
         },
-        // update the local and remote storage for the caregiver
+        // update the local and remote storage for the entity
         // Receives: entityPropertyContainer{ collectionId:'',propertiesObject:{} }
         update_currentEntity_byEntityPropertyContainer(context, entityPropertyContainer){
             for (var key in entityPropertyContainer.propertiesObject) {
