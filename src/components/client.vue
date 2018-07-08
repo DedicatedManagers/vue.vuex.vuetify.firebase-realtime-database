@@ -77,59 +77,60 @@ export default {
   computed:{
     FirstName:{
       get(){
-        return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.FirstName:"";
+        return this.$store.state.currentEntity['PrimaryRelativeCaregiver']?this.$store.state.currentEntity['PrimaryRelativeCaregiver'].data.FirstName:"";
       },
       set(newValue){
-        this.$store.dispatch('update_currentPrimaryRelativeCaregiver_byObject', {FirstName: newValue});
+        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:'PrimaryRelativeCaregiver',propertiesObject:{FirstName: newValue}});
       },
     },
     MiddleName:{
       get(){
-        return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.MiddleName:"";
+        return (this.$store.state.currentEntity && this.$store.state.currentEntity['PrimaryRelativeCaregiver'] && this.$store.state.currentEntity['PrimaryRelativeCaregiver'].data)?this.$store.state.currentEntity['PrimaryRelativeCaregiver'].data.MiddleName:"";
       },
       set(newValue){
-        this.$store.dispatch('update_currentPrimaryRelativeCaregiver_byObject', {MiddleName: newValue});
+        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:'PrimaryRelativeCaregiver',propertiesObject:{MiddleName: newValue}});
       },
     },
     LastName:{
       get(){
-        return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.LastName:"";
+        return this.$store.state.currentEntity['PrimaryRelativeCaregiver']?this.$store.state.currentEntity['PrimaryRelativeCaregiver'].data.LastName:"";
       },
       set(newValue){
-        this.$store.dispatch('update_currentPrimaryRelativeCaregiver_byObject', {LastName: newValue});
+        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:'PrimaryRelativeCaregiver',propertiesObject:{LastName: newValue}});
       },
     },
     PrimaryStreetAddress:{
       get(){
-        return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.PrimaryStreetAddress:"";
+        return this.$store.state.currentEntity['PrimaryRelativeCaregiver']?this.$store.state.currentEntity['PrimaryRelativeCaregiver'].data.PrimaryStreetAddress:"";
       },
       set(newValue){
-        this.$store.dispatch('update_currentPrimaryRelativeCaregiver_byObject', {PrimaryStreetAddress: newValue});
+        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:'PrimaryRelativeCaregiver',propertiesObject:{PrimaryStreetAddress: newValue}});
       },
     },
     BirthDateLocal:{
       get(){
-        return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.BirthDate:null;
+        return this.$store.state.currentEntity['PrimaryRelativeCaregiver']?this.$store.state.currentEntity['PrimaryRelativeCaregiver'].data.BirthDate:"";
       },
       set(newValue){
-        this.$store.dispatch('update_currentPrimaryRelativeCaregiver_byObject', {BirthDate: newValue});
+        console.log('BirthDateLocal Setter: ' + newValue);
+        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:'PrimaryRelativeCaregiver',propertiesObject:{BirthDate: newValue}});
       },
     },
     NavigatorProgram:{
       get(){
-        return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.NavigatorProgram:null;
+        return this.$store.state.currentEntity['PrimaryRelativeCaregiver']?this.$store.state.currentEntity['PrimaryRelativeCaregiver'].data.NavigatorProgram:"";
       },
       set(newValue){
-        this.$store.dispatch('update_currentPrimaryRelativeCaregiver_byObject', {NavigatorProgram: newValue});
+        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:'PrimaryRelativeCaregiver',propertiesObject:{NavigatorProgram: newValue}});
       },
     },
     
     ClientTypeAtIntake:{
       get(){
-        return this.$store.state.currentPrimaryRelativeCaregiver?this.$store.state.currentPrimaryRelativeCaregiver.data.ClientTypeAtIntake:null;
+        return this.$store.state.currentEntity['PrimaryRelativeCaregiver']?this.$store.state.currentEntity['PrimaryRelativeCaregiver'].data.ClientTypeAtIntake:"";
       },
       set(newValue){
-        this.$store.dispatch('update_currentPrimaryRelativeCaregiver_byObject', {ClientTypeAtIntake: newValue});
+        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:'PrimaryRelativeCaregiver',propertiesObject:{ClientTypeAtIntake: newValue}});
       },
     },
     
@@ -139,11 +140,11 @@ export default {
   methods:{
       fDelete(){
         this.confirmDialogVisibility = false;
-        this.$store.dispatch('fdelete_PrimaryRelativeCaregiverById')
+        this.$store.dispatch('fdelete_Entity_byCollectionId','PrimaryRelativeCaregiver')
       },
   },
   created(){
-    this.$store.dispatch('getPrimaryRelativeCaregiverById', this.clientId);
+    this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.clientId, collectionId:'PrimaryRelativeCaregiver'});
   },
 };
 </script>
