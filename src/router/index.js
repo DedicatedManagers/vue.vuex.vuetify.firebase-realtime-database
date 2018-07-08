@@ -2,6 +2,7 @@ import firebase from 'firebase/app';
 import Router from 'vue-router';
 import Vue from 'vue';
 import Client from '@/components/Client';
+import Child from '@/components/Child';
 import Dashboard from '@/components/Dashboard';
 import Login from '@/components/Login';
 
@@ -27,6 +28,15 @@ const router = new Router({
       props: true,
       name: 'Client',
       component: Client,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/child/:childId',
+      props: true,
+      name: 'Child',
+      component: Child,
       meta: {
         requiresAuth: true,
       },

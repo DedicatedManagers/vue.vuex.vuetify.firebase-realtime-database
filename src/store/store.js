@@ -122,7 +122,18 @@ export const store = new Vuex.Store({
                 firebase.firestore().collection(collectionId).add({})
                 .then(function(docRef) {    
                     context.dispatch('getEntity_ByEntityContainer', {docId:docRef.id,collectionId:collectionId,});
-                    router.replace('/client/' + docRef.id);               
+                    //TODO: Remove hard coded redirects!
+                    console.log('collectionId to be added');
+                    console.log(collectionId);
+                    if(collectionId=='RelatedChild')
+                        router.replace('/child/' + docRef.id);
+                    else if(collectionId=='PrimaryRelativeCaregiver'){
+                        router.replace('/client/' + docRef.id);
+                    }
+                    else {
+                        router.replace('/dashboard/');
+                        console.log("ERROR #DKF343: Router redirect undefined for adding new collection");
+                    }               
                 })
                 .catch(function(error) {
                     console.error("Error writing document: ", error);
