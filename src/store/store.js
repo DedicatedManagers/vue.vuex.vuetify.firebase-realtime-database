@@ -24,7 +24,25 @@ export const store = new Vuex.Store({
         // Receives: entityContainer{collectionId:'',docContainer:''}
         initialize_currentEntity_byEntityContainer(state, entityContainer){
             if(!state.currentEntity) state.currentEntity={}; // initialize the holder if its not yet initialized
-            Vue.set(state.currentEntity, entityContainer.collectionId, entityContainer.docContainer); // requred when adding property to an object to make it reactive
+            Vue.set(state.currentEntity, entityContainer.collectionId, entityContainer.docContainer); // Vue.set is requred when adding property to an object to make it reactive
+        },
+        // Receives: entityPropertyContainer{ collectionId:'',propertiesObject:{} }
+        mutate_currentEntity_byEntityPropertyContainer(state, entityPropertyContainer){
+            // If this is the first property being added on the Entity, the data property won't be set yet
+            if(!state.currentEntity[entityPropertyContainer.collectionId]) Vue.set(state.currentEntity, entityPropertyContainer.collectionId, 'data');
+            
+            // Loop through the key/value pairs sent in the properties object and set them on the collection
+            for (var key in entityPropertyContainer.propertiesObject) {
+                if (entityPropertyContainer.propertiesObject.hasOwnProperty(key)) { // only look at key's we set, not any javascript object helper keys on the object
+                    // If thisis the first time we've set this property on the entity, add the property using Vue.set so that its reactive
+                    if(!state.currentEntity[entityPropertyContainer.collectionId].data.hasOwnProperty(key)){
+                        Vue.set(state.currentEntity[entityPropertyContainer.collectionId].data, key, entityPropertyContainer.propertiesObject[key]);
+                    }
+                    else{
+                        state.currentEntity[entityPropertyContainer.collectionId].data[key] = entityPropertyContainer.propertiesObject[key];
+                    }
+                }
+            };
         },
     },
     actions:{
@@ -94,11 +112,7 @@ export const store = new Vuex.Store({
         // update the local and remote storage for the entity
         // Receives: entityPropertyContainer{ collectionId:'',propertiesObject:{} }
         update_currentEntity_byEntityPropertyContainer(context, entityPropertyContainer){
-            for (var key in entityPropertyContainer.propertiesObject) {
-                if (entityPropertyContainer.propertiesObject.hasOwnProperty(key)) {
-                    context.state.currentEntity[entityPropertyContainer.collectionId].data[key] = entityPropertyContainer.propertiesObject[key];
-                }
-            };
+            context.commit('mutate_currentEntity_byEntityPropertyContainer', entityPropertyContainer);
             context.dispatch('fcommit_Entity_byCollectionId', entityPropertyContainer.collectionId);
         },
         // Commit changes to firebase
