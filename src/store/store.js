@@ -21,7 +21,7 @@ export const store = new Vuex.Store({
             state.user = replace;
         },
         // Initialize an Entity
-        // Receives: entityContainer{collectionId:'',docContainer:''}
+        // Receives: entityContainer{collectionId:'',docContainer:{id: '', data:{} } }
         initialize_currentEntity_byEntityContainer(state, entityContainer){
             if(!state.currentEntity) state.currentEntity={}; // initialize the holder if its not yet initialized
             Vue.set(state.currentEntity, entityContainer.collectionId, entityContainer.docContainer); // Vue.set is requred when adding property to an object to make it reactive
