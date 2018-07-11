@@ -93,7 +93,6 @@ export default {
         return this.$store.state.currentEntity[this.componentCollectionId]?this.$store.state.currentEntity[this.componentCollectionId].data.BirthDate:"";
       },
       set(newValue){
-        console.log('BirthDateLocal Setter: ' + newValue);
         this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:this.componentCollectionId,propertiesObject:{BirthDate: newValue}});
       },
     },
