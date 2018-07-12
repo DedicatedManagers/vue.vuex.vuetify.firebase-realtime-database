@@ -12,6 +12,8 @@ export const store = new Vuex.Store({
         entityListeners:null,
         currentEntity:null,
         currentPrimaryRelativeCaregivers:false,
+        newSubEntityMeta:{}, // Set by parent prior to creating a subentity to reference the parent object
+        forceLocalFirebaseListenerCommit:false, // used to override skipping local write when a new subentity is created (because its created with an object that its sending)
     },
     mutations:{
         setUserIsAuthenticated(state, replace){
@@ -19,6 +21,13 @@ export const store = new Vuex.Store({
         },
         setUser(state, replace){
             state.user = replace;
+        },
+        setForceLocalFirebaseListenerCommit(state,replacement){
+            state.forceLocalFirebaseListenerCommit = replacement;
+        },
+        setNewSubEntityMeta(state,newSubEntityMetaReplacement){
+            state.forceLocalFirebaseListenerCommit = true;
+            state.newSubEntityMeta=newSubEntityMetaReplacement;
         },
         // Initialize an Entity
         // Receives: entityContainer{collectionId:'',docContainer:{id: '', data:{} } }
@@ -97,7 +106,9 @@ export const store = new Vuex.Store({
                     }
                     // Only update if receiving new data from the firebase server. 
                     // - commits to firebase from our app will also call this listener and we can ignore since its just putting the data back where it came from
-                    else if(!doc.metadata.hasPendingWrites){
+                    else if(context.state.forceLocalFirebaseListenerCommit || !doc.metadata.hasPendingWrites){
+                        if(context.state.forceLocalFirebaseListenerCommit) context.commit('setForceLocalFirebaseListenerCommit',false);
+
                         context.commit('initialize_currentEntity_byEntityContainer', {
                             collectionId:entityContainer.collectionId,
                             docContainer:{
@@ -133,7 +144,15 @@ export const store = new Vuex.Store({
             // Creating a new entry
             else{
                 console.log('creating new');
-                firebase.firestore().collection(collectionId).add({})
+                let newSubEntityMetaLocal = {};
+
+                // Determine and set the new add to include parent meta properties if this is a sub/nested entity
+                if(context.state.newSubEntityMeta.hasOwnProperty('ParentId')){ // the newSubEntityMeta object is not empty therefore its a sub entity
+                    newSubEntityMetaLocal = Object.assign({},context.state.newSubEntityMeta); // copy the newSubEntityMeta locally (removing the reference)
+                    context.commit('setNewSubEntityMeta',{}); // reset the storage newSubEntityMeta now (rather than in .then) in case the addtion fails; that way there won't be a parent ref hanging out for a later add which could be a top level    
+                }
+
+                firebase.firestore().collection(collectionId).add(newSubEntityMetaLocal)
                 .then(function(docRef) {    
                     context.dispatch('getEntity_ByEntityContainer', {docId:docRef.id,collectionId:collectionId,});
                     router.replace(router.currentRoute.fullPath.replace(/add/, "") + docRef.id);

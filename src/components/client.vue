@@ -20,6 +20,8 @@
 
                   <v-select v-model="ClientTypeAtIntake" :items="ClientTypeAtIntakeValues" label="Client Type At Intake" ></v-select>
 
+                  <h2>Related Children</h2>
+                  <v-btn class="" @click="addChild">Add Child</v-btn>
                   
 
               </v-form>
@@ -143,6 +145,10 @@ export default {
         this.confirmDialogVisibility = false;
         this.$store.dispatch('fdelete_Entity_byCollectionId',this.componentCollectionId)
       },
+      addChild(){
+        this.$store.commit('setNewSubEntityMeta',{ParentId:this.clientId, ParentType:this.componentCollectionId});
+        this.$router.push('/child/add');
+      }
   },
   created(){
     this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.clientId, collectionId:this.componentCollectionId});
