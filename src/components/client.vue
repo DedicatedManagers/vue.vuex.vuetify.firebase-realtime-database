@@ -45,7 +45,6 @@
 </template>
 
 <script>
-import firebase from 'firebase/app';
 import DialogConfirm from '@/components/shared/DialogConfirm';
 
 export default {
@@ -151,6 +150,7 @@ export default {
       }
   },
   created(){
+    console.log('client.vue created function: ' + this.clientId + this.componentCollectionId);
     this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.clientId, collectionId:this.componentCollectionId});
   },
 };

@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import Router from 'vue-router';
 import Vue from 'vue';
+import ClientContainer from '@/components/ClientContainer';
 import Client from '@/components/Client';
 import Child from '@/components/Child';
 import Dashboard from '@/components/Dashboard';
@@ -27,7 +28,7 @@ const router = new Router({
       path: '/client/:clientId',
       props: true,
       name: 'Client',
-      component: Client,
+      component: ClientContainer,
       meta: {
         requiresAuth: true,
       },
@@ -36,7 +37,7 @@ const router = new Router({
       path: '/client/:clientId/child/:childId',
       props: true,
       name: 'Child',
-      component: Child,
+      component: ClientContainer,
       meta: {
         requiresAuth: true,
       },

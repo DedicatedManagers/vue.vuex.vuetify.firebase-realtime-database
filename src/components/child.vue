@@ -39,12 +39,11 @@
 </template>
 
 <script>
-import firebase from 'firebase/app';
 import DialogConfirm from '@/components/shared/DialogConfirm';
 
 export default {
   name: 'Child',
-  props:['childId'],
+  props:['childId', 'clientId'],
   components:{
     'dialog-confirm':DialogConfirm
   },
@@ -106,7 +105,7 @@ export default {
       },
   },
   created(){
-      console.log('created');
+    console.log('child.vue created function: ' + this.childId + this.componentCollectionId);
     this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.childId, collectionId:this.componentCollectionId});
   },
 };
