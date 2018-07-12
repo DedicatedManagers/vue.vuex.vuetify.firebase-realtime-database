@@ -147,7 +147,7 @@ export default {
       },
       addChild(){
         this.$store.commit('setNewSubEntityMeta',{ParentId:this.clientId, ParentType:this.componentCollectionId});
-        this.$router.push('/child/add');
+        this.$router.push('/client/' + this.clientId + '/child/add');
       }
   },
   created(){

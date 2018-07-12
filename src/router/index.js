@@ -33,7 +33,7 @@ const router = new Router({
       },
     },
     {
-      path: '/child/:childId',
+      path: '/client/:clientId/child/:childId',
       props: true,
       name: 'Child',
       component: Child,
