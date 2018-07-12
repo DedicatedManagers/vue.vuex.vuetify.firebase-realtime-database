@@ -151,7 +151,6 @@ export default {
   },
   created(){
     console.log('client.vue created function: ' + this.clientId + this.componentCollectionId);
-    this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.clientId, collectionId:this.componentCollectionId});
   },
 };
 </script>
