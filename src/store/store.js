@@ -14,7 +14,6 @@ export const store = new Vuex.Store({
         currentEntity:null,
         currentPrimaryRelativeCaregivers:false,
         newSubEntityMeta:{}, // Set by parent prior to creating a subentity to reference the parent object
-        forceLocalFirebaseListenerCommit:false, // used to override skipping local write when a new subentity is created (because its created with an object that its sending)
     },
     mutations:{
         setUserIsAuthenticated(state, replace){
@@ -23,12 +22,8 @@ export const store = new Vuex.Store({
         setUser(state, replace){
             state.user = replace;
         },
-        setForceLocalFirebaseListenerCommit(state,replacement){
-            state.forceLocalFirebaseListenerCommit = replacement;
-        },
         // Receives {ParentId:'', ParentType:''} OR {}
         setNewSubEntityMeta(state,newSubEntityMetaReplacement){
-            state.forceLocalFirebaseListenerCommit = true;
             state.newSubEntityMeta=newSubEntityMetaReplacement;
         },
         // Initialize an Entity
@@ -111,11 +106,10 @@ export const store = new Vuex.Store({
                         context.commit('initialize_currentEntity_byEntityContainer', {collectionId:entityContainer.collectionId,docContainer:null,});
                         console.log('listener doc does not exist');
                     }
-                    // Only update if receiving new data from the firebase server. 
-                    // - commits to firebase from our app will also call this listener and we can ignore since its just putting the data back where it came from
-                    else if(true || context.state.forceLocalFirebaseListenerCommit || !doc.metadata.hasPendingWrites){
-                        if(context.state.forceLocalFirebaseListenerCommit) context.commit('setForceLocalFirebaseListenerCommit',false);
-
+                    // Always update if receiving new data from the firebase server. 
+                    // - commits to firebase from our app will also call this listener and it got difficult to try and ingnore the listner when new entites were added 
+                    // - if this becomes an issue look into setting some kind of flag passed when it should be ignored locally (as opposed to checking when it shouldn't be ignored)
+                    else{
                         context.commit('initialize_currentEntity_byEntityContainer', {
                             collectionId:entityContainer.collectionId,
                             docContainer:{
