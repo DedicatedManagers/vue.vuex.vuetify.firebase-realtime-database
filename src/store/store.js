@@ -175,7 +175,7 @@ export const store = new Vuex.Store({
                 });    
             }
         },
-        // Delete Client
+        // Delete Entity / Firebase Document
         fdelete_Entity_byCollectionId(context, collectionId){
             firebase.firestore().collection(collectionId).doc(context.state.currentEntity[collectionId].id).delete()
                 .then(function(docRef) {
@@ -196,7 +196,7 @@ export const store = new Vuex.Store({
                 context.state.currentPrimaryRelativeCaregivers=PrimaryRelativeCaregiverOBJ;
             })
             .catch(function(error) {
-                console.error("Error retrieving clients: ", error);
+                console.error("Error retrieving collection: ", error);
             });
         },
     }

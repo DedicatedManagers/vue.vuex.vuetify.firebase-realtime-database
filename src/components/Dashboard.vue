@@ -8,12 +8,12 @@
         <v-flex xs12 v-if="clients">
           <div v-for="(client, id) in clients" :key="id">
             <div>
-              <router-link :to="'/client/'+id">{{client.LastName}}, {{client.FirstName}} {{client.MiddleName}}</router-link>
+              <router-link :to="'/PrimaryRelativeCaregiver/'+id">{{client.LastName}}, {{client.FirstName}} {{client.MiddleName}}</router-link>
             </div>
           </div>
           <div>
             <br>
-            <v-btn :to="'/client/add'">+ Add New Client</v-btn>
+            <v-btn :to="'/PrimaryRelativeCaregiver/add'">+ Add New Client</v-btn>
           </div>
         </v-flex>
       </v-layout>

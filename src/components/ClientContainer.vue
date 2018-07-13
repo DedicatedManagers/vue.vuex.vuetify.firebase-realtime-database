@@ -7,8 +7,8 @@
             <span v-for="(navBreadCrumb, id) in navBreadCrumbs" :key="id">
                 | <router-link  :to="navBreadCrumb.link">{{navBreadCrumb.text}}</router-link>
             </span>
-            <client v-if="!childId" :clientId="clientId"></client>
-            <child v-if="childId" :childId="childId"></child>
+            <primary-relative-caregiver v-if="!relatedChildId" :primaryRelativeCaregiverId="primaryRelativeCaregiverId"></primary-relative-caregiver>
+            <related-child v-if="relatedChildId" :relatedChildId="relatedChildId"></related-child>
           </v-flex>
         </v-layout> 
     </v-container>
@@ -17,15 +17,15 @@
 
 <script>
 import firebase from 'firebase/app';
-import Client from '@/components/Client';
-import Child from '@/components/Child';
+import PrimaryRelativeCaregiver from '@/components/PrimaryRelativeCaregiver';
+import RelatedChild from '@/components/RelatedChild';
 
 export default {
-  name: 'Client',
-  props:['clientId','childId'],
+  name: 'ClientContainer',
+  props:['primaryRelativeCaregiverId','relatedChildId'],
   components:{
-      client:Client,
-      child:Child,
+      'primary-relative-caregiver':PrimaryRelativeCaregiver,
+      'related-child':RelatedChild,
   },
   computed:{
       clientFullName:function(){
@@ -37,9 +37,9 @@ export default {
       },
       navBreadCrumbs: function (){
           let crumbs = [];
-          if(this.childId){
+          if(this.relatedChildId){
             crumbs.push({
-                link:'/client/'+this.clientId,
+                link:'/PrimaryRelativeCaregiver/'+this.primaryRelativeCaregiverId,
                 text:this.clientFullName,
             });
           }
@@ -49,9 +49,9 @@ export default {
   created(){
     console.log('ClientContainer.vue created function');
     console.log(this.$options.propsData);
-    console.log('clientId: ' + this.clientId);
-    console.log('childId: ' + this.childId);
-    this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.clientId, collectionId:'PrimaryRelativeCaregiver'});
+    console.log('primaryRelativeCaregiverId: ' + this.primaryRelativeCaregiverId);
+    console.log('relatedChildId: ' + this.relatedChildId);
+    this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.primaryRelativeCaregiverId, collectionId:'PrimaryRelativeCaregiver'});
   },
 };
 </script>
