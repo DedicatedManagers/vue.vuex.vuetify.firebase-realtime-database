@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import firebase from 'firebase/app';
 import router from '@/router';
+import merge from 'deepmerge';
 
 Vue.use(Vuex);
 
@@ -12,6 +13,7 @@ export const store = new Vuex.Store({
         entityListeners:null,
         currentEntity:null,
         currentPrimaryRelativeCaregivers:false,
+        newSubEntityMeta:{}, // Set by parent prior to creating a subentity to reference the parent object
     },
     mutations:{
         setUserIsAuthenticated(state, replace){
@@ -19,6 +21,10 @@ export const store = new Vuex.Store({
         },
         setUser(state, replace){
             state.user = replace;
+        },
+        // Receives {ParentId:'', ParentType:''} OR {}
+        setNewSubEntityMeta(state,newSubEntityMetaReplacement){
+            state.newSubEntityMeta=newSubEntityMetaReplacement;
         },
         // Initialize an Entity
         // Receives: entityContainer{collectionId:'',docContainer:{id: '', data:{} } }
@@ -39,7 +45,12 @@ export const store = new Vuex.Store({
                         Vue.set(state.currentEntity[entityPropertyContainer.collectionId].data, key, entityPropertyContainer.propertiesObject[key]);
                     }
                     else{
-                        state.currentEntity[entityPropertyContainer.collectionId].data[key] = entityPropertyContainer.propertiesObject[key];
+                        if(key == 'NestedCollections'){
+                            state.currentEntity[entityPropertyContainer.collectionId].data[key] = merge( state.currentEntity[entityPropertyContainer.collectionId].data[key], entityPropertyContainer.propertiesObject[key]);
+                        }
+                        else{
+                            state.currentEntity[entityPropertyContainer.collectionId].data[key] = entityPropertyContainer.propertiesObject[key];
+                        }
                     }
                 }
             };
@@ -95,9 +106,10 @@ export const store = new Vuex.Store({
                         context.commit('initialize_currentEntity_byEntityContainer', {collectionId:entityContainer.collectionId,docContainer:null,});
                         console.log('listener doc does not exist');
                     }
-                    // Only update if receiving new data from the firebase server. 
-                    // - commits to firebase from our app will also call this listener and we can ignore since its just putting the data back where it came from
-                    else if(!doc.metadata.hasPendingWrites){
+                    // Always update - whether setting locally or receiving new data asynchronously from the firebase server. 
+                    // - commits to firebase from our app will also call this listener and it got difficult to try and ingnore the listner when new entites were added 
+                    // - if this becomes an issue look into setting some kind of flag passed when it should be ignored locally (as opposed to checking when it shouldn't be ignored)
+                    else{
                         context.commit('initialize_currentEntity_byEntityContainer', {
                             collectionId:entityContainer.collectionId,
                             docContainer:{
@@ -133,9 +145,29 @@ export const store = new Vuex.Store({
             // Creating a new entry
             else{
                 console.log('creating new');
-                firebase.firestore().collection(collectionId).add({})
+                let newSubEntityMetaLocal = {};
+
+                // Determine and set the new add to include parent meta properties if this is a sub/nested entity
+                if(context.state.newSubEntityMeta.hasOwnProperty('ParentId')){ // the newSubEntityMeta object is not empty therefore its a sub entity
+                    newSubEntityMetaLocal = Object.assign({},context.state.newSubEntityMeta); // copy the newSubEntityMeta locally (removing the reference)
+                    context.commit('setNewSubEntityMeta',{}); // reset the storage newSubEntityMeta now (rather than in .then) in case the addtion fails; that way there won't be a parent ref hanging out for a later add which could be a top level    
+                }
+
+                firebase.firestore().collection(collectionId).add(newSubEntityMetaLocal)
                 .then(function(docRef) {    
+                    // Determine and set the parent to know about the sub/nested entity
+                    if(newSubEntityMetaLocal.hasOwnProperty('ParentId')){ // the newSubEntityMeta object is not empty therefore its a sub entity
+                        let NestedCollections = {};  // holds an array of child entities
+                        NestedCollections[collectionId] =  [docRef.id];
+                        context.dispatch('update_currentEntity_byEntityPropertyContainer', {
+                            collectionId: newSubEntityMetaLocal.ParentType,
+                            propertiesObject:{
+                                NestedCollections:NestedCollections,
+                            }
+                        });
+                    }
                     context.dispatch('getEntity_ByEntityContainer', {docId:docRef.id,collectionId:collectionId,});
+                    console.log('router.replace /add: ' + router.currentRoute.fullPath.replace(/add/, "") + docRef.id);
                     router.replace(router.currentRoute.fullPath.replace(/add/, "") + docRef.id);
                 })
                 .catch(function(error) {
