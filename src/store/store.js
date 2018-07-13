@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import firebase from 'firebase/app';
 import router from '@/router';
+import merge from 'deepmerge';
 
 Vue.use(Vuex);
 
@@ -25,6 +26,7 @@ export const store = new Vuex.Store({
         setForceLocalFirebaseListenerCommit(state,replacement){
             state.forceLocalFirebaseListenerCommit = replacement;
         },
+        // Receives {ParentId:'', ParentType:''} OR {}
         setNewSubEntityMeta(state,newSubEntityMetaReplacement){
             state.forceLocalFirebaseListenerCommit = true;
             state.newSubEntityMeta=newSubEntityMetaReplacement;
@@ -48,7 +50,12 @@ export const store = new Vuex.Store({
                         Vue.set(state.currentEntity[entityPropertyContainer.collectionId].data, key, entityPropertyContainer.propertiesObject[key]);
                     }
                     else{
-                        state.currentEntity[entityPropertyContainer.collectionId].data[key] = entityPropertyContainer.propertiesObject[key];
+                        if(key == 'NestedCollections'){
+                            state.currentEntity[entityPropertyContainer.collectionId].data[key] = merge( state.currentEntity[entityPropertyContainer.collectionId].data[key], entityPropertyContainer.propertiesObject[key]);
+                        }
+                        else{
+                            state.currentEntity[entityPropertyContainer.collectionId].data[key] = entityPropertyContainer.propertiesObject[key];
+                        }
                     }
                 }
             };
@@ -106,7 +113,7 @@ export const store = new Vuex.Store({
                     }
                     // Only update if receiving new data from the firebase server. 
                     // - commits to firebase from our app will also call this listener and we can ignore since its just putting the data back where it came from
-                    else if(context.state.forceLocalFirebaseListenerCommit || !doc.metadata.hasPendingWrites){
+                    else if(true || context.state.forceLocalFirebaseListenerCommit || !doc.metadata.hasPendingWrites){
                         if(context.state.forceLocalFirebaseListenerCommit) context.commit('setForceLocalFirebaseListenerCommit',false);
 
                         context.commit('initialize_currentEntity_byEntityContainer', {
@@ -154,7 +161,19 @@ export const store = new Vuex.Store({
 
                 firebase.firestore().collection(collectionId).add(newSubEntityMetaLocal)
                 .then(function(docRef) {    
+                    // Determine and set the parent to know about the sub/nested entity
+                    if(newSubEntityMetaLocal.hasOwnProperty('ParentId')){ // the newSubEntityMeta object is not empty therefore its a sub entity
+                        let NestedCollections = {};  // holds an array of child entities
+                        NestedCollections[collectionId] =  [docRef.id];
+                        context.dispatch('update_currentEntity_byEntityPropertyContainer', {
+                            collectionId: newSubEntityMetaLocal.ParentType,
+                            propertiesObject:{
+                                NestedCollections:NestedCollections,
+                            }
+                        });
+                    }
                     context.dispatch('getEntity_ByEntityContainer', {docId:docRef.id,collectionId:collectionId,});
+                    console.log('router.replace /add: ' + router.currentRoute.fullPath.replace(/add/, "") + docRef.id);
                     router.replace(router.currentRoute.fullPath.replace(/add/, "") + docRef.id);
                 })
                 .catch(function(error) {

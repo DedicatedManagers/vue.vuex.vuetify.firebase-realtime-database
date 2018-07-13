@@ -47,9 +47,10 @@ export default {
       },
   },
   created(){
-    console.log('ClientConteiner.vue created function');
+    console.log('ClientContainer.vue created function');
     console.log(this.$options.propsData);
-    console.log(this.childId);
+    console.log('clientId: ' + this.clientId);
+    console.log('childId: ' + this.childId);
     this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.clientId, collectionId:'PrimaryRelativeCaregiver'});
   },
 };
