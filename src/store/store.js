@@ -13,7 +13,6 @@ export const store = new Vuex.Store({
         entityListeners:null,
         currentEntity:null,
         currentPrimaryRelativeCaregivers:false,
-        newSubEntityMeta:{}, // Set by parent prior to creating a subentity to reference the parent object
     },
     mutations:{
         setUserIsAuthenticated(state, replace){
@@ -21,10 +20,6 @@ export const store = new Vuex.Store({
         },
         setUser(state, replace){
             state.user = replace;
-        },
-        // Receives {ParentId:'', ParentType:''} OR {}
-        setNewSubEntityMeta(state,newSubEntityMetaReplacement){
-            state.newSubEntityMeta=newSubEntityMetaReplacement;
         },
         // Initialize an Entity
         // Receives: entityContainer{collectionId:'',docContainer:{id: '', data:{} } }
@@ -145,18 +140,31 @@ export const store = new Vuex.Store({
             // Creating a new entry
             else{
                 console.log('creating new');
-                let newSubEntityMetaLocal = {};
+                let newSubEntityMetaLocal = {}; // empty object means it's not a sub-entity
 
-                // Determine and set the new add to include parent meta properties if this is a sub/nested entity
-                if(context.state.newSubEntityMeta.hasOwnProperty('ParentId')){ // the newSubEntityMeta object is not empty therefore its a sub entity
-                    newSubEntityMetaLocal = Object.assign({},context.state.newSubEntityMeta); // copy the newSubEntityMeta locally (removing the reference)
-                    context.commit('setNewSubEntityMeta',{}); // reset the storage newSubEntityMeta now (rather than in .then) in case the addtion fails; that way there won't be a parent ref hanging out for a later add which could be a top level    
+                // check the route to see whether or not we are creating a sub-entity. 
+                // ie  /ParentEntityType/xxxParentCollectionIdxxx/NewChild--EntityType-aka-CollectionId/add
+                // if we are creating a sub entity:
+                // found[1] - Contains the Parent Entity Type
+                // found[2] - Contains the Parent Entity CollectionId
+                // found[3] - Contains the New Child Entity type, which should match the collectionId
+                let found = router.currentRoute.fullPath.match(   /\/((?:[^\/]+?))\/((?:[^\/]+?))\/((?:[^\/]+?))\/add/   );  
+                if(found && found[3] == collectionId){  // sanity check that the url matches the entity we are creating
+                    if(found[1] && found[2]){ // Parent Entity Type & CollectionId were found
+                        // the entity being created is a subentity/child of a parent entity
+                        newSubEntityMetaLocal = {
+                            ParentType:found[1],
+                            ParentCollectionId:found[2], 
+                        }
+
+                    }    
                 }
 
                 firebase.firestore().collection(collectionId).add(newSubEntityMetaLocal)
                 .then(function(docRef) {    
+
                     // Determine and set the parent to know about the sub/nested entity
-                    if(newSubEntityMetaLocal.hasOwnProperty('ParentId')){ // the newSubEntityMeta object is not empty therefore its a sub entity
+                    if(newSubEntityMetaLocal.hasOwnProperty('ParentCollectionId')){ // the newSubEntityMeta object is not empty therefore its a sub entity
                         let NestedCollections = {};  // holds an array of child entities
                         NestedCollections[collectionId] =  [docRef.id];
                         context.dispatch('update_currentEntity_byEntityPropertyContainer', {

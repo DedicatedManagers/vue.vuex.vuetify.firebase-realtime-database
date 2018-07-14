@@ -144,7 +144,6 @@ export default {
         this.$store.dispatch('fdelete_Entity_byCollectionId',this.componentCollectionId)
       },
       addRelatedChild(){
-        this.$store.commit('setNewSubEntityMeta',{ParentId:this.primaryRelativeCaregiverId, ParentType:this.componentCollectionId});
         this.$router.push('/PrimaryRelativeCaregiver/' + this.primaryRelativeCaregiverId + '/RelatedChild/add');
       }
   },
