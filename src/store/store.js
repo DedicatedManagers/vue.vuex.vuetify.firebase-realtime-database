@@ -76,14 +76,13 @@ export const store = new Vuex.Store({
         // Retrieve an Entity data from firebase
         // Receives Object: entityContainer{docId:'',collectionId:''}
         getEntity_ByEntityContainer(context, entityContainer){
+            console.log('getEntity_ByEntityContainer');
             // Initialize the listeners array if not initialized yet
-            if(!context.state.entityListeners){
-                context.state.entityListeners={};
-            }
+            if(!context.state.entityListeners) context.state.entityListeners={};
+            if(!context.state.entityListeners[entityContainer.collectionId]) context.state.entityListeners[entityContainer.collectionId]={};
+            
             // If there is already a listener for this collection, unsubscribe it
-            if(context.state.entityListeners[entityContainer.collectionId]){
-                context.state.entityListeners[entityContainer.collectionId]();
-            }
+            if(typeof context.state.entityListeners[entityContainer.collectionId][entityContainer.docId] === 'function') context.state.entityListeners[entityContainer.collectionId][entityContainer.docId]();
 
             // Remove any old info so it is not shown prior to async call returning info
             context.commit('initialize_currentEntity_byEntityContainer', {collectionId:entityContainer.collectionId,docContainer:null,});
@@ -96,7 +95,7 @@ export const store = new Vuex.Store({
             // Get existing
             else{
                 // Set up the new query & listener
-                context.state.entityListeners[entityContainer.collectionId] = firebase.firestore().collection(entityContainer.collectionId).doc(entityContainer.docId).onSnapshot(function(doc){
+                context.state.entityListeners[entityContainer.collectionId][entityContainer.docId] = firebase.firestore().collection(entityContainer.collectionId).doc(entityContainer.docId).onSnapshot(function(doc){
                     if(!doc.exists){
                         context.commit('initialize_currentEntity_byEntityContainer', {collectionId:entityContainer.collectionId,docContainer:null,});
                         console.log('listener doc does not exist');
