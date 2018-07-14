@@ -19,12 +19,18 @@
 
 
                   <v-select v-model="ClientTypeAtIntake" :items="ClientTypeAtIntakeValues" label="Client Type At Intake" ></v-select>
-
-                  <h2>Related Children</h2>
-                  <v-btn class="" @click="addRelatedChild">Add Child</v-btn>
-                  
-
               </v-form>
+
+              <h2>Related Children</h2>
+              <div v-if="relatedChildren">
+                <div v-for="(relatedChild, relatedChildCollectionId) in relatedChildren" :key="relatedChildCollectionId">
+                  <div v-if="relatedChild">
+                    <router-link :to="'/PrimaryRelativeCaregiver/'+docId+'/RelatedChild/'+relatedChildCollectionId">{{relatedChild.data.LastName}}, {{relatedChild.data.FirstName}} {{relatedChild.data.MiddleName}}</router-link>
+                  </div>
+                </div>
+              </div>
+              <v-btn class="" @click="addRelatedChild">Add Child</v-btn>
+              
           </v-flex>
         </v-layout> 
 
@@ -79,6 +85,10 @@ export default {
   computed:{
     docId: function(){
       return this.primaryRelativeCaregiverId;
+    },
+    relatedChildren(){
+      if(!this.$store.state.currentEntity) return null
+      return this.$store.state.currentEntity['RelatedChild'];
     },
     FirstName:{
       get(){
