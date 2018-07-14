@@ -94,6 +94,7 @@ export const store = new Vuex.Store({
         // Retrieve an Entity data from firebase
         // Receives Object: entityContainer{docId:'',collectionId:''}
         getEntity_ByEntityContainer(context, entityContainer){
+            console.log('store action getEntity_ByEntityContainer. Object received: ' + JSON.stringify(entityContainer));
             // Initialize the listeners array if not initialized yet
             if(!context.state.entityListeners) context.state.entityListeners={};
             if(!context.state.entityListeners[entityContainer.collectionId]) context.state.entityListeners[entityContainer.collectionId]={};

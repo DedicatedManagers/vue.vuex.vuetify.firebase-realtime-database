@@ -151,7 +151,7 @@ export default {
       }
   },
   created(){
-    console.log('PrimaryRelativeCaregiver.vue created function: ' + this.docId + this.componentCollectionId);
+    console.log('PrimaryRelativeCaregiver.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
   },
 };
 </script>

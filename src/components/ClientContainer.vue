@@ -50,8 +50,7 @@ export default {
       },
   },
   created(){
-    console.log('ClientContainer.vue created function. Props:');
-    console.log(this.$options.propsData);
+    console.log('ClientContainer.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
     this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.primaryRelativeCaregiverId, collectionId:'PrimaryRelativeCaregiver'});
   },
 };

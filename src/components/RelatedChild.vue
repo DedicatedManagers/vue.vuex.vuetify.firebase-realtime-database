@@ -108,7 +108,7 @@ export default {
       },
   },
   created(){
-    console.log('RelatedChild.vue created function: ' + this.docId + this.componentCollectionId);
+    console.log('RelatedChild.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
     this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.docId, collectionId:this.componentCollectionId});
   },
 };
