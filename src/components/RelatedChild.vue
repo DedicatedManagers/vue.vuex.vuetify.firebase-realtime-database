@@ -10,9 +10,9 @@
                   <v-text-field  v-model="LastName" label="Last Name" required ></v-text-field>
                   <v-text-field  v-model="PrimaryStreetAddress" label="Primary Street Address" required ></v-text-field>
 
-                  <v-menu ref="BirthDateMenuRef" :return-value.sync="BirthDateLocal" v-model="BirthDateMenuVisibility" :close-on-content-click="false" :nudge-right="40" lazy transition="scale-transition" offset-y full-width min-width="290px">
-                    <v-text-field slot="activator" v-model="BirthDateLocal" label="Birth Date" prepend-icon="event" readonly ></v-text-field>
-                    <v-date-picker v-model="BirthDateLocal" @input="$refs.BirthDateMenuRef.save(BirthDateLocal);"></v-date-picker>
+                  <v-menu ref="BirthDateMenuRef" :return-value.sync="BirthDate" v-model="BirthDateMenuVisibility" :close-on-content-click="false" :nudge-right="40" lazy transition="scale-transition" offset-y full-width min-width="290px">
+                    <v-text-field slot="activator" v-model="BirthDate" label="Birth Date" prepend-icon="event" readonly ></v-text-field>
+                    <v-date-picker v-model="BirthDate" @input="$refs.BirthDateMenuRef.save(BirthDate);"></v-date-picker>
                   </v-menu>
 
 
@@ -55,44 +55,47 @@ export default {
     };
   },
   computed:{
+    docId: function(){
+      return this.relatedChildId;
+    },
     FirstName:{
       get(){
-        return this.$store.state.currentEntity[this.componentCollectionId]?this.$store.state.currentEntity[this.componentCollectionId].data.FirstName:"";
+        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'FirstName',});
       },
       set(newValue){
-        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:this.componentCollectionId,propertiesObject:{FirstName: newValue}});
+        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{FirstName: newValue}});
       },
     },
     MiddleName:{
       get(){
-        return (this.$store.state.currentEntity && this.$store.state.currentEntity[this.componentCollectionId] && this.$store.state.currentEntity[this.componentCollectionId].data)?this.$store.state.currentEntity[this.componentCollectionId].data.MiddleName:"";
+        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'MiddleName',});
       },
       set(newValue){
-        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:this.componentCollectionId,propertiesObject:{MiddleName: newValue}});
+        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{MiddleName: newValue}});
       },
     },
     LastName:{
       get(){
-        return this.$store.state.currentEntity[this.componentCollectionId]?this.$store.state.currentEntity[this.componentCollectionId].data.LastName:"";
+        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'LastName',});
       },
       set(newValue){
-        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:this.componentCollectionId,propertiesObject:{LastName: newValue}});
+        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{LastName: newValue}});
       },
     },
     PrimaryStreetAddress:{
       get(){
-        return this.$store.state.currentEntity[this.componentCollectionId]?this.$store.state.currentEntity[this.componentCollectionId].data.PrimaryStreetAddress:"";
+        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'PrimaryStreetAddress',});
       },
       set(newValue){
-        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:this.componentCollectionId,propertiesObject:{PrimaryStreetAddress: newValue}});
+        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{PrimaryStreetAddress: newValue}});
       },
     },
-    BirthDateLocal:{
+    BirthDate:{
       get(){
-        return this.$store.state.currentEntity[this.componentCollectionId]?this.$store.state.currentEntity[this.componentCollectionId].data.BirthDate:"";
+        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'BirthDate',});
       },
       set(newValue){
-        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {collectionId:this.componentCollectionId,propertiesObject:{BirthDate: newValue}});
+        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{BirthDate: newValue}});
       },
     },
 
@@ -105,8 +108,8 @@ export default {
       },
   },
   created(){
-    console.log('RelatedChild.vue created function: ' + this.relatedChildId + this.componentCollectionId);
-    this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.relatedChildId, collectionId:this.componentCollectionId});
+    console.log('RelatedChild.vue created function: ' + this.docId + this.componentCollectionId);
+    this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.docId, collectionId:this.componentCollectionId});
   },
 };
 </script>

@@ -14,6 +14,17 @@ export const store = new Vuex.Store({
         currentEntity:null,
         currentPrimaryRelativeCaregivers:false,
     },
+    getters:{
+        // Receives fieldValueCollectionContainer: {docId:'', collectionId:'', fieldName:''}
+        getCurrentEntityFieldValue: (state) => (fieldValueCollectionContainer) => {
+            if (!store.state.currentEntity) return "";
+            if (!store.state.currentEntity[fieldValueCollectionContainer.collectionId]) return "";
+            if (!store.state.currentEntity[fieldValueCollectionContainer.collectionId][fieldValueCollectionContainer.docId]) return "";
+            if (!store.state.currentEntity[fieldValueCollectionContainer.collectionId][fieldValueCollectionContainer.docId].data) return "";
+            if (!store.state.currentEntity[fieldValueCollectionContainer.collectionId][fieldValueCollectionContainer.docId].data[fieldValueCollectionContainer.fieldName]) return "";
+            return store.state.currentEntity[fieldValueCollectionContainer.collectionId][fieldValueCollectionContainer.docId].data[fieldValueCollectionContainer.fieldName];
+        }
+    },
     mutations:{
         setUserIsAuthenticated(state, replace){
             state.userIsAuthenticated = replace;
@@ -22,29 +33,36 @@ export const store = new Vuex.Store({
             state.user = replace;
         },
         // Initialize an Entity
-        // Receives: entityContainer{collectionId:'',docContainer:{id: '', data:{} } }
-        initialize_currentEntity_byEntityContainer(state, entityContainer){
+        // Receives: docEntityContainer{docId:'', collectionId:'',docContainer:{id: '', data:{} } }
+        initialize_currentEntity_byDocEntityContainer(state, docEntityContainer){
             if(!state.currentEntity) state.currentEntity={}; // initialize the holder if its not yet initialized
-            Vue.set(state.currentEntity, entityContainer.collectionId, entityContainer.docContainer); // Vue.set is requred when adding property to an object to make it reactive
+            if(!state.currentEntity[docEntityContainer.collectionId]) Vue.set(state.currentEntity, docEntityContainer.collectionId, {}); // Vue.set is requred when adding property to an object to make it reactive
+            // set the data
+            Vue.set(state.currentEntity[docEntityContainer.collectionId], docEntityContainer.docId, docEntityContainer.docContainer); // Vue.set is requred when adding property to an object to make it reactive
         },
-        // Receives: entityPropertyContainer{ collectionId:'',propertiesObject:{} }
+        // Receives: entityPropertyContainer{ docId:'',collectionId:'',propertiesObject:{prop:val,[prop2:val2]} }
         mutate_currentEntity_byEntityPropertyContainer(state, entityPropertyContainer){
-            // If this is the first property being added on the Entity, the data property won't be set yet
-            if(!state.currentEntity[entityPropertyContainer.collectionId]) Vue.set(state.currentEntity, entityPropertyContainer.collectionId, 'data');
+            // If this is the first property being added on the Entity, the entity type / collectionId property won't be set yet
+            if(!state.currentEntity[entityPropertyContainer.collectionId]) Vue.set(state.currentEntity, entityPropertyContainer.collectionId, {});
+            // If this is the first property being added on the Entity, the entity type / collectionId property won't be set yet
+            if(!state.currentEntity[entityPropertyContainer.collectionId][entityPropertyContainer.docId]) Vue.set(state.currentEntity[entityPropertyContainer.collectionId], entityPropertyContainer.docId, {});
+            // If this is the first property being added on the Entity, the entity type / collectionId property won't be set yet - set it and its data property
+            if(!state.currentEntity[entityPropertyContainer.collectionId][entityPropertyContainer.docId]) Vue.set(state.currentEntity[entityPropertyContainer.collectionId], entityPropertyContainer.docId, {data:{}});
+
             
             // Loop through the key/value pairs sent in the properties object and set them on the collection
             for (var key in entityPropertyContainer.propertiesObject) {
                 if (entityPropertyContainer.propertiesObject.hasOwnProperty(key)) { // only look at key's we set, not any javascript object helper keys on the object
                     // If thisis the first time we've set this property on the entity, add the property using Vue.set so that its reactive
-                    if(!state.currentEntity[entityPropertyContainer.collectionId].data.hasOwnProperty(key)){
-                        Vue.set(state.currentEntity[entityPropertyContainer.collectionId].data, key, entityPropertyContainer.propertiesObject[key]);
+                    if(!state.currentEntity[entityPropertyContainer.collectionId][entityPropertyContainer.docId].data.hasOwnProperty(key)){
+                        Vue.set(state.currentEntity[entityPropertyContainer.collectionId][entityPropertyContainer.docId].data, key, entityPropertyContainer.propertiesObject[key]);
                     }
                     else{
                         if(key == 'NestedCollections'){
-                            state.currentEntity[entityPropertyContainer.collectionId].data[key] = merge( state.currentEntity[entityPropertyContainer.collectionId].data[key], entityPropertyContainer.propertiesObject[key]);
+                            state.currentEntity[entityPropertyContainer.collectionId][entityPropertyContainer.docId].data[key] = merge( state.currentEntity[entityPropertyContainer.collectionId][entityPropertyContainer.docId].data[key], entityPropertyContainer.propertiesObject[key]);
                         }
                         else{
-                            state.currentEntity[entityPropertyContainer.collectionId].data[key] = entityPropertyContainer.propertiesObject[key];
+                            state.currentEntity[entityPropertyContainer.collectionId][entityPropertyContainer.docId].data[key] = entityPropertyContainer.propertiesObject[key];
                         }
                     }
                 }
@@ -76,7 +94,6 @@ export const store = new Vuex.Store({
         // Retrieve an Entity data from firebase
         // Receives Object: entityContainer{docId:'',collectionId:''}
         getEntity_ByEntityContainer(context, entityContainer){
-            console.log('getEntity_ByEntityContainer');
             // Initialize the listeners array if not initialized yet
             if(!context.state.entityListeners) context.state.entityListeners={};
             if(!context.state.entityListeners[entityContainer.collectionId]) context.state.entityListeners[entityContainer.collectionId]={};
@@ -85,19 +102,18 @@ export const store = new Vuex.Store({
             if(typeof context.state.entityListeners[entityContainer.collectionId][entityContainer.docId] === 'function') context.state.entityListeners[entityContainer.collectionId][entityContainer.docId]();
 
             // Remove any old info so it is not shown prior to async call returning info
-            context.commit('initialize_currentEntity_byEntityContainer', {collectionId:entityContainer.collectionId,docContainer:null,});
+            context.commit('initialize_currentEntity_byDocEntityContainer', {docId:entityContainer.docId,collectionId:entityContainer.collectionId,docContainer:null,});
 
             // Create New
             if(entityContainer.docId == "add"){
-                context.dispatch('fcommit_Entity_byCollectionId', entityContainer.collectionId);
-                console.log('Creating new entity: ' + entityContainer.collectionId);
+                context.dispatch('fcommit_Entity_byCollectionContainer', {docId:entityContainer.docId, collectionId:entityContainer.collectionId});
             }
             // Get existing
             else{
                 // Set up the new query & listener
                 context.state.entityListeners[entityContainer.collectionId][entityContainer.docId] = firebase.firestore().collection(entityContainer.collectionId).doc(entityContainer.docId).onSnapshot(function(doc){
                     if(!doc.exists){
-                        context.commit('initialize_currentEntity_byEntityContainer', {collectionId:entityContainer.collectionId,docContainer:null,});
+                        context.commit('initialize_currentEntity_byDocEntityContainer', {docId:entityContainer.docId,collectionId:entityContainer.collectionId,docContainer:null,});
                         console.log('listener doc does not exist');
                     }
                     // Always update - whether setting locally or receiving new data asynchronously from the firebase server. 
@@ -119,7 +135,8 @@ export const store = new Vuex.Store({
                             }
                 
                         }
-                        context.commit('initialize_currentEntity_byEntityContainer', {
+                        context.commit('initialize_currentEntity_byDocEntityContainer', {
+                            docId:entityContainer.docId,
                             collectionId:entityContainer.collectionId,
                             docContainer:{
                                 id: entityContainer.docId,
@@ -131,19 +148,21 @@ export const store = new Vuex.Store({
             }
         },
         // update the local and remote storage for the entity
-        // Receives: entityPropertyContainer{ collectionId:'',propertiesObject:{} }
+        // Receives: entityPropertyContainer{ docId:'',collectionId:'',propertiesObject:{prop:val,[prop2:val2]} }
         update_currentEntity_byEntityPropertyContainer(context, entityPropertyContainer){
             context.commit('mutate_currentEntity_byEntityPropertyContainer', entityPropertyContainer);
-            context.dispatch('fcommit_Entity_byCollectionId', entityPropertyContainer.collectionId);
+            context.dispatch('fcommit_Entity_byCollectionContainer', {docId:entityPropertyContainer.docId,collectionId:entityPropertyContainer.collectionId});
         },
         // Commit changes to firebase
-        fcommit_Entity_byCollectionId(context, collectionId){
+        // Receives collectionContainer: {docId:'', collectionId:''}
+        fcommit_Entity_byCollectionContainer(context, collectionContainer){
             // Updating an entry
             if( context.state.currentEntity &&
-                context.state.currentEntity[collectionId] && 
-                context.state.currentEntity[collectionId].hasOwnProperty('id') && 
-                context.state.currentEntity[collectionId].id){
-                firebase.firestore().collection(collectionId).doc(context.state.currentEntity[collectionId].id).update(context.state.currentEntity[collectionId].data)
+                context.state.currentEntity[collectionContainer.collectionId] && 
+                context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId] && 
+                context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId].hasOwnProperty('id') && 
+                context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId].id){
+                firebase.firestore().collection(collectionContainer.collectionId).doc(context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId].id).update(context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId].data)
                 .then(function() {
                     //console.log("Document successfully written!");
                 })
@@ -163,32 +182,34 @@ export const store = new Vuex.Store({
                 // found[2] - Contains the Parent Entity CollectionId
                 // found[3] - Contains the New Child Entity type, which should match the collectionId
                 let found = router.currentRoute.fullPath.match(   /\/((?:[^\/]+?))\/((?:[^\/]+?))\/((?:[^\/]+?))\/add/   );  
-                if(found && found[3] == collectionId){  // sanity check that the url matches the entity we are creating
+                if(found && found[3] == collectionContainer.collectionId){  // sanity check that the url matches the entity we are creating
                     if(found[1] && found[2]){ // Parent Entity Type & CollectionId were found
                         // the entity being created is a subentity/child of a parent entity
                         newSubEntityMetaLocal = {
                             ParentType:found[1],
                             ParentCollectionId:found[2], 
                         }
+                        console.log('created newSubEntityMetaLocal:' + JSON.stringify(newSubEntityMetaLocal));
 
                     }    
                 }
 
-                firebase.firestore().collection(collectionId).add(newSubEntityMetaLocal)
+                firebase.firestore().collection(collectionContainer.collectionId).add(newSubEntityMetaLocal)
                 .then(function(docRef) {    
-
+                    console.log('new entity has been created. docRef.id: ' + docRef.id);
                     // Determine and set the parent to know about the sub/nested entity
                     if(newSubEntityMetaLocal.hasOwnProperty('ParentCollectionId')){ // the newSubEntityMeta object is not empty therefore its a sub entity
                         let NestedCollections = {};  // holds an array of child entities
-                        NestedCollections[collectionId] =  [docRef.id];
+                        NestedCollections[collectionContainer.collectionId] =  [docRef.id];
                         context.dispatch('update_currentEntity_byEntityPropertyContainer', {
+                            docId:newSubEntityMetaLocal.ParentCollectionId,
                             collectionId: newSubEntityMetaLocal.ParentType,
                             propertiesObject:{
                                 NestedCollections:NestedCollections,
                             }
                         });
                     }
-                    context.dispatch('getEntity_ByEntityContainer', {docId:docRef.id,collectionId:collectionId,});
+                    context.dispatch('getEntity_ByEntityContainer', {docId:docRef.id,collectionId:collectionContainer.collectionId,});
                     console.log('router.replace /add: ' + router.currentRoute.fullPath.replace(/add/, "") + docRef.id);
                     router.replace(router.currentRoute.fullPath.replace(/add/, "") + docRef.id);
                 })

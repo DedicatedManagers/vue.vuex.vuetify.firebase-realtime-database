@@ -29,10 +29,13 @@ export default {
   },
   computed:{
       clientFullName:function(){
+        if(!this.$store.state.currentEntity['PrimaryRelativeCaregiver']) return "";
+        if(!this.$store.state.currentEntity['PrimaryRelativeCaregiver'][this.primaryRelativeCaregiverId]) return "";
+        
         let fullName = "";
-        fullName += this.$store.state.currentEntity['PrimaryRelativeCaregiver']?this.$store.state.currentEntity['PrimaryRelativeCaregiver'].data.LastName:"";
+        fullName += this.$store.state.currentEntity['PrimaryRelativeCaregiver'][this.primaryRelativeCaregiverId]?this.$store.state.currentEntity['PrimaryRelativeCaregiver'][this.primaryRelativeCaregiverId].data.LastName:"";
         fullName += ", ";
-        fullName += this.$store.state.currentEntity['PrimaryRelativeCaregiver']?this.$store.state.currentEntity['PrimaryRelativeCaregiver'].data.FirstName:"";
+        fullName += this.$store.state.currentEntity['PrimaryRelativeCaregiver'][this.primaryRelativeCaregiverId]?this.$store.state.currentEntity['PrimaryRelativeCaregiver'][this.primaryRelativeCaregiverId].data.FirstName:"";
         return fullName;
       },
       navBreadCrumbs: function (){
@@ -47,10 +50,8 @@ export default {
       },
   },
   created(){
-    console.log('ClientContainer.vue created function');
+    console.log('ClientContainer.vue created function. Props:');
     console.log(this.$options.propsData);
-    console.log('primaryRelativeCaregiverId: ' + this.primaryRelativeCaregiverId);
-    console.log('relatedChildId: ' + this.relatedChildId);
     this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.primaryRelativeCaregiverId, collectionId:'PrimaryRelativeCaregiver'});
   },
 };
