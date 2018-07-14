@@ -104,6 +104,21 @@ export const store = new Vuex.Store({
                     // - commits to firebase from our app will also call this listener and it got difficult to try and ingnore the listner when new entites were added 
                     // - if this becomes an issue look into setting some kind of flag passed when it should be ignored locally (as opposed to checking when it shouldn't be ignored)
                     else{
+                        let NestedCollections = doc.data()['NestedCollections'];
+                        if(typeof NestedCollections === 'object' ){
+                            for (let collectionId in NestedCollections) {
+                                if ( NestedCollections.hasOwnProperty(collectionId) && Array.isArray(NestedCollections[collectionId]) ) { // sanity check
+                                    NestedCollections[collectionId].forEach( docId => {
+                                        // Check Vuex store to see if there is a listener running on this sub-entity
+                                        if( !(context.state.entityListeners[collectionId] && context.state.entityListeners[collectionId][docId]) ){
+                                            // Listener not found - load the entity
+                                            context.dispatch('getEntity_ByEntityContainer', {docId:docId,collectionId:collectionId})    
+                                        }
+                                    });                                    
+                                }
+                            }
+                
+                        }
                         context.commit('initialize_currentEntity_byEntityContainer', {
                             collectionId:entityContainer.collectionId,
                             docContainer:{
