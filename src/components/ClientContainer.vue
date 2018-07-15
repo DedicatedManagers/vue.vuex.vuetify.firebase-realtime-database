@@ -51,7 +51,24 @@ export default {
   },
   created(){
     console.log('ClientContainer.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
-    this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.primaryRelativeCaregiverId, collectionId:'PrimaryRelativeCaregiver'});
+
+    // if we have already loaded the root level Entity (highest parent of the entities)
+    if(this.$store.state.currentEntity){
+      if(this.$store.state.currentEntity['PrimaryRelativeCaregiver']){
+        for (let rootEntityId in this.$store.state.currentEntity['PrimaryRelativeCaregiver']){
+          // if we are trying to get a new root level Entity, clear out the currentEntity & entityListeners to start fresh with the new root level entity
+          if(rootEntityId != this.primaryRelativeCaregiverId){
+            this.$store.commit('deleteAllCurrentEntitesAndListeners');
+            this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.primaryRelativeCaregiverId, collectionId:'PrimaryRelativeCaregiver'});
+          }
+          break; //there should only be one root currentEntity so no need to loop any further
+        }
+      }
+    }
+    else{
+      // this is a new load of the app - get the info for this root level entity
+      this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.primaryRelativeCaregiverId, collectionId:'PrimaryRelativeCaregiver'});      
+    }
   },
 };
 </script>

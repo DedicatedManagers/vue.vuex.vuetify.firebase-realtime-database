@@ -32,6 +32,24 @@ export const store = new Vuex.Store({
         setUser(state, replace){
             state.user = replace;
         },
+        deleteAllCurrentEntitesAndListeners(state){
+            // Clear out the currentEntity
+            state.currentEntity = null;
+            // Cler out the entityListeners by executing them, which closes them
+            if(typeof state.entityListeners === 'object'){
+                for (let entityListenerGroup in state.entityListeners) {
+                    if(typeof entityListenerGroup === 'object'){
+                        for (let entityListener in entityListenerGroup){
+                            if(typeof entityListener === 'function'){
+                                entityListener();
+                            }
+                        }
+                    }
+                }
+                state.entityListeners = null;
+            }           
+            console.log('end deleteAllCurrentEntitesAndListeners context.state.entityListeners: ' + JSON.stringify(state.entityListeners))
+        },
         // Initialize an Entity
         // Receives: docEntityContainer{docId:'', collectionId:'',docContainer:{id: '', data:{} } }
         initialize_currentEntity_byDocEntityContainer(state, docEntityContainer){

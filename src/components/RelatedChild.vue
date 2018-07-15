@@ -109,6 +109,7 @@ export default {
   },
   created(){
     console.log('RelatedChild.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
+    // TODO: this will need similar functionality to its parent PrimaryRelativeCaregiver which erases entities at a lower lever, otherwise this levels nested entities will continue to show up across this levels changes between entities
     this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.docId, collectionId:this.componentCollectionId});
   },
 };
