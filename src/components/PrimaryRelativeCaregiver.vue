@@ -8,33 +8,29 @@
                 <v-toolbar-title>Primary Caregiver</v-toolbar-title>
               </v-toolbar>
               <v-card-title>
-                <v-form>
-                    <v-text-field  v-model="FirstName" label="First Name" required ></v-text-field>
-                    <v-text-field  v-model="MiddleName" label="Middle Name" required ></v-text-field>
-                    <v-text-field  v-model="LastName" label="Last Name" required ></v-text-field>
-                    <v-text-field  v-model="PrimaryStreetAddress" label="Primary Street Address" required ></v-text-field>
+                <v-layout row wrap>
+                  <v-flex xs12>
+                    <v-form>
+                      <v-text-field  v-model="FirstName" label="First Name" required ></v-text-field>
+                      <v-text-field  v-model="MiddleName" label="Middle Name" required ></v-text-field>
+                      <v-text-field  v-model="LastName" label="Last Name" required ></v-text-field>
+                      <v-text-field  v-model="PrimaryStreetAddress" label="Primary Street Address" required ></v-text-field>
 
-                    <v-menu ref="BirthDateMenuRef" :return-value.sync="BirthDate" v-model="BirthDateMenuVisibility" :close-on-content-click="false" :nudge-right="40" lazy transition="scale-transition" offset-y full-width min-width="290px">
-                      <v-text-field slot="activator" v-model="BirthDate" label="Birth Date" prepend-icon="event" readonly ></v-text-field>
-                      <v-date-picker v-model="BirthDate" @input="$refs.BirthDateMenuRef.save(BirthDate);"></v-date-picker>
-                    </v-menu>
+                      <v-menu ref="BirthDateMenuRef" :return-value.sync="BirthDate" v-model="BirthDateMenuVisibility" :close-on-content-click="false" :nudge-right="40" lazy transition="scale-transition" offset-y full-width min-width="290px">
+                        <v-text-field slot="activator" v-model="BirthDate" label="Birth Date" prepend-icon="event" readonly ></v-text-field>
+                        <v-date-picker v-model="BirthDate" @input="$refs.BirthDateMenuRef.save(BirthDate);"></v-date-picker>
+                      </v-menu>
 
-                    <v-checkbox v-model="NavigatorProgram" label="Navigator Program"></v-checkbox>
+                      <v-checkbox v-model="NavigatorProgram" label="Navigator Program"></v-checkbox>
 
 
-                    <v-select v-model="ClientTypeAtIntake" :items="ClientTypeAtIntakeValues" label="Client Type At Intake" ></v-select>
-                </v-form>
+                      <v-select v-model="ClientTypeAtIntake" :items="ClientTypeAtIntakeValues" label="Client Type At Intake" ></v-select>
 
-                <v-layout row>
-                    <v-spacer></v-spacer>
-                    <v-btn color="error" @click="confirmDialogVisibility=true">Delete<v-icon right>delete</v-icon></v-btn>
-                    <template v-if="confirmDialogVisibility">
-                      <dialog-confirm confirmType="error" :confirmVisibilty="confirmDialogVisibility" @confirmAccept="fDelete" @confirmCancel="confirmDialogVisibility=false">
-                        <template slot="title">Confirm Delete</template>
-                        <template slot="text">Are you sure you want to delete this client?</template>
-                        <template slot="confirmButton">Confirm Delete</template>
-                      </dialog-confirm>
-                    </template>
+                      <div class="text-xs-right">
+                        <v-btn color="error" @click="confirmDialogVisibility=true">Delete<v-icon right>delete</v-icon></v-btn>
+                      </div>
+                    </v-form>
+                  </v-flex>
                 </v-layout>
               </v-card-title>
             </v-card> 
@@ -45,27 +41,45 @@
               <v-toolbar color="blue" dark>
                 <v-toolbar-title>Related Children</v-toolbar-title>
               </v-toolbar>
-              <v-list v-for="(relatedChild, relatedChildCollectionId) in relatedChildren" :key="relatedChildCollectionId" v-if="relatedChild">
-                <v-list-tile  :to="'/PrimaryRelativeCaregiver/'+docId+'/RelatedChild/'+relatedChildCollectionId">
-                    <v-list-tile-action>
-                    <v-icon>person</v-icon>
-                  </v-list-tile-action>
+              <v-card-title>
+                <v-layout row wrap>
+                  <v-flex xs12>
+                    <v-list v-for="(relatedChild, relatedChildCollectionId) in relatedChildren" :key="relatedChildCollectionId" v-if="relatedChild">
+                      <v-list-tile  :to="'/PrimaryRelativeCaregiver/'+docId+'/RelatedChild/'+relatedChildCollectionId">
+                          <v-list-tile-action>
+                          <v-icon>person</v-icon>
+                        </v-list-tile-action>
 
-                  <v-list-tile-content>
-                    <v-list-tile-title>{{relatedChild.data.LastName}}, {{relatedChild.data.FirstName}} {{relatedChild.data.MiddleName}}</v-list-tile-title>
-                  </v-list-tile-content>
-                </v-list-tile>
-              </v-list>
-              <v-btn color="success" @click="addRelatedChild">Add Child<v-icon right>person_add</v-icon></v-btn>
-            </v-card>
-              
+                        <v-list-tile-content>
+                          <v-list-tile-title>{{relatedChild.data.LastName}}, {{relatedChild.data.FirstName}} {{relatedChild.data.MiddleName}}</v-list-tile-title>
+                        </v-list-tile-content>
+                      </v-list-tile>
+                    </v-list>
+                    <div class="text-xs-right">
+                      <v-btn color="success" @click="addRelatedChild">Add Child<v-icon right>person_add</v-icon></v-btn>
+                    </div>
+                  </v-flex>
+                </v-layout>
+              </v-card-title>
+            </v-card>              
           </v-flex>
         </v-layout> 
 
+        <template v-if="confirmDialogVisibility">
+          <dialog-confirm confirmType="error" :confirmVisibilty="confirmDialogVisibility" @confirmAccept="fDelete" @confirmCancel="confirmDialogVisibility=false">
+            <template slot="title">Confirm Delete</template>
+            <template slot="text">Are you sure you want to delete this Primary Relative Caregiver?</template>
+            <template slot="confirmButton">Confirm Delete</template>
+          </dialog-confirm> 
+        </template>
 
     </v-container>
   </v-slide-y-transition>
+
+
 </template>
+
+
 
 <script>
 import DialogConfirm from '@/components/shared/DialogConfirm';
