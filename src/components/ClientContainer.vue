@@ -55,13 +55,12 @@ export default {
     // if we have already loaded the root level Entity (highest parent of the entities)
     if(this.$store.state.currentEntity){
       if(this.$store.state.currentEntity['PrimaryRelativeCaregiver']){
-        for (let rootEntityId in this.$store.state.currentEntity['PrimaryRelativeCaregiver']){
-          // if we are trying to get a new root level Entity, clear out the currentEntity & entityListeners to start fresh with the new root level entity
-          if(rootEntityId != this.primaryRelativeCaregiverId){
+
+        // if we are trying add or to get a new root level Entity, clear out the currentEntity & entityListeners to start fresh with the new root level entity
+        // - its a new entity if the new id (primaryRelativeCaregiverId) doesn't exist already on the root entity (PrimaryRelativeCaregiver)
+        if(this.primaryRelativeCaregiverId=="add" || !this.$store.state.currentEntity['PrimaryRelativeCaregiver'].hasOwnProperty(this.primaryRelativeCaregiverId)){
             this.$store.commit('deleteAllCurrentEntitesAndListeners');
             this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.primaryRelativeCaregiverId, collectionId:'PrimaryRelativeCaregiver'});
-          }
-          break; //there should only be one root currentEntity so no need to loop any further
         }
       }
     }
