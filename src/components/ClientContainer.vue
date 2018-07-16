@@ -8,7 +8,7 @@
                 | <router-link  :to="navBreadCrumb.link">{{navBreadCrumb.text}}</router-link>
             </span>
             <primary-relative-caregiver v-if="!relatedChildId" :primaryRelativeCaregiverId="primaryRelativeCaregiverId"></primary-relative-caregiver>
-            <related-child v-if="relatedChildId" :relatedChildId="relatedChildId"></related-child>
+            <related-child v-if="relatedChildId" :primaryRelativeCaregiverId="primaryRelativeCaregiverId" :relatedChildId="relatedChildId" ></related-child>
           </v-flex>
         </v-layout> 
     </v-container>

@@ -238,10 +238,25 @@ export const store = new Vuex.Store({
             }
         },
         // Delete Entity / Firebase Document
-        fdelete_Entity_byCollectionId(context, collectionId){
-            firebase.firestore().collection(collectionId).doc(context.state.currentEntity[collectionId].id).delete()
+        // Receives collectionContainer: {docId:'', collectionId:'', route:{to:'', type:'<replace>'}}
+        fdelete_Entity_byCollectionContainer(context, collectionContainer){
+            console.log('delete Entity. received object: ' + JSON.stringify(collectionContainer))
+
+            // TODO: Need to find and delete any sub entities
+
+            // Delete Listener
+            context.state.entityListeners[collectionContainer.collectionId][collectionContainer.docId]();  // executing the the function closes the listener
+            delete context.state.entityListeners[collectionContainer.collectionId][collectionContainer.docId];  // remove the id property from the listeners
+            
+            // Delete the Entity in currentEntity
+            delete context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId];  
+
+            // Delete the Entity in the store
+            firebase.firestore().collection(collectionContainer.collectionId).doc(collectionContainer.docId).delete()
                 .then(function(docRef) {
-                    router.replace('/dashboard');               
+                    if(collectionContainer.route.to){
+                        router.replace(collectionContainer.route.to);               
+                    }
                 })
                 .catch(function(error) {
                     console.error("Error deleting document: ", error);

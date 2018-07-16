@@ -108,8 +108,9 @@ export default {
   },
   methods:{
       fDelete(){
+        console.log(this.primaryRelativeCaregiverId);
         this.confirmDialogVisibility = false;
-        this.$store.dispatch('fdelete_Entity_byCollectionId',this.componentCollectionId)
+        this.$store.dispatch('fdelete_Entity_byCollectionContainer',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryRelativeCaregiver/'+this.primaryRelativeCaregiverId}})
       },
   },
   created(){

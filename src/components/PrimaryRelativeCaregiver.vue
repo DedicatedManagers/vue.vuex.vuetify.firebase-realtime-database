@@ -185,7 +185,7 @@ export default {
   methods:{
       fDelete(){
         this.confirmDialogVisibility = false;
-        this.$store.dispatch('fdelete_Entity_byCollectionId',this.componentCollectionId)
+        this.$store.dispatch('fdelete_Entity_byCollectionContainer',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/dashboard'}})
       },
       addRelatedChild(){
         this.$router.push('/PrimaryRelativeCaregiver/' + this.docId + '/RelatedChild/add');
