@@ -17,11 +17,7 @@ export const store = new Vuex.Store({
     getters:{
         // Receives fieldValueCollectionContainer: {docId:'', collectionId:'', fieldName:''}
         getCurrentEntityFieldValue: (state) => (fieldValueCollectionContainer) => {
-            if (!store.state.currentEntity) return "";
-            if (!store.state.currentEntity[fieldValueCollectionContainer.collectionId]) return "";
-            if (!store.state.currentEntity[fieldValueCollectionContainer.collectionId][fieldValueCollectionContainer.docId]) return "";
-            if (!store.state.currentEntity[fieldValueCollectionContainer.collectionId][fieldValueCollectionContainer.docId].data) return "";
-            if (!store.state.currentEntity[fieldValueCollectionContainer.collectionId][fieldValueCollectionContainer.docId].data[fieldValueCollectionContainer.fieldName]) return "";
+            if (   !((((store.state.currentEntity||{})[fieldValueCollectionContainer.collectionId]||{})[fieldValueCollectionContainer.docId]||{}).data||{}).hasOwnProperty(fieldValueCollectionContainer.fieldName)    ) return "";
             return store.state.currentEntity[fieldValueCollectionContainer.collectionId][fieldValueCollectionContainer.docId].data[fieldValueCollectionContainer.fieldName];
         }
     },
