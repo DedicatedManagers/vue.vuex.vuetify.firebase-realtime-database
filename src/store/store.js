@@ -94,10 +94,8 @@ export const store = new Vuex.Store({
                 // Loop through the key/value pairs sent in the properties object and set them on the collection
                 for (var key in entityPropertyContainer.propertiesObject) {
                     if (entityPropertyContainer.propertiesObject.hasOwnProperty(key)) { // only look at key's we set, not any javascript object helper keys on the object
-                console.log('mutate_currentEntity_byEntityPropertyContainer - hasOwnProperty');
                         // If thisis the first time we've set this property on the entity, add the property using Vue.set so that its reactive
                         if(!state.currentEntity[entityPropertyContainer.collectionId][entityPropertyContainer.docId].data.hasOwnProperty(key)){
-                console.log('mutate_currentEntity_byEntityPropertyContainer - hasOwnProperty2');
                             Vue.set(state.currentEntity[entityPropertyContainer.collectionId][entityPropertyContainer.docId].data, key, entityPropertyContainer.propertiesObject[key]);
                         }
                         else{
