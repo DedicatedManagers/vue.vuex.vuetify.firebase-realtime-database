@@ -29,13 +29,15 @@ export default {
   },
   computed:{
       clientFullName:function(){
-        if(!this.$store.state.currentEntity['PrimaryRelativeCaregiver']) return "";
-        if(!this.$store.state.currentEntity['PrimaryRelativeCaregiver'][this.primaryRelativeCaregiverId]) return "";
+        if( ! ((this.$store.state.currentEntity||{})['PrimaryRelativeCaregiver']||{}).hasOwnProperty(this.primaryRelativeCaregiverId)   ) return "";  // the async call to get the info hasn't happened yet
         
-        let fullName = "";
-        fullName += this.$store.state.currentEntity['PrimaryRelativeCaregiver'][this.primaryRelativeCaregiverId]?this.$store.state.currentEntity['PrimaryRelativeCaregiver'][this.primaryRelativeCaregiverId].data.LastName:"";
-        fullName += ", ";
-        fullName += this.$store.state.currentEntity['PrimaryRelativeCaregiver'][this.primaryRelativeCaregiverId]?this.$store.state.currentEntity['PrimaryRelativeCaregiver'][this.primaryRelativeCaregiverId].data.FirstName:"";
+        let FirstName = ((((this.$store.state.currentEntity||{})['PrimaryRelativeCaregiver']||{})[this.primaryRelativeCaregiverId]||{}).data||{}).FirstName;
+        if (typeof FirstName === 'undefined') FirstName = "<FIRST NAME NOT SET>";
+
+        let LastName = ((((this.$store.state.currentEntity||{})['PrimaryRelativeCaregiver']||{})[this.primaryRelativeCaregiverId]||{}).data||{}).LastName;
+        if (typeof LastName === 'undefined') LastName = "<LAST NAME NOT SET>";
+
+        let fullName = LastName + ", " + FirstName;
         return fullName;
       },
       navBreadCrumbs: function (){
@@ -66,6 +68,7 @@ export default {
     }
     else{
       // this is a new load of the app - get the info for this root level entity
+      console.log('new load');
       this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.primaryRelativeCaregiverId, collectionId:'PrimaryRelativeCaregiver'});      
     }
   },

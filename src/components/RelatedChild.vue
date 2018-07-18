@@ -115,8 +115,17 @@ export default {
   },
   created(){
     console.log('RelatedChild.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
-    // TODO: this will need similar functionality to its parent PrimaryRelativeCaregiver which erases entities at a lower lever, otherwise this levels nested entities will continue to show up across this levels changes between entities
-    this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.docId, collectionId:this.componentCollectionId});
+
+    // if we are adding a new subEntity then create it
+    // - otherwise this entity will get loaded by parent ClientContainer.vue created function
+    if(this.relatedChildId == "add"){
+      this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.docId, collectionId:this.componentCollectionId});
+    }
+
+    // TODO: Need to implement verification of relatedChildId 
+    // - The parent ClientContainer.vue loads the parent entity and its children
+    // - - If the relatedChild value is legitimate (not deleted though user saved the link or erroneous value entered in the link) then the relatedChild will get loaded
+    // - - Otherwise - a blank form gets loaded and the user isn't notified of the issue until trying to type something in one of the fields  & the message is for a deleted entity which is confusing
   },
 };
 </script>

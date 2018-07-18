@@ -76,6 +76,7 @@ export const store = new Vuex.Store({
         // Initialize an Entity
         // Receives: docEntityContainer{docId:'', collectionId:'',docContainer:{id: '', data:{} } }
         initialize_currentEntity_byDocEntityContainer(state, docEntityContainer){
+            console.log('initialize_currentEntity_byDocEntityContainer');
             if(!state.currentEntity) state.currentEntity={}; // initialize the holder if its not yet initialized
             if(!state.currentEntity[docEntityContainer.collectionId]) Vue.set(state.currentEntity, docEntityContainer.collectionId, {}); // initialize the entity type / collection holder if its not set yet
             // set the data
@@ -154,10 +155,13 @@ export const store = new Vuex.Store({
                 if(typeof context.state.entityListeners[entityContainer.collectionId][entityContainer.docId] === 'function') context.state.entityListeners[entityContainer.collectionId][entityContainer.docId]();
 
                 // Remove any old info so it is not shown prior to async call returning info
-                context.commit('initialize_currentEntity_byDocEntityContainer', {docId:entityContainer.docId,collectionId:entityContainer.collectionId,docContainer:null,});
+                // - Need to check if the info does already exist so that we don't create a currentEntity collection doc property on a request where the entity does not exist
+                if(  ((context.state.currentEntity||{})[entityContainer.collectionId]||{}).hasOwnProperty(entityContainer.docId)  ){
+                    context.commit('initialize_currentEntity_byDocEntityContainer', {docId:entityContainer.docId,collectionId:entityContainer.collectionId,docContainer:null,});
+                }
 
-                    // Set up the new query & listener
-                    context.state.entityListeners[entityContainer.collectionId][entityContainer.docId] = firebase.firestore().collection(entityContainer.collectionId).doc(entityContainer.docId).onSnapshot(function(doc){
+                // Set up the new query & listener
+                context.state.entityListeners[entityContainer.collectionId][entityContainer.docId] = firebase.firestore().collection(entityContainer.collectionId).doc(entityContainer.docId).onSnapshot(function(doc){
                     if(!doc.exists){
                         console.log('Listener for collectionId/docId: ' + entityContainer.collectionId + '/' + entityContainer.docId + ' called and the !doc.exists returned false.  This document does not exist! (invalid link or the document was deleted and the listener was not removed');
 
@@ -166,17 +170,24 @@ export const store = new Vuex.Store({
                         // 2) When this document is deleted via the database of another real-time client
                         // 3) If the lookup for the entity/document is not found (ie a link for a deleted entity was used, or someone changed the id on the submitted link for the entity - thus the document is not found)
 
-                        // Possibly, the document was deleted on the server or by another real-time client
-                        // Therefore: Delete the entity & listener locally; shouldn't hurt to do so for the other situations
-                        context.commit('deleteEntityFromCurrentEntity', {docId:entityContainer.docId, collectionId:entityContainer.collectionId});
-                        context.commit('deleteEntityFromEntityListeners', {docId:entityContainer.docId, collectionId:entityContainer.collectionId});
+                        // if the document/entity exists locally, then this must be a delete from the server or via another real-time client
+                        if(  ((context.state.currentEntity||{})[entityContainer.collectionId]||{}).hasOwnProperty(entityContainer.docId)  ){
+                            // Therefore: Delete the entity & listener locally
+                            context.dispatch('fdelete_Entity_byCollectionContainer', {docId:entityContainer.docId, collectionId:entityContainer.collectionId});
+                            alert('The entity (or one of its child entities) has been deleted on the server.  You may need to reload the application by clicking refresh on your browser.');
+                        }
+                        // otherwise we must be trying to get a document that doesn't exist
+                        else{
+                            alert('The entity you are trying to retrieve does not exist.');  // TODO: Only works for parent object as ClientContainer loads the values based on the parent docId & gets recursively.  see related TODO note in RelatedChild.vue created function
+                        }
 
                     }
                     // Always update - whether setting locally or receiving new data asynchronously from the firebase server. 
                     // - commits to firebase from our app will also call this listener and it got difficult to try and ingnore the listner when new entites were added 
                     // - if this becomes an issue look into setting some kind of flag passed when it should be ignored locally (as opposed to checking when it shouldn't be ignored)
                     else{
-                        let NestedCollections = doc.data()['NestedCollections'];
+                        console.log('nestedcollections');
+                        let NestedCollections = doc.data()['NestedCollections']; 
                         if(typeof NestedCollections === 'object' ){
                             for (let collectionId in NestedCollections) {
                                 if ( NestedCollections.hasOwnProperty(collectionId) && Array.isArray(NestedCollections[collectionId]) ) { // sanity check
@@ -324,8 +335,9 @@ export const store = new Vuex.Store({
             context.commit('deleteEntityFromEntityListeners', {docId:collectionContainer.docId, collectionId:collectionContainer.collectionId});
 
             // Delete the Entity in the store
+            // NOTE: it seems to be ok to delete a document that does not exist 
             firebase.firestore().collection(collectionContainer.collectionId).doc(collectionContainer.docId).delete()
-                .then(function(docRef) {
+                .then(function() {
                     if(collectionContainer.route && collectionContainer.route.to){
                         router.replace(collectionContainer.route.to);               
                     }
@@ -336,6 +348,7 @@ export const store = new Vuex.Store({
         },
 
         getPrimaryRelativeCaregivers(context){
+            console.log('getPrimaryRelativeCaregivers');
             firebase.firestore().collection('PrimaryRelativeCaregiver').get()
             .then(function(querySnapshot){
                 let PrimaryRelativeCaregiverOBJ = {};
