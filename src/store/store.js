@@ -168,7 +168,7 @@ export const store = new Vuex.Store({
                         console.log('Listener for collectionId/docId: ' + entityContainer.collectionId + '/' + entityContainer.docId + ' called and the !doc.exists returned false.  This document does not exist! (invalid link or the document was deleted and the listener was not removed');
 
                         // Situations that lead to here
-                        // 1) When sending to delete this document on the server
+                        // 1) When sending to delete this document on the server - NOTE: this should no longer happen as the listener is to be deleted before the delete
                         // 2) When this document is deleted via the database of another real-time client
                         // 3) If the lookup for the entity/document is not found (ie a link for a deleted entity was used, or someone changed the id on the submitted link for the entity - thus the document is not found)
 
@@ -219,7 +219,7 @@ export const store = new Vuex.Store({
         // Remove an entity from a parent's neste collection
         // receives object: parentChildEntityPropertyContainer{docId:parentDocId, collectionId:parentCollectionId, childDocId:collectionContainer.docId, childCollectionId:collectionContainer.collectionId})
         removeNestedCollection(context, parentChildEntityPropertyContainer){
-            console.log('removeNestedCollection');
+            console.log('removeNestedCollection - object received: ' + JSON.stringify(parentChildEntityPropertyContainer));
             if(Array.isArray(  (((((context.state.currentEntity||{})[parentChildEntityPropertyContainer.collectionId]||{})[parentChildEntityPropertyContainer.docId]||{}).data||{}).NestedCollections||{})[parentChildEntityPropertyContainer.childCollectionId]    )){
                 // TODO:  delete this child from the parent
                 console.log('need to delete child from parent');
@@ -312,18 +312,16 @@ export const store = new Vuex.Store({
                 }
             }
 
-            console.log(context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId].data.ParentCollectionId);
             // If this is a child entity of another entity
             if(     
                 ((((context.state.currentEntity||{})[collectionContainer.collectionId]||{})[collectionContainer.docId]||{}).data||{}).hasOwnProperty('ParentCollectionId') &&
                 ((((context.state.currentEntity||{})[collectionContainer.collectionId]||{})[collectionContainer.docId]||{}).data||{}).hasOwnProperty('ParentType')
             ){
-                console.log('sending dispatch to remove child from parent NestedCollections array');
                 let parentDocId = context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId].data.ParentCollectionId;
                 let parentCollectionId = context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId].data.ParentType;
+                console.log('sending dispatch to remove child from parent NestedCollections array.');
                 context.dispatch('removeNestedCollection', {docId:parentDocId, collectionId:parentCollectionId, childDocId:collectionContainer.docId, childCollectionId:collectionContainer.collectionId})
             }
-
 
             // Delete Entity from currentEntity
             context.commit('deleteEntityFromCurrentEntity', {docId:collectionContainer.docId, collectionId:collectionContainer.collectionId});
@@ -331,7 +329,6 @@ export const store = new Vuex.Store({
             // Delete listener from currentListeners
             context.commit('deleteEntityFromEntityListeners', {docId:collectionContainer.docId, collectionId:collectionContainer.collectionId});
 
-            
             // Delete the Entity in the store
             firebase.firestore().collection(collectionContainer.collectionId).doc(collectionContainer.docId).delete()
                 .then(function(docRef) {
