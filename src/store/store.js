@@ -110,9 +110,15 @@ export const store = new Vuex.Store({
                     }
                 };
 
+            }            
+        },
+        // removes a nested collection property from a 
+        // receives object: parentChildEntityPropertyContainer{docId:parentDocId, collectionId:parentCollectionId, childDocId:collectionContainer.docId, childCollectionId:collectionContainer.collectionId})
+        deleteNestedCollectionFromParent(state, parentChildEntityPropertyContainer){
+            // check that the NestedCollections property for the child docId / entity id exists on the parent collectionId / entity type 
+            if(typeof (((((state.currentEntity||{})[parentChildEntityPropertyContainer.collectionId]||{})[parentChildEntityPropertyContainer.docId]||{}).data||{}).NestedCollections||{})[parentChildEntityPropertyContainer.childCollectionId] === 'object'   ){
+                delete state.currentEntity[parentChildEntityPropertyContainer.collectionId][parentChildEntityPropertyContainer.docId].data.NestedCollections[parentChildEntityPropertyContainer.childCollectionId][parentChildEntityPropertyContainer.childDocId]
             }
-
-            
         },
     },
     actions:{
@@ -186,18 +192,28 @@ export const store = new Vuex.Store({
                     // - commits to firebase from our app will also call this listener and it got difficult to try and ingnore the listner when new entites were added 
                     // - if this becomes an issue look into setting some kind of flag passed when it should be ignored locally (as opposed to checking when it shouldn't be ignored)
                     else{
+
+                        // look for nested collections on the loaded entity and load them if they aren't already loaded
                         console.log('nestedcollections');
                         let NestedCollections = doc.data()['NestedCollections']; 
-                        if(typeof NestedCollections === 'object' ){
+                        if(typeof NestedCollections === 'object' ){ // the loaded entity has nested collections
                             for (let collectionId in NestedCollections) {
-                                if ( NestedCollections.hasOwnProperty(collectionId) && Array.isArray(NestedCollections[collectionId]) ) { // sanity check
-                                    NestedCollections[collectionId].forEach( docId => {
+                                console.log('looping over NestedCollections.  collectionId: ', JSON.stringify(collectionId));
+                                if ( NestedCollections.hasOwnProperty(collectionId) && typeof NestedCollections[collectionId]==='object' ) { // sanity check
+                                    console.log('passed sanity check');
+                                    for(let docId in NestedCollections[collectionId]){
+                                        console.log('docId: ' + docId)
+                                        console.log('typeof entity listener: ' + !(typeof ((context.state.entityListeners||{})[collectionId]||{})[docId]  === 'function')  );
                                         // Check Vuex store to see if there is a listener running on this sub-entity
-                                        if( !(context.state.entityListeners[collectionId] && context.state.entityListeners[collectionId][docId]) ){
+                                        if( !(typeof ((context.state.entityListeners||{})[collectionId]||{})[docId]  === 'function')  ){
                                             // Listener not found - load the entity
                                             context.dispatch('getEntity_ByEntityContainer', {docId:docId,collectionId:collectionId})    
                                         }
-                                    });                                    
+                                        else{
+                                            // Listener found
+                                            console.log('getEntity_ByEntityContainer nested collection check - listener already established therefore the sub entity is already loaded. collectionId/docId:' + collectionId + docId);
+                                        }
+                                    }
                                 }
                             }
                 
@@ -223,12 +239,13 @@ export const store = new Vuex.Store({
         
         // Remove an entity from a parent's neste collection
         // receives object: parentChildEntityPropertyContainer{docId:parentDocId, collectionId:parentCollectionId, childDocId:collectionContainer.docId, childCollectionId:collectionContainer.collectionId})
-        removeNestedCollection(context, parentChildEntityPropertyContainer){
+        removeNestedCollectionFromParent(context, parentChildEntityPropertyContainer){
             console.log('removeNestedCollection - object received: ' + JSON.stringify(parentChildEntityPropertyContainer));
-            if(Array.isArray(  (((((context.state.currentEntity||{})[parentChildEntityPropertyContainer.collectionId]||{})[parentChildEntityPropertyContainer.docId]||{}).data||{}).NestedCollections||{})[parentChildEntityPropertyContainer.childCollectionId]    )){
-                // TODO:  delete this child from the parent
-                console.log('need to delete child from parent');
-            }
+
+            // delete this child from the parent
+            context.commit('deleteNestedCollectionFromParent', parentChildEntityPropertyContainer);
+            // commit the parent
+            context.dispatch('fcommit_Entity_byCollectionContainer', {docId:parentChildEntityPropertyContainer.docId, collectionId:parentChildEntityPropertyContainer.collectionId});
         },
         // add new entity to firebase
         // Receives collectionContainer: {docId:'', collectionId:''}
@@ -259,8 +276,9 @@ export const store = new Vuex.Store({
                 console.log('new entity has been created. docRef.id: ' + docRef.id);
                 // Determine and set the parent to know about the sub/nested entity
                 if(newSubEntityMetaLocal.hasOwnProperty('ParentCollectionId')){ // the newSubEntityMeta object is not empty therefore its a sub entity
-                    let NestedCollections = {};  // holds an array of child entities
-                    NestedCollections[collectionContainer.collectionId] =  [docRef.id];
+                    let NestedCollections = {};  // holds an object of child entities by child entity type property
+                    NestedCollections[collectionContainer.collectionId] = {};
+                    NestedCollections[collectionContainer.collectionId][docRef.id] = 1;  // set the docId as a property of the collectionId object
                     context.dispatch('update_currentEntity_byEntityPropertyContainer', {
                         docId:newSubEntityMetaLocal.ParentCollectionId,
                         collectionId: newSubEntityMetaLocal.ParentType,
@@ -308,11 +326,11 @@ export const store = new Vuex.Store({
             let NestedCollections =  ((((context.state.currentEntity[collectionContainer.collectionId]||{})[collectionContainer.docId])||{}).data||{}).NestedCollections;  // NestedCollections exists || undefined
             if(  NestedCollections  ){ 
                 for (let collectionId in NestedCollections) {
-                    if ( NestedCollections.hasOwnProperty(collectionId) && Array.isArray(NestedCollections[collectionId]) ) { // sanity check
-                        NestedCollections[collectionId].forEach( docId => {
+                    if ( NestedCollections.hasOwnProperty(collectionId) && typeof NestedCollections[collectionId] === 'object' ) { // sanity check
+                        for(let docId in NestedCollections[collectionId]){
                             // Delete this nested collection entity
                             context.dispatch('fdelete_Entity_byCollectionContainer', {docId:docId, collectionId:collectionId});
-                        });                                    
+                        }                        
                     }
                 }
             }
@@ -325,7 +343,7 @@ export const store = new Vuex.Store({
                 let parentDocId = context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId].data.ParentCollectionId;
                 let parentCollectionId = context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId].data.ParentType;
                 console.log('sending dispatch to remove child from parent NestedCollections array.');
-                context.dispatch('removeNestedCollection', {docId:parentDocId, collectionId:parentCollectionId, childDocId:collectionContainer.docId, childCollectionId:collectionContainer.collectionId})
+                context.dispatch('removeNestedCollectionFromParent', {docId:parentDocId, collectionId:parentCollectionId, childDocId:collectionContainer.docId, childCollectionId:collectionContainer.collectionId})
             }
 
             // Delete Entity from currentEntity
