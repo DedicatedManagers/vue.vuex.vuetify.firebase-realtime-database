@@ -7,9 +7,9 @@
             <span v-for="(navBreadCrumb, id) in navBreadCrumbs" :key="id">
                 | <router-link  :to="navBreadCrumb.link">{{navBreadCrumb.text}}</router-link>
             </span>
-            <primary-relative-caregiver v-if="!relatedChildId && !relatedChildIncomeId" :primaryRelativeCaregiverId="primaryRelativeCaregiverId"></primary-relative-caregiver>
-            <related-child v-if="relatedChildId && !relatedChildIncomeId" :primaryRelativeCaregiverId="primaryRelativeCaregiverId" :relatedChildId="relatedChildId" ></related-child>
-            <related-child-income v-if="relatedChildIncomeId" :primaryRelativeCaregiverId="primaryRelativeCaregiverId" :relatedChildId="relatedChildId" :relatedChildIncomeId="relatedChildIncomeId"></related-child-income>
+            <primary-relative-caregiver v-if="!relatedChildId && !relatedChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId"></primary-relative-caregiver>
+            <related-child v-if="relatedChildId && !relatedChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :relatedChildId="relatedChildId" ></related-child>
+            <related-child-income v-if="relatedChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :relatedChildId="relatedChildId" :relatedChildIncomeId="relatedChildIncomeId"></related-child-income>
           </v-flex>
         </v-layout> 
     </v-container>
@@ -24,7 +24,7 @@ import RelatedChildIncome from '@/components/RelatedChildIncome';
 
 export default {
   name: 'ClientContainer',
-  props:['primaryRelativeCaregiverId','relatedChildId', 'relatedChildIncomeId'],
+  props:['primaryKinshipCaregiverId','relatedChildId', 'relatedChildIncomeId'],
   components:{
       'primary-relative-caregiver':PrimaryKinshipCaregiver,
       'related-child':RelatedChild,
@@ -32,12 +32,12 @@ export default {
   },
   computed:{
       clientFullName:function(){
-        if( ! ((this.$store.state.currentEntity||{})['PrimaryKinshipCaregiver']||{}).hasOwnProperty(this.primaryRelativeCaregiverId)   ) return "";  // the async call to get the info hasn't happened yet
+        if( ! ((this.$store.state.currentEntity||{})['PrimaryKinshipCaregiver']||{}).hasOwnProperty(this.primaryKinshipCaregiverId)   ) return "";  // the async call to get the info hasn't happened yet
         
-        let FirstName = ((((this.$store.state.currentEntity||{})['PrimaryKinshipCaregiver']||{})[this.primaryRelativeCaregiverId]||{}).data||{}).FirstName;
+        let FirstName = ((((this.$store.state.currentEntity||{})['PrimaryKinshipCaregiver']||{})[this.primaryKinshipCaregiverId]||{}).data||{}).FirstName;
         if (typeof FirstName === 'undefined') FirstName = "<FIRST NAME NOT SET>";
 
-        let LastName = ((((this.$store.state.currentEntity||{})['PrimaryKinshipCaregiver']||{})[this.primaryRelativeCaregiverId]||{}).data||{}).LastName;
+        let LastName = ((((this.$store.state.currentEntity||{})['PrimaryKinshipCaregiver']||{})[this.primaryKinshipCaregiverId]||{}).data||{}).LastName;
         if (typeof LastName === 'undefined') LastName = "<LAST NAME NOT SET>";
 
         let fullName = LastName + ", " + FirstName;
@@ -60,13 +60,13 @@ export default {
           let crumbs = [];
           if(this.relatedChildId){
             crumbs.push({
-                link:'/PrimaryKinshipCaregiver/'+this.primaryRelativeCaregiverId,
+                link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId,
                 text:this.clientFullName,
             });
           }
           if(this.relatedChildIncomeId){
             crumbs.push({
-                link:'/PrimaryKinshipCaregiver/'+this.primaryRelativeCaregiverId+'/RelatedChild/'+this.relatedChildId,
+                link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId+'/RelatedChild/'+this.relatedChildId,
                 text:this.relatedChildFullName,
             });
           }
@@ -81,17 +81,17 @@ export default {
       if(this.$store.state.currentEntity['PrimaryKinshipCaregiver']){
 
         // if we are trying add or to get a new root level Entity, clear out the currentEntity & entityListeners to start fresh with the new root level entity
-        // - its a new entity if the new id (primaryRelativeCaregiverId) doesn't exist already on the root entity (PrimaryKinshipCaregiver)
-        if(this.primaryRelativeCaregiverId=="add" || !this.$store.state.currentEntity['PrimaryKinshipCaregiver'].hasOwnProperty(this.primaryRelativeCaregiverId)){
+        // - its a new entity if the new id (primaryKinshipCaregiverId) doesn't exist already on the root entity (PrimaryKinshipCaregiver)
+        if(this.primaryKinshipCaregiverId=="add" || !this.$store.state.currentEntity['PrimaryKinshipCaregiver'].hasOwnProperty(this.primaryKinshipCaregiverId)){
             this.$store.commit('deleteAllCurrentEntitesAndListeners');
-            this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.primaryRelativeCaregiverId, collectionId:'PrimaryKinshipCaregiver'});
+            this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.primaryKinshipCaregiverId, collectionId:'PrimaryKinshipCaregiver'});
         }
       }
     }
     else{
       // this is a new load of the app - get the info for this root level entity
       console.log('new load');
-      this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.primaryRelativeCaregiverId, collectionId:'PrimaryKinshipCaregiver'});      
+      this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.primaryKinshipCaregiverId, collectionId:'PrimaryKinshipCaregiver'});      
     }
   },
 };

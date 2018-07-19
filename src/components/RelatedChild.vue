@@ -40,7 +40,7 @@
                 <v-layout row wrap>
                   <v-flex xs12>
                     <v-list v-for="(relatedChildIncome, relatedChildIncomeCollectionId) in relatedChildIncomes" :key="relatedChildIncomeCollectionId" v-if="relatedChildIncome">
-                      <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+primaryRelativeCaregiverId+'/RelatedChild/'+relatedChildId+'/RelatedChildIncome/'+relatedChildIncomeCollectionId">
+                      <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+primaryKinshipCaregiverId+'/RelatedChild/'+relatedChildId+'/RelatedChildIncome/'+relatedChildIncomeCollectionId">
                           <v-list-tile-action>
                           <v-icon>monetization_on</v-icon>
                         </v-list-tile-action>
@@ -76,7 +76,7 @@ import DialogConfirm from '@/components/shared/DialogConfirm';
 
 export default {
   name: 'RelatedChild',
-  props:['relatedChildId', 'primaryRelativeCaregiverId'],
+  props:['relatedChildId', 'primaryKinshipCaregiverId'],
   components:{
     'dialog-confirm':DialogConfirm
   },
@@ -150,12 +150,12 @@ export default {
   },
   methods:{
       fDelete(){
-        console.log(this.primaryRelativeCaregiverId);
+        console.log(this.primaryKinshipCaregiverId);
         this.confirmDialogVisibility = false;
-        this.$store.dispatch('fdelete_Entity_byCollectionContainer',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryKinshipCaregiver/'+this.primaryRelativeCaregiverId}})
+        this.$store.dispatch('fdelete_Entity_byCollectionContainer',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId}})
       },     
       addRelatedChildIncome(){
-        this.$router.push('/PrimaryKinshipCaregiver/' + this.primaryRelativeCaregiverId + '/RelatedChild/' + this.relatedChildId + '/RelatedChildIncome/add');
+        this.$router.push('/PrimaryKinshipCaregiver/' + this.primaryKinshipCaregiverId + '/RelatedChild/' + this.relatedChildId + '/RelatedChildIncome/add');
       }
 
   },

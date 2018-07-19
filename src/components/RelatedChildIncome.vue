@@ -41,7 +41,7 @@ import DialogConfirm from '@/components/shared/DialogConfirm';
 
 export default {
   name: 'RelatedChildIncome',
-  props:['primaryRelativeCaregiverId', 'relatedChildId', 'relatedChildIncomeId'],
+  props:['primaryKinshipCaregiverId', 'relatedChildId', 'relatedChildIncomeId'],
   components:{
     'dialog-confirm':DialogConfirm
   },
@@ -74,9 +74,9 @@ export default {
   },
   methods:{
       fDelete(){
-        console.log(this.primaryRelativeCaregiverId);
+        console.log(this.primaryKinshipCaregiverId);
         this.confirmDialogVisibility = false;
-        this.$store.dispatch('fdelete_Entity_byCollectionContainer',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryKinshipCaregiver/'+this.primaryRelativeCaregiverId+'/RelatedChild/'+this.relatedChildId}})
+        this.$store.dispatch('fdelete_Entity_byCollectionContainer',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId+'/RelatedChild/'+this.relatedChildId}})
       },
   },
   created(){

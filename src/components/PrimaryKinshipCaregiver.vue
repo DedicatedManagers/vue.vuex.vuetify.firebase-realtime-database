@@ -86,7 +86,7 @@ import DialogConfirm from '@/components/shared/DialogConfirm';
 
 export default {
   name: 'PrimaryKinshipCaregiver',
-  props:['primaryRelativeCaregiverId'],
+  props:['primaryKinshipCaregiverId'],
   components:{
     'dialog-confirm':DialogConfirm
   },
@@ -115,7 +115,7 @@ export default {
   },
   computed:{
     docId: function(){
-      return this.primaryRelativeCaregiverId;
+      return this.primaryKinshipCaregiverId;
     },
     relatedChildren(){
       if(!this.$store.state.currentEntity) return null

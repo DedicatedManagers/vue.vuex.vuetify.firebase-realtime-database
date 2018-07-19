@@ -25,7 +25,7 @@ const router = new Router({
       component: Login,
     },
     {
-      path: '/PrimaryKinshipCaregiver/:primaryRelativeCaregiverId',
+      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId',
       props: true,
       name: 'PrimaryKinshipCaregiver',
       component: ClientContainer,
@@ -34,7 +34,7 @@ const router = new Router({
       },
     },
     {
-      path: '/PrimaryKinshipCaregiver/:primaryRelativeCaregiverId/RelatedChild/:relatedChildId',
+      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/RelatedChild/:relatedChildId',
       props: true,
       name: 'RelatedChild',
       component: ClientContainer,
@@ -43,7 +43,7 @@ const router = new Router({
       },
     },
     {
-      path: '/PrimaryKinshipCaregiver/:primaryRelativeCaregiverId/RelatedChild/:relatedChildId/RelatedChildIncome/:relatedChildIncomeId',
+      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/RelatedChild/:relatedChildId/RelatedChildIncome/:relatedChildIncomeId',
       props: true,
       name: 'RelatedChildIncome',
       component: ClientContainer,
