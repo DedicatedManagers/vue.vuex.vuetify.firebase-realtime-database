@@ -8,8 +8,8 @@
                 | <router-link  :to="navBreadCrumb.link">{{navBreadCrumb.text}}</router-link>
             </span>
             <primary-relative-caregiver v-if="!kinshipChildId && !kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId"></primary-relative-caregiver>
-            <related-child v-if="kinshipChildId && !kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" ></related-child>
-            <related-child-income v-if="kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" :kinshipChildIncomeId="kinshipChildIncomeId"></related-child-income>
+            <kinship-child v-if="kinshipChildId && !kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" ></kinship-child>
+            <kinship-child-income v-if="kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" :kinshipChildIncomeId="kinshipChildIncomeId"></kinship-child-income>
           </v-flex>
         </v-layout> 
     </v-container>
@@ -27,8 +27,8 @@ export default {
   props:['primaryKinshipCaregiverId','kinshipChildId', 'kinshipChildIncomeId'],
   components:{
       'primary-relative-caregiver':PrimaryKinshipCaregiver,
-      'related-child':KinshipChild,
-      'related-child-income':KinshipChildIncome,
+      'kinship-child':KinshipChild,
+      'kinship-child-income':KinshipChildIncome,
   },
   computed:{
       clientFullName:function(){
