@@ -5,7 +5,7 @@
         <v-flex xs12 md4>
           <v-card>
             <v-toolbar color="blue" dark>
-              <v-toolbar-title>Related Child</v-toolbar-title>
+              <v-toolbar-title>Kinship Child</v-toolbar-title>
             </v-toolbar>
             <v-card-title>
               <v-layout row wrap>

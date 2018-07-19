@@ -7,7 +7,7 @@
             <span v-for="(navBreadCrumb, id) in navBreadCrumbs" :key="id">
                 | <router-link  :to="navBreadCrumb.link">{{navBreadCrumb.text}}</router-link>
             </span>
-            <primary-relative-caregiver v-if="!kinshipChildId && !kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId"></primary-relative-caregiver>
+            <primary-kinship-caregiver v-if="!kinshipChildId && !kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId"></primary-kinship-caregiver>
             <kinship-child v-if="kinshipChildId && !kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" ></kinship-child>
             <kinship-child-income v-if="kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" :kinshipChildIncomeId="kinshipChildIncomeId"></kinship-child-income>
           </v-flex>
@@ -26,7 +26,7 @@ export default {
   name: 'ClientContainer',
   props:['primaryKinshipCaregiverId','kinshipChildId', 'kinshipChildIncomeId'],
   components:{
-      'primary-relative-caregiver':PrimaryKinshipCaregiver,
+      'primary-kinship-caregiver':PrimaryKinshipCaregiver,
       'kinship-child':KinshipChild,
       'kinship-child-income':KinshipChildIncome,
   },

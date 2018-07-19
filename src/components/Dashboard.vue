@@ -3,7 +3,7 @@
     <v-container fluid>
       <v-layout row wrap>
         <v-flex xs12>
-          <h1>Dashboard</h1>
+          <h1>Primary Kinship Caregivers</h1>
         </v-flex>
         <v-flex xs12 v-if="clients">
           <div v-for="(client, id) in clients" :key="id">

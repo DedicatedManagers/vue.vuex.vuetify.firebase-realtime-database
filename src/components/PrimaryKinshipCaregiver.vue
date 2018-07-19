@@ -5,7 +5,7 @@
           <v-flex xs12 md4>
             <v-card>
               <v-toolbar color="blue" dark>
-                <v-toolbar-title>Primary Caregiver</v-toolbar-title>
+                <v-toolbar-title>Primary Kinship Caregiver</v-toolbar-title>
               </v-toolbar>
               <v-card-title>
                 <v-layout row wrap>
@@ -39,7 +39,7 @@
           <v-flex xs12 md4 offset-md1>
             <v-card>
               <v-toolbar color="blue" dark>
-                <v-toolbar-title>Related Children</v-toolbar-title>
+                <v-toolbar-title>Kinship Children</v-toolbar-title>
               </v-toolbar>
               <v-card-title>
                 <v-layout row wrap>
@@ -68,7 +68,7 @@
         <template v-if="confirmDialogVisibility">
           <dialog-confirm confirmType="error" :confirmVisibilty="confirmDialogVisibility" @confirmAccept="fDelete" @confirmCancel="confirmDialogVisibility=false">
             <template slot="title">Confirm Delete</template>
-            <template slot="text">Are you sure you want to delete this Primary Relative Caregiver?</template>
+            <template slot="text">Are you sure you want to delete this Primary Kinship Caregiver?</template>
             <template slot="confirmButton">Confirm Delete</template>
           </dialog-confirm> 
         </template>
