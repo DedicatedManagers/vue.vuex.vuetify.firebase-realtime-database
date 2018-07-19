@@ -1,22 +1,35 @@
 <template>
   <v-slide-y-transition mode="out-in">
     <v-container fluid>
-      <v-layout row wrap>
-        <v-flex xs12>
-          <h1>Primary Kinship Caregivers</h1>
-        </v-flex>
-        <v-flex xs12 v-if="clients">
-          <div v-for="(client, id) in clients" :key="id">
-            <div>
-              <router-link :to="'/PrimaryKinshipCaregiver/'+id">{{client.LastName}}, {{client.FirstName}} {{client.MiddleName}}</router-link>
-            </div>
-          </div>
-          <div>
-            <br>
-            <v-btn :to="'/PrimaryKinshipCaregiver/add'">+ Add New Client</v-btn>
-          </div>
-        </v-flex>
-      </v-layout>
+        <v-layout row wrap>
+          <v-flex xs12 md4>
+            <v-card>
+              <v-toolbar color="blue" dark>
+                <v-toolbar-title>Primary Kinship Caregivers</v-toolbar-title>
+              </v-toolbar>
+              <v-card-title>
+                <v-layout row wrap>
+                  <v-flex xs12>
+                    <v-list  v-for="(client, id) in clients" :key="id">
+                      <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+id">
+                          <v-list-tile-action>
+                          <v-icon>person</v-icon>
+                        </v-list-tile-action>
+
+                        <v-list-tile-content>
+                          <v-list-tile-title>{{client.LastName}}, {{client.FirstName}} {{client.MiddleName}}</v-list-tile-title>
+                        </v-list-tile-content>
+                      </v-list-tile>
+                    </v-list>
+                    <div class="text-xs-right">
+                      <v-btn color="success" :to="'/PrimaryKinshipCaregiver/add'">Add New Client<v-icon right>person_add</v-icon></v-btn>
+                    </div>
+                  </v-flex>
+                </v-layout>
+              </v-card-title>
+            </v-card>              
+          </v-flex>
+        </v-layout>
     </v-container>
   </v-slide-y-transition>
 </template>
