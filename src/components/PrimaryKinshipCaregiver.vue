@@ -237,7 +237,7 @@ export default {
         this.$router.push('/PrimaryKinshipCaregiver/' + this.docId + '/KinshipChild/add');
       },
       addOtherInHousehold(){
-        this.$router.push('/PrimaryKinshipCaregiver/' + this.docId + '/OtherInHouseHold/add');
+        this.$router.push('/PrimaryKinshipCaregiver/' + this.docId + '/OtherInHousehold/add');
       },
   },
   created(){

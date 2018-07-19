@@ -250,7 +250,7 @@ export const store = new Vuex.Store({
         // add new entity to firebase
         // Receives collectionContainer: {docId:'', collectionId:''}
         fcreate_Entity_byCollectionContainer(context, collectionContainer){
-            console.log('creating new');
+            console.log('creating new. object passed in: ' + JSON.stringify(collectionContainer));
             let newSubEntityMetaLocal = {}; // empty object means it's not a sub-entity
 
             // check the route to see whether or not we are creating a sub-entity. 
