@@ -184,7 +184,7 @@ export const store = new Vuex.Store({
                         }
                         // otherwise we must be trying to get a document that doesn't exist
                         else{
-                            alert('The entity you are trying to retrieve does not exist.');  // TODO: Only works for parent object as ClientContainer loads the values based on the parent docId & gets recursively.  see related TODO note in RelatedChild.vue created function
+                            alert('The entity you are trying to retrieve does not exist.');  // TODO: Only works for parent object as ClientContainer loads the values based on the parent docId & gets recursively.  see related TODO note in KinshipChild.vue created function
                         }
 
                     }

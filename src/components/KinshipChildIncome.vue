@@ -40,20 +40,20 @@
 import DialogConfirm from '@/components/shared/DialogConfirm';
 
 export default {
-  name: 'RelatedChildIncome',
-  props:['primaryKinshipCaregiverId', 'relatedChildId', 'relatedChildIncomeId'],
+  name: 'KinshipChildIncome',
+  props:['primaryKinshipCaregiverId', 'kinshipChildId', 'kinshipChildIncomeId'],
   components:{
     'dialog-confirm':DialogConfirm
   },
   data() {
     return {
-      componentCollectionId:'RelatedChildIncome',
+      componentCollectionId:'KinshipChildIncome',
       confirmDialogVisibility:false,
     };
   },
   computed:{
     docId: function(){
-      return this.relatedChildIncomeId;
+      return this.kinshipChildIncomeId;
     },
     IncomeType:{
       get(){
@@ -76,21 +76,21 @@ export default {
       fDelete(){
         console.log(this.primaryKinshipCaregiverId);
         this.confirmDialogVisibility = false;
-        this.$store.dispatch('fdelete_Entity_byCollectionContainer',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId+'/RelatedChild/'+this.relatedChildId}})
+        this.$store.dispatch('fdelete_Entity_byCollectionContainer',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId+'/KinshipChild/'+this.kinshipChildId}})
       },
   },
   created(){
-    console.log('RelatedChildIncome.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
+    console.log('KinshipChildIncome.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
 
     // if we are adding a new subEntity then create it
     // - otherwise this entity will get loaded by parent ClientContainer.vue created function
-    if(this.relatedChildIncomeId == "add"){
+    if(this.kinshipChildIncomeId == "add"){
       this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.docId, collectionId:this.componentCollectionId});
     }
 
-    // TODO: Need to implement verification of relatedChildIncomeId 
+    // TODO: Need to implement verification of kinshipChildIncomeId 
     // - The parent ClientContainer.vue loads the parent entity and its children
-    // - - If the relatedChild value is legitimate (not deleted though user saved the link or erroneous value entered in the link) then the relatedChild will get loaded
+    // - - If the kinshipChild value is legitimate (not deleted though user saved the link or erroneous value entered in the link) then the kinshipChild will get loaded
     // - - Otherwise - a blank form gets loaded and the user isn't notified of the issue until trying to type something in one of the fields  & the message is for a deleted entity which is confusing
   },
 };

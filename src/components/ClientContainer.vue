@@ -7,9 +7,9 @@
             <span v-for="(navBreadCrumb, id) in navBreadCrumbs" :key="id">
                 | <router-link  :to="navBreadCrumb.link">{{navBreadCrumb.text}}</router-link>
             </span>
-            <primary-relative-caregiver v-if="!relatedChildId && !relatedChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId"></primary-relative-caregiver>
-            <related-child v-if="relatedChildId && !relatedChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :relatedChildId="relatedChildId" ></related-child>
-            <related-child-income v-if="relatedChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :relatedChildId="relatedChildId" :relatedChildIncomeId="relatedChildIncomeId"></related-child-income>
+            <primary-relative-caregiver v-if="!kinshipChildId && !kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId"></primary-relative-caregiver>
+            <related-child v-if="kinshipChildId && !kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" ></related-child>
+            <related-child-income v-if="kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" :kinshipChildIncomeId="kinshipChildIncomeId"></related-child-income>
           </v-flex>
         </v-layout> 
     </v-container>
@@ -19,16 +19,16 @@
 <script>
 import firebase from 'firebase/app';
 import PrimaryKinshipCaregiver from '@/components/PrimaryKinshipCaregiver';
-import RelatedChild from '@/components/RelatedChild';
-import RelatedChildIncome from '@/components/RelatedChildIncome';
+import KinshipChild from '@/components/KinshipChild';
+import KinshipChildIncome from '@/components/KinshipChildIncome';
 
 export default {
   name: 'ClientContainer',
-  props:['primaryKinshipCaregiverId','relatedChildId', 'relatedChildIncomeId'],
+  props:['primaryKinshipCaregiverId','kinshipChildId', 'kinshipChildIncomeId'],
   components:{
       'primary-relative-caregiver':PrimaryKinshipCaregiver,
-      'related-child':RelatedChild,
-      'related-child-income':RelatedChildIncome,
+      'related-child':KinshipChild,
+      'related-child-income':KinshipChildIncome,
   },
   computed:{
       clientFullName:function(){
@@ -43,14 +43,14 @@ export default {
         let fullName = LastName + ", " + FirstName;
         return fullName;
       },
-      relatedChildFullName:function(){
-        // If the RelatedChild has not loaded, return an empty string
-        if( ! ((this.$store.state.currentEntity||{})['RelatedChild']||{}).hasOwnProperty(this.relatedChildId)   ) return ""; 
+      kinshipChildFullName:function(){
+        // If the KinshipChild has not loaded, return an empty string
+        if( ! ((this.$store.state.currentEntity||{})['KinshipChild']||{}).hasOwnProperty(this.kinshipChildId)   ) return ""; 
         
-        let FirstName = ((((this.$store.state.currentEntity||{})['RelatedChild']||{})[this.relatedChildId]||{}).data||{}).FirstName;
+        let FirstName = ((((this.$store.state.currentEntity||{})['KinshipChild']||{})[this.kinshipChildId]||{}).data||{}).FirstName;
         if (typeof FirstName === 'undefined') FirstName = "<FIRST NAME NOT SET>";
 
-        let LastName = ((((this.$store.state.currentEntity||{})['RelatedChild']||{})[this.relatedChildId]||{}).data||{}).LastName;
+        let LastName = ((((this.$store.state.currentEntity||{})['KinshipChild']||{})[this.kinshipChildId]||{}).data||{}).LastName;
         if (typeof LastName === 'undefined') LastName = "<LAST NAME NOT SET>";
 
         let fullName = LastName + ", " + FirstName;
@@ -58,16 +58,16 @@ export default {
       },
       navBreadCrumbs: function (){
           let crumbs = [];
-          if(this.relatedChildId){
+          if(this.kinshipChildId){
             crumbs.push({
                 link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId,
                 text:this.clientFullName,
             });
           }
-          if(this.relatedChildIncomeId){
+          if(this.kinshipChildIncomeId){
             crumbs.push({
-                link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId+'/RelatedChild/'+this.relatedChildId,
-                text:this.relatedChildFullName,
+                link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId+'/KinshipChild/'+this.kinshipChildId,
+                text:this.kinshipChildFullName,
             });
           }
           return crumbs;

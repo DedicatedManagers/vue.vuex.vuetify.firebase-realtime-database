@@ -3,7 +3,7 @@ import Router from 'vue-router';
 import Vue from 'vue';
 import ClientContainer from '@/components/ClientContainer';
 import PrimaryKinshipCaregiver from '@/components/PrimaryKinshipCaregiver';
-import RelatedChild from '@/components/RelatedChild';
+import KinshipChild from '@/components/KinshipChild';
 import Dashboard from '@/components/Dashboard';
 import Login from '@/components/Login';
 
@@ -34,18 +34,18 @@ const router = new Router({
       },
     },
     {
-      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/RelatedChild/:relatedChildId',
+      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/KinshipChild/:kinshipChildId',
       props: true,
-      name: 'RelatedChild',
+      name: 'KinshipChild',
       component: ClientContainer,
       meta: {
         requiresAuth: true,
       },
     },
     {
-      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/RelatedChild/:relatedChildId/RelatedChildIncome/:relatedChildIncomeId',
+      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/KinshipChild/:kinshipChildId/KinshipChildIncome/:kinshipChildIncomeId',
       props: true,
-      name: 'RelatedChildIncome',
+      name: 'KinshipChildIncome',
       component: ClientContainer,
       meta: {
         requiresAuth: true,

@@ -44,19 +44,19 @@
               <v-card-title>
                 <v-layout row wrap>
                   <v-flex xs12>
-                    <v-list v-for="(relatedChild, relatedChildCollectionId) in relatedChildren" :key="relatedChildCollectionId" v-if="relatedChild">
-                      <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+docId+'/RelatedChild/'+relatedChildCollectionId">
+                    <v-list v-for="(kinshipChild, kinshipChildCollectionId) in kinshipChildren" :key="kinshipChildCollectionId" v-if="kinshipChild">
+                      <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+docId+'/KinshipChild/'+kinshipChildCollectionId">
                           <v-list-tile-action>
                           <v-icon>person</v-icon>
                         </v-list-tile-action>
 
                         <v-list-tile-content>
-                          <v-list-tile-title>{{relatedChild.data.LastName}}, {{relatedChild.data.FirstName}} {{relatedChild.data.MiddleName}}</v-list-tile-title>
+                          <v-list-tile-title>{{kinshipChild.data.LastName}}, {{kinshipChild.data.FirstName}} {{kinshipChild.data.MiddleName}}</v-list-tile-title>
                         </v-list-tile-content>
                       </v-list-tile>
                     </v-list>
                     <div class="text-xs-right">
-                      <v-btn color="success" @click="addRelatedChild">Add Child<v-icon right>person_add</v-icon></v-btn>
+                      <v-btn color="success" @click="addKinshipChild">Add Child<v-icon right>person_add</v-icon></v-btn>
                     </div>
                   </v-flex>
                 </v-layout>
@@ -117,9 +117,9 @@ export default {
     docId: function(){
       return this.primaryKinshipCaregiverId;
     },
-    relatedChildren(){
+    kinshipChildren(){
       if(!this.$store.state.currentEntity) return null
-      return this.$store.state.currentEntity['RelatedChild'];
+      return this.$store.state.currentEntity['KinshipChild'];
     },
     FirstName:{
       get(){
@@ -187,8 +187,8 @@ export default {
         this.confirmDialogVisibility = false;
         this.$store.dispatch('fdelete_Entity_byCollectionContainer',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/dashboard'}})
       },
-      addRelatedChild(){
-        this.$router.push('/PrimaryKinshipCaregiver/' + this.docId + '/RelatedChild/add');
+      addKinshipChild(){
+        this.$router.push('/PrimaryKinshipCaregiver/' + this.docId + '/KinshipChild/add');
       }
   },
   created(){

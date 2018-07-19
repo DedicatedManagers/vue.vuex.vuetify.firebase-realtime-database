@@ -39,19 +39,19 @@
               <v-card-title>
                 <v-layout row wrap>
                   <v-flex xs12>
-                    <v-list v-for="(relatedChildIncome, relatedChildIncomeCollectionId) in relatedChildIncomes" :key="relatedChildIncomeCollectionId" v-if="relatedChildIncome">
-                      <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+primaryKinshipCaregiverId+'/RelatedChild/'+relatedChildId+'/RelatedChildIncome/'+relatedChildIncomeCollectionId">
+                    <v-list v-for="(kinshipChildIncome, kinshipChildIncomeCollectionId) in kinshipChildIncomes" :key="kinshipChildIncomeCollectionId" v-if="kinshipChildIncome">
+                      <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+primaryKinshipCaregiverId+'/KinshipChild/'+kinshipChildId+'/KinshipChildIncome/'+kinshipChildIncomeCollectionId">
                           <v-list-tile-action>
                           <v-icon>monetization_on</v-icon>
                         </v-list-tile-action>
 
                         <v-list-tile-content>
-                          <v-list-tile-title>{{relatedChildIncome.data.IncomeType}} - {{relatedChildIncome.data.IncomeAmount}}</v-list-tile-title>
+                          <v-list-tile-title>{{kinshipChildIncome.data.IncomeType}} - {{kinshipChildIncome.data.IncomeAmount}}</v-list-tile-title>
                         </v-list-tile-content>
                       </v-list-tile>
                     </v-list>
                     <div class="text-xs-right">
-                      <v-btn color="success" @click="addRelatedChildIncome">Add Income<v-icon right>monetization_on</v-icon></v-btn>
+                      <v-btn color="success" @click="addKinshipChildIncome">Add Income<v-icon right>monetization_on</v-icon></v-btn>
                     </div>
                   </v-flex>
                 </v-layout>
@@ -75,35 +75,35 @@
 import DialogConfirm from '@/components/shared/DialogConfirm';
 
 export default {
-  name: 'RelatedChild',
-  props:['relatedChildId', 'primaryKinshipCaregiverId'],
+  name: 'KinshipChild',
+  props:['kinshipChildId', 'primaryKinshipCaregiverId'],
   components:{
     'dialog-confirm':DialogConfirm
   },
   data() {
     return {
-      componentCollectionId:'RelatedChild',
+      componentCollectionId:'KinshipChild',
       confirmDialogVisibility:false,
       BirthDateMenuVisibility:false,
     };
   },
   computed:{
     docId: function(){
-      return this.relatedChildId;
+      return this.kinshipChildId;
     },
-    relatedChildIncomes(){
+    kinshipChildIncomes(){
       // if the parent entity has not loaded, return an empty object
-      if(!(((((this.$store.state.currentEntity||{})['RelatedChild']||{})[this.relatedChildId]||{}).data||{}).NestedCollections||{}).hasOwnProperty('RelatedChildIncome')) return {};
+      if(!(((((this.$store.state.currentEntity||{})['KinshipChild']||{})[this.kinshipChildId]||{}).data||{}).NestedCollections||{}).hasOwnProperty('KinshipChildIncome')) return {};
 
       // the parent entity has been loaded
-      let relatedChildIncomesFiltered = {};
-      for(let relatedChildIncomeDocId in this.$store.state.currentEntity['RelatedChild'][this.relatedChildId].data.NestedCollections.RelatedChildIncome){
+      let kinshipChildIncomesFiltered = {};
+      for(let kinshipChildIncomeDocId in this.$store.state.currentEntity['KinshipChild'][this.kinshipChildId].data.NestedCollections.KinshipChildIncome){
         // Verify the child entity has been loaded
-        if(  ((this.$store.state.currentEntity||{})['RelatedChildIncome']||{}).hasOwnProperty(relatedChildIncomeDocId)  ){
-          relatedChildIncomesFiltered[relatedChildIncomeDocId] = this.$store.state.currentEntity['RelatedChildIncome'][relatedChildIncomeDocId];
+        if(  ((this.$store.state.currentEntity||{})['KinshipChildIncome']||{}).hasOwnProperty(kinshipChildIncomeDocId)  ){
+          kinshipChildIncomesFiltered[kinshipChildIncomeDocId] = this.$store.state.currentEntity['KinshipChildIncome'][kinshipChildIncomeDocId];
         }
       }
-      return relatedChildIncomesFiltered;
+      return kinshipChildIncomesFiltered;
     },
     FirstName:{
       get(){
@@ -154,23 +154,23 @@ export default {
         this.confirmDialogVisibility = false;
         this.$store.dispatch('fdelete_Entity_byCollectionContainer',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId}})
       },     
-      addRelatedChildIncome(){
-        this.$router.push('/PrimaryKinshipCaregiver/' + this.primaryKinshipCaregiverId + '/RelatedChild/' + this.relatedChildId + '/RelatedChildIncome/add');
+      addKinshipChildIncome(){
+        this.$router.push('/PrimaryKinshipCaregiver/' + this.primaryKinshipCaregiverId + '/KinshipChild/' + this.kinshipChildId + '/KinshipChildIncome/add');
       }
 
   },
   created(){
-    console.log('RelatedChild.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
+    console.log('KinshipChild.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
 
     // if we are adding a new subEntity then create it
     // - otherwise this entity will get loaded by parent ClientContainer.vue created function
-    if(this.relatedChildId == "add"){
+    if(this.kinshipChildId == "add"){
       this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.docId, collectionId:this.componentCollectionId});
     }
 
-    // TODO: Need to implement verification of relatedChildId 
+    // TODO: Need to implement verification of kinshipChildId 
     // - The parent ClientContainer.vue loads the parent entity and its children
-    // - - If the relatedChild value is legitimate (not deleted though user saved the link or erroneous value entered in the link) then the relatedChild will get loaded
+    // - - If the kinshipChild value is legitimate (not deleted though user saved the link or erroneous value entered in the link) then the kinshipChild will get loaded
     // - - Otherwise - a blank form gets loaded and the user isn't notified of the issue until trying to type something in one of the fields  & the message is for a deleted entity which is confusing
   },
 };
