@@ -12,7 +12,7 @@ export const store = new Vuex.Store({
         userIsAuthenticated:false,
         entityListeners:null,
         currentEntity:null,
-        currentPrimaryRelativeCaregivers:false,
+        currentPrimaryKinshipCaregivers:false,
     },
     getters:{
         // Receives fieldValueCollectionContainer: {docId:'', collectionId:'', fieldName:''}
@@ -365,15 +365,15 @@ export const store = new Vuex.Store({
                 }); 
         },
 
-        getPrimaryRelativeCaregivers(context){
-            console.log('getPrimaryRelativeCaregivers');
-            firebase.firestore().collection('PrimaryRelativeCaregiver').get()
+        getPrimaryKinshipCaregivers(context){
+            console.log('getPrimaryKinshipCaregivers');
+            firebase.firestore().collection('PrimaryKinshipCaregiver').get()
             .then(function(querySnapshot){
-                let PrimaryRelativeCaregiverOBJ = {};
+                let PrimaryKinshipCaregiverOBJ = {};
                 querySnapshot.forEach(function(doc){
-                    PrimaryRelativeCaregiverOBJ[doc.id] = doc.data();
+                    PrimaryKinshipCaregiverOBJ[doc.id] = doc.data();
                 });
-                context.state.currentPrimaryRelativeCaregivers=PrimaryRelativeCaregiverOBJ;
+                context.state.currentPrimaryKinshipCaregivers=PrimaryKinshipCaregiverOBJ;
             })
             .catch(function(error) {
                 console.error("Error retrieving collection: ", error);

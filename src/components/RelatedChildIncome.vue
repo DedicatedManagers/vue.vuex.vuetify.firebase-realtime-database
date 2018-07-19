@@ -76,7 +76,7 @@ export default {
       fDelete(){
         console.log(this.primaryRelativeCaregiverId);
         this.confirmDialogVisibility = false;
-        this.$store.dispatch('fdelete_Entity_byCollectionContainer',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryRelativeCaregiver/'+this.primaryRelativeCaregiverId+'/RelatedChild/'+this.relatedChildId}})
+        this.$store.dispatch('fdelete_Entity_byCollectionContainer',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryKinshipCaregiver/'+this.primaryRelativeCaregiverId+'/RelatedChild/'+this.relatedChildId}})
       },
   },
   created(){

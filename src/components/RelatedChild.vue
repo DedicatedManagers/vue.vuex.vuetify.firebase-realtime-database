@@ -40,7 +40,7 @@
                 <v-layout row wrap>
                   <v-flex xs12>
                     <v-list v-for="(relatedChildIncome, relatedChildIncomeCollectionId) in relatedChildIncomes" :key="relatedChildIncomeCollectionId" v-if="relatedChildIncome">
-                      <v-list-tile  :to="'/PrimaryRelativeCaregiver/'+primaryRelativeCaregiverId+'/RelatedChild/'+relatedChildId+'/RelatedChildIncome/'+relatedChildIncomeCollectionId">
+                      <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+primaryRelativeCaregiverId+'/RelatedChild/'+relatedChildId+'/RelatedChildIncome/'+relatedChildIncomeCollectionId">
                           <v-list-tile-action>
                           <v-icon>monetization_on</v-icon>
                         </v-list-tile-action>
@@ -152,10 +152,10 @@ export default {
       fDelete(){
         console.log(this.primaryRelativeCaregiverId);
         this.confirmDialogVisibility = false;
-        this.$store.dispatch('fdelete_Entity_byCollectionContainer',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryRelativeCaregiver/'+this.primaryRelativeCaregiverId}})
+        this.$store.dispatch('fdelete_Entity_byCollectionContainer',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryKinshipCaregiver/'+this.primaryRelativeCaregiverId}})
       },     
       addRelatedChildIncome(){
-        this.$router.push('/PrimaryRelativeCaregiver/' + this.primaryRelativeCaregiverId + '/RelatedChild/' + this.relatedChildId + '/RelatedChildIncome/add');
+        this.$router.push('/PrimaryKinshipCaregiver/' + this.primaryRelativeCaregiverId + '/RelatedChild/' + this.relatedChildId + '/RelatedChildIncome/add');
       }
 
   },

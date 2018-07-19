@@ -45,7 +45,7 @@
                 <v-layout row wrap>
                   <v-flex xs12>
                     <v-list v-for="(relatedChild, relatedChildCollectionId) in relatedChildren" :key="relatedChildCollectionId" v-if="relatedChild">
-                      <v-list-tile  :to="'/PrimaryRelativeCaregiver/'+docId+'/RelatedChild/'+relatedChildCollectionId">
+                      <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+docId+'/RelatedChild/'+relatedChildCollectionId">
                           <v-list-tile-action>
                           <v-icon>person</v-icon>
                         </v-list-tile-action>
@@ -85,14 +85,14 @@
 import DialogConfirm from '@/components/shared/DialogConfirm';
 
 export default {
-  name: 'PrimaryRelativeCaregiver',
+  name: 'PrimaryKinshipCaregiver',
   props:['primaryRelativeCaregiverId'],
   components:{
     'dialog-confirm':DialogConfirm
   },
   data() {
     return {
-      componentCollectionId:'PrimaryRelativeCaregiver',
+      componentCollectionId:'PrimaryKinshipCaregiver',
       confirmDialogVisibility:false,
       BirthDateMenuVisibility:false,
 
@@ -188,11 +188,11 @@ export default {
         this.$store.dispatch('fdelete_Entity_byCollectionContainer',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/dashboard'}})
       },
       addRelatedChild(){
-        this.$router.push('/PrimaryRelativeCaregiver/' + this.docId + '/RelatedChild/add');
+        this.$router.push('/PrimaryKinshipCaregiver/' + this.docId + '/RelatedChild/add');
       }
   },
   created(){
-    console.log('PrimaryRelativeCaregiver.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
+    console.log('PrimaryKinshipCaregiver.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
   },
 };
 </script>

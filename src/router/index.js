@@ -2,7 +2,7 @@ import firebase from 'firebase/app';
 import Router from 'vue-router';
 import Vue from 'vue';
 import ClientContainer from '@/components/ClientContainer';
-import PrimaryRelativeCaregiver from '@/components/PrimaryRelativeCaregiver';
+import PrimaryKinshipCaregiver from '@/components/PrimaryKinshipCaregiver';
 import RelatedChild from '@/components/RelatedChild';
 import Dashboard from '@/components/Dashboard';
 import Login from '@/components/Login';
@@ -25,16 +25,16 @@ const router = new Router({
       component: Login,
     },
     {
-      path: '/PrimaryRelativeCaregiver/:primaryRelativeCaregiverId',
+      path: '/PrimaryKinshipCaregiver/:primaryRelativeCaregiverId',
       props: true,
-      name: 'PrimaryRelativeCaregiver',
+      name: 'PrimaryKinshipCaregiver',
       component: ClientContainer,
       meta: {
         requiresAuth: true,
       },
     },
     {
-      path: '/PrimaryRelativeCaregiver/:primaryRelativeCaregiverId/RelatedChild/:relatedChildId',
+      path: '/PrimaryKinshipCaregiver/:primaryRelativeCaregiverId/RelatedChild/:relatedChildId',
       props: true,
       name: 'RelatedChild',
       component: ClientContainer,
@@ -43,7 +43,7 @@ const router = new Router({
       },
     },
     {
-      path: '/PrimaryRelativeCaregiver/:primaryRelativeCaregiverId/RelatedChild/:relatedChildId/RelatedChildIncome/:relatedChildIncomeId',
+      path: '/PrimaryKinshipCaregiver/:primaryRelativeCaregiverId/RelatedChild/:relatedChildId/RelatedChildIncome/:relatedChildIncomeId',
       props: true,
       name: 'RelatedChildIncome',
       component: ClientContainer,
