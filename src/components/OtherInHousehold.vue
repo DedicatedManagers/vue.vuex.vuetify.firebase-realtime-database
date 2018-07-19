@@ -5,7 +5,7 @@
         <v-flex xs12 md4>
           <v-card>
             <v-toolbar color="blue" dark>
-              <v-toolbar-title>Kinship Child</v-toolbar-title>
+              <v-toolbar-title>Other In Household</v-toolbar-title>
             </v-toolbar>
             <v-card-title>
               <v-layout row wrap>
@@ -39,32 +39,32 @@
 
               <v-flex xs12>
                 <v-card>
-                  <v-toolbar color="blue" dark>
+                <v-toolbar color="blue" dark>
                     <v-toolbar-title>Incomes</v-toolbar-title>
-                  </v-toolbar>
-                  <v-card-title>
+                </v-toolbar>
+                <v-card-title>
                     <v-layout row wrap>
-                      <v-flex xs12>
-                        <v-list v-for="(kinshipChildIncome, kinshipChildIncomeCollectionId) in kinshipChildIncomes" :key="kinshipChildIncomeCollectionId" v-if="kinshipChildIncome">
-                          <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+primaryKinshipCaregiverId+'/KinshipChild/'+kinshipChildId+'/KinshipChildIncome/'+kinshipChildIncomeCollectionId">
-                              <v-list-tile-action>
-                              <v-icon>monetization_on</v-icon>
+                    <v-flex xs12>
+                        <v-list v-for="(otherInHouseholdIncome, otherInHouseholdIncomeCollectionId) in otherInHouseholdIncomes" :key="otherInHouseholdIncomeCollectionId" v-if="otherInHouseholdIncome">
+                        <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+primaryKinshipCaregiverId+'/OtherInHousehold/'+otherInHouseholdId+'/OtherInHouseholdIncome/'+otherInHouseholdIncomeCollectionId">
+                            <v-list-tile-action>
+                            <v-icon>monetization_on</v-icon>
                             </v-list-tile-action>
 
                             <v-list-tile-content>
-                              <v-list-tile-title>{{kinshipChildIncome.data.IncomeType}} - {{kinshipChildIncome.data.IncomeAmount}}</v-list-tile-title>
+                            <v-list-tile-title>{{otherInHouseholdIncome.data.IncomeType}} - {{otherInHouseholdIncome.data.IncomeAmount}}</v-list-tile-title>
                             </v-list-tile-content>
-                          </v-list-tile>
+                        </v-list-tile>
                         </v-list>
                         <div class="text-xs-right">
-                          <v-btn color="success" @click="addKinshipChildIncome">Add Income<v-icon right>monetization_on</v-icon></v-btn>
+                        <v-btn color="success" @click="addOtherInHouseholdIncome">Add Income<v-icon right>monetization_on</v-icon></v-btn>
                         </div>
-                      </v-flex>
+                    </v-flex>
                     </v-layout>
-                  </v-card-title>
-                </v-card>              
+                </v-card-title>
+                </v-card>
               </v-flex>
-            </v-layout>
+            </v-layout>              
           </v-flex>
       </v-layout>
 
@@ -83,35 +83,35 @@
 import DialogConfirm from '@/components/shared/DialogConfirm';
 
 export default {
-  name: 'KinshipChild',
-  props:['kinshipChildId', 'primaryKinshipCaregiverId'],
+  name: 'OtherInHousehold',
+  props:['otherInHouseholdId', 'primaryKinshipCaregiverId'],
   components:{
     'dialog-confirm':DialogConfirm
   },
   data() {
     return {
-      componentCollectionId:'KinshipChild',
+      componentCollectionId:'OtherInHousehold',
       confirmDialogVisibility:false,
       BirthDateMenuVisibility:false,
     };
   },
   computed:{
     docId: function(){
-      return this.kinshipChildId;
+      return this.otherInHouseholdId;
     },
-    kinshipChildIncomes(){
+    otherInHouseholdIncomes(){
       // if the parent entity has not loaded, return an empty object
-      if(!(((((this.$store.state.currentEntity||{})['KinshipChild']||{})[this.kinshipChildId]||{}).data||{}).NestedCollections||{}).hasOwnProperty('KinshipChildIncome')) return {};
+      if(!(((((this.$store.state.currentEntity||{})['OtherInHousehold']||{})[this.otherInHouseholdId]||{}).data||{}).NestedCollections||{}).hasOwnProperty('OtherInHouseholdIncome')) return {};
 
       // the parent entity has been loaded
-      let kinshipChildIncomesFiltered = {};
-      for(let kinshipChildIncomeDocId in this.$store.state.currentEntity['KinshipChild'][this.kinshipChildId].data.NestedCollections.KinshipChildIncome){
+      let otherInHouseholdIncomesFiltered = {};
+      for(let otherInHouseholdIncomeDocId in this.$store.state.currentEntity['OtherInHousehold'][this.otherInHouseholdId].data.NestedCollections.OtherInHouseholdIncome){
         // Verify the child entity has been loaded
-        if(  ((this.$store.state.currentEntity||{})['KinshipChildIncome']||{}).hasOwnProperty(kinshipChildIncomeDocId)  ){
-          kinshipChildIncomesFiltered[kinshipChildIncomeDocId] = this.$store.state.currentEntity['KinshipChildIncome'][kinshipChildIncomeDocId];
+        if(  ((this.$store.state.currentEntity||{})['OtherInHouseholdIncome']||{}).hasOwnProperty(otherInHouseholdIncomeDocId)  ){
+          otherInHouseholdIncomesFiltered[otherInHouseholdIncomeDocId] = this.$store.state.currentEntity['OtherInHouseholdIncome'][otherInHouseholdIncomeDocId];
         }
       }
-      return kinshipChildIncomesFiltered;
+      return otherInHouseholdIncomesFiltered;
     },
     FirstName:{
       get(){
@@ -162,23 +162,23 @@ export default {
         this.confirmDialogVisibility = false;
         this.$store.dispatch('fdelete_Entity_byCollectionContainer',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId}})
       },     
-      addKinshipChildIncome(){
-        this.$router.push('/PrimaryKinshipCaregiver/' + this.primaryKinshipCaregiverId + '/KinshipChild/' + this.kinshipChildId + '/KinshipChildIncome/add');
+      addOtherInHouseholdIncome(){
+        this.$router.push('/PrimaryKinshipCaregiver/' + this.primaryKinshipCaregiverId + '/OtherInHousehold/' + this.otherInHouseholdId + '/OtherInHouseholdIncome/add');
       }
 
   },
   created(){
-    console.log('KinshipChild.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
+    console.log('OtherInHousehold.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
 
     // if we are adding a new subEntity then create it
     // - otherwise this entity will get loaded by parent ClientContainer.vue created function
-    if(this.kinshipChildId == "add"){
+    if(this.otherInHouseholdId == "add"){
       this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.docId, collectionId:this.componentCollectionId});
     }
 
-    // TODO: Need to implement verification of kinshipChildId 
+    // TODO: Need to implement verification of otherInHouseholdId 
     // - The parent ClientContainer.vue loads the parent entity and its children
-    // - - If the kinshipChild value is legitimate (not deleted though user saved the link or erroneous value entered in the link) then the kinshipChild will get loaded
+    // - - If the otherInHousehold value is legitimate (not deleted though user saved the link or erroneous value entered in the link) then the otherInHousehold will get loaded
     // - - Otherwise - a blank form gets loaded and the user isn't notified of the issue until trying to type something in one of the fields  & the message is for a deleted entity which is confusing
   },
 };

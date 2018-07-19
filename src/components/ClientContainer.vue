@@ -7,9 +7,19 @@
             <span v-for="(navBreadCrumb, id) in navBreadCrumbs" :key="id">
                 | <router-link  :to="navBreadCrumb.link">{{navBreadCrumb.text}}</router-link>
             </span>
-            <primary-kinship-caregiver v-if="!kinshipChildId && !kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId"></primary-kinship-caregiver>
-            <kinship-child v-if="kinshipChildId && !kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" ></kinship-child>
-            <kinship-child-income v-if="kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" :kinshipChildIncomeId="kinshipChildIncomeId"></kinship-child-income>
+
+            <template v-if="kinshipChildId">
+              <kinshipchild  v-if="!kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" ></kinshipchild>
+              <kinshipchild-income v-if="kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" :kinshipChildIncomeId="kinshipChildIncomeId"></kinshipchild-income>
+            </template>
+            <template v-else-if="otherInHouseholdId">
+              <otherinhousehold v-if="!otherInHouseholdIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :otherInHouseholdId="otherInHouseholdId" ></otherinhousehold>
+              <otherinhousehold-income v-if="otherInHouseholdIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :otherInHouseholdId="otherInHouseholdId" :otherInHouseholdIncomeId="otherInHouseholdIncomeId"></otherinhousehold-income>
+            </template>
+            <template v-else>
+              <primary-kinship-caregiver :primaryKinshipCaregiverId="primaryKinshipCaregiverId"></primary-kinship-caregiver>
+            </template>
+
           </v-flex>
         </v-layout> 
     </v-container>
@@ -21,14 +31,18 @@ import firebase from 'firebase/app';
 import PrimaryKinshipCaregiver from '@/components/PrimaryKinshipCaregiver';
 import KinshipChild from '@/components/KinshipChild';
 import KinshipChildIncome from '@/components/KinshipChildIncome';
+import OtherInHousehold from '@/components/OtherInHousehold';
+import OtherInHouseholdIncome from '@/components/OtherInHouseholdIncome';
 
 export default {
   name: 'ClientContainer',
-  props:['primaryKinshipCaregiverId','kinshipChildId', 'kinshipChildIncomeId'],
+  props:['primaryKinshipCaregiverId','kinshipChildId', 'kinshipChildIncomeId','otherInHouseholdId', 'otherInHouseholdIncomeId'],
   components:{
       'primary-kinship-caregiver':PrimaryKinshipCaregiver,
-      'kinship-child':KinshipChild,
-      'kinship-child-income':KinshipChildIncome,
+      'kinshipchild':KinshipChild,
+      'kinshipchild-income':KinshipChildIncome,
+      'otherinhousehold':OtherInHousehold,
+      'otherinhousehold-income':OtherInHouseholdIncome,
   },
   computed:{
       clientFullName:function(){
@@ -56,21 +70,49 @@ export default {
         let fullName = LastName + ", " + FirstName;
         return fullName;
       },
+      otherInHouseholdFullName:function(){
+        // If the OtherInHousehold has not loaded, return an empty string
+        if( ! ((this.$store.state.currentEntity||{})['OtherInHousehold']||{}).hasOwnProperty(this.otherInHouseholdId)   ) return ""; 
+        
+        let FirstName = ((((this.$store.state.currentEntity||{})['OtherInHousehold']||{})[this.otherInHouseholdId]||{}).data||{}).FirstName;
+        if (typeof FirstName === 'undefined') FirstName = "<FIRST NAME NOT SET>";
+
+        let LastName = ((((this.$store.state.currentEntity||{})['OtherInHousehold']||{})[this.otherInHouseholdId]||{}).data||{}).LastName;
+        if (typeof LastName === 'undefined') LastName = "<LAST NAME NOT SET>";
+
+        let fullName = LastName + ", " + FirstName;
+        return fullName;
+      },
       navBreadCrumbs: function (){
-          let crumbs = [];
-          if(this.kinshipChildId){
-            crumbs.push({
-                link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId,
-                text:this.clientFullName,
-            });
-          }
-          if(this.kinshipChildIncomeId){
-            crumbs.push({
-                link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId+'/KinshipChild/'+this.kinshipChildId,
-                text:this.kinshipChildFullName,
-            });
-          }
-          return crumbs;
+        let crumbs = [];
+        if(this.kinshipChildId){
+          crumbs.push({
+              link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId,
+              text:this.clientFullName,
+          });
+        }
+        if(this.kinshipChildIncomeId){
+          crumbs.push({
+              link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId+'/KinshipChild/'+this.kinshipChildId,
+              text:this.kinshipChildFullName,
+          });
+        }
+
+
+        if(this.otherInHouseholdId){
+          crumbs.push({
+              link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId,
+              text:this.clientFullName,
+          });
+        }
+        if(this.otherInHouseholdIncomeId){
+          crumbs.push({
+              link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId+'/OtherInHousehold/'+this.otherInHouseholdId,
+              text:this.otherInHouseholdFullName,
+          });
+        }
+
+        return crumbs;
       },
   },
   created(){

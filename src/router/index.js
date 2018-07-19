@@ -2,8 +2,6 @@ import firebase from 'firebase/app';
 import Router from 'vue-router';
 import Vue from 'vue';
 import ClientContainer from '@/components/ClientContainer';
-import PrimaryKinshipCaregiver from '@/components/PrimaryKinshipCaregiver';
-import KinshipChild from '@/components/KinshipChild';
 import Dashboard from '@/components/Dashboard';
 import Login from '@/components/Login';
 
@@ -46,6 +44,24 @@ const router = new Router({
       path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/KinshipChild/:kinshipChildId/KinshipChildIncome/:kinshipChildIncomeId',
       props: true,
       name: 'KinshipChildIncome',
+      component: ClientContainer,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/OtherInHousehold/:otherInHouseholdId',
+      props: true,
+      name: 'OtherInHousehold',
+      component: ClientContainer,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/OtherInHousehold/:otherInHouseholdId/OtherInHouseholdIncome/:otherInHouseholdIncomeId',
+      props: true,
+      name: 'OtherInHouseholdIncome',
       component: ClientContainer,
       meta: {
         requiresAuth: true,

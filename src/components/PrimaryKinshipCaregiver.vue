@@ -37,31 +37,73 @@
           </v-flex>
 
           <v-flex xs12 md4 offset-md1>
-            <v-card>
-              <v-toolbar color="blue" dark>
-                <v-toolbar-title>Kinship Children</v-toolbar-title>
-              </v-toolbar>
-              <v-card-title>
-                <v-layout row wrap>
-                  <v-flex xs12>
-                    <v-list v-for="(kinshipChild, kinshipChildCollectionId) in kinshipChildren" :key="kinshipChildCollectionId" v-if="kinshipChild">
-                      <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+docId+'/KinshipChild/'+kinshipChildCollectionId">
-                          <v-list-tile-action>
-                          <v-icon>person</v-icon>
-                        </v-list-tile-action>
 
-                        <v-list-tile-content>
-                          <v-list-tile-title>{{kinshipChild.data.LastName}}, {{kinshipChild.data.FirstName}} {{kinshipChild.data.MiddleName}}</v-list-tile-title>
-                        </v-list-tile-content>
-                      </v-list-tile>
-                    </v-list>
-                    <div class="text-xs-right">
-                      <v-btn color="success" @click="addKinshipChild">Add Child<v-icon right>person_add</v-icon></v-btn>
-                    </div>
-                  </v-flex>
-                </v-layout>
-              </v-card-title>
-            </v-card>              
+            <v-layout row wrap>
+              <v-flex xs12 hidden-md-and-up>
+                &nbsp;
+              </v-flex>
+
+              <v-flex xs12>
+                <v-card>
+                  <v-toolbar color="blue" dark>
+                    <v-toolbar-title>Kinship Children</v-toolbar-title>
+                  </v-toolbar>
+                  <v-card-title>
+                    <v-layout row wrap>
+                      <v-flex xs12>
+                        <v-list v-for="(kinshipChild, kinshipChildCollectionId) in kinshipChildren" :key="kinshipChildCollectionId" v-if="kinshipChild">
+                          <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+docId+'/KinshipChild/'+kinshipChildCollectionId">
+                              <v-list-tile-action>
+                              <v-icon>person</v-icon>
+                            </v-list-tile-action>
+
+                            <v-list-tile-content>
+                              <v-list-tile-title>{{kinshipChild.data.LastName}}, {{kinshipChild.data.FirstName}} {{kinshipChild.data.MiddleName}}</v-list-tile-title>
+                            </v-list-tile-content>
+                          </v-list-tile>
+                        </v-list>
+                        <div class="text-xs-right">
+                          <v-btn color="success" @click="addKinshipChild">Add Child<v-icon right>person_add</v-icon></v-btn>
+                        </div>
+                      </v-flex>
+                    </v-layout>
+                  </v-card-title>
+                </v-card>              
+              </v-flex>
+
+              <v-flex xs12>
+                &nbsp;
+              </v-flex>
+
+              <v-flex xs12>
+                <v-card>
+                  <v-toolbar color="blue" dark>
+                    <v-toolbar-title>Others In Household</v-toolbar-title>
+                  </v-toolbar>
+                  <v-card-title>
+                    <v-layout row wrap>
+                      <v-flex xs12>
+                        <v-list v-for="(otherInHousehold, otherInHouseholdCollectionId) in otherInHousehold" :key="otherInHouseholdCollectionId" v-if="otherInHousehold">
+                          <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+docId+'/OtherInHousehold/'+otherInHouseholdCollectionId">
+                              <v-list-tile-action>
+                              <v-icon>person</v-icon>
+                            </v-list-tile-action>
+
+                            <v-list-tile-content>
+                              <v-list-tile-title>{{otherInHousehold.data.LastName}}, {{otherInHousehold.data.FirstName}} {{otherInHousehold.data.MiddleName}}</v-list-tile-title>
+                            </v-list-tile-content>
+                          </v-list-tile>
+                        </v-list>
+                        <div class="text-xs-right">
+                          <v-btn color="success" @click="addOtherInHousehold">Add Other<v-icon right>person_add</v-icon></v-btn>
+                        </div>
+                      </v-flex>
+                    </v-layout>
+                  </v-card-title>
+                </v-card>              
+              </v-flex>
+
+            </v-layout>
           </v-flex>
         </v-layout> 
 
@@ -120,6 +162,10 @@ export default {
     kinshipChildren(){
       if(!this.$store.state.currentEntity) return null
       return this.$store.state.currentEntity['KinshipChild'];
+    },
+    otherInHousehold(){
+      if(!this.$store.state.currentEntity) return null
+      return this.$store.state.currentEntity['OtherInHousehold'];
     },
     FirstName:{
       get(){
@@ -189,7 +235,10 @@ export default {
       },
       addKinshipChild(){
         this.$router.push('/PrimaryKinshipCaregiver/' + this.docId + '/KinshipChild/add');
-      }
+      },
+      addOtherInHousehold(){
+        this.$router.push('/PrimaryKinshipCaregiver/' + this.docId + '/OtherInHouseHold/add');
+      },
   },
   created(){
     console.log('PrimaryKinshipCaregiver.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
