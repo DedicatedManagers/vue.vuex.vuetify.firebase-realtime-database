@@ -30,6 +30,34 @@
             </v-card-title>
           </v-card> 
         </v-flex>
+
+          <v-flex xs12 md4 offset-md1>
+            <v-card>
+              <v-toolbar color="blue" dark>
+                <v-toolbar-title>Incomes</v-toolbar-title>
+              </v-toolbar>
+              <v-card-title>
+                <v-layout row wrap>
+                  <v-flex xs12>
+                    <v-list v-for="(relatedChildIncome, relatedChildIncomeCollectionId) in relatedChildIncomes" :key="relatedChildIncomeCollectionId" v-if="relatedChildIncome">
+                      <v-list-tile  :to="'/PrimaryRelativeCaregiver/'+primaryRelativeCaregiverId+'/RelatedChild/'+relatedChildId+'/RelatedChildIncome/'+relatedChildIncomeCollectionId">
+                          <v-list-tile-action>
+                          <v-icon>monetization_on</v-icon>
+                        </v-list-tile-action>
+
+                        <v-list-tile-content>
+                          <v-list-tile-title>{{relatedChildIncome.data.IncomeType}} - {{relatedChildIncome.data.IncomeAmount}}</v-list-tile-title>
+                        </v-list-tile-content>
+                      </v-list-tile>
+                    </v-list>
+                    <div class="text-xs-right">
+                      <v-btn color="success" @click="addRelatedChildIncome">Add Income<v-icon right>monetization_on</v-icon></v-btn>
+                    </div>
+                  </v-flex>
+                </v-layout>
+              </v-card-title>
+            </v-card>              
+          </v-flex>
       </v-layout>
 
       <template v-if="confirmDialogVisibility">
@@ -62,6 +90,20 @@ export default {
   computed:{
     docId: function(){
       return this.relatedChildId;
+    },
+    relatedChildIncomes(){
+      // if the parent entity has not loaded, return an empty object
+      if(!(((((this.$store.state.currentEntity||{})['RelatedChild']||{})[this.relatedChildId]||{}).data||{}).NestedCollections||{}).hasOwnProperty('RelatedChildIncome')) return {};
+
+      // the parent entity has been loaded
+      let relatedChildIncomesFiltered = {};
+      for(let relatedChildIncomeDocId in this.$store.state.currentEntity['RelatedChild'][this.relatedChildId].data.NestedCollections.RelatedChildIncome){
+        // Verify the child entity has been loaded
+        if(  ((this.$store.state.currentEntity||{})['RelatedChildIncome']||{}).hasOwnProperty(relatedChildIncomeDocId)  ){
+          relatedChildIncomesFiltered[relatedChildIncomeDocId] = this.$store.state.currentEntity['RelatedChildIncome'][relatedChildIncomeDocId];
+        }
+      }
+      return relatedChildIncomesFiltered;
     },
     FirstName:{
       get(){
@@ -111,7 +153,11 @@ export default {
         console.log(this.primaryRelativeCaregiverId);
         this.confirmDialogVisibility = false;
         this.$store.dispatch('fdelete_Entity_byCollectionContainer',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryRelativeCaregiver/'+this.primaryRelativeCaregiverId}})
-      },
+      },     
+      addRelatedChildIncome(){
+        this.$router.push('/PrimaryRelativeCaregiver/' + this.primaryRelativeCaregiverId + '/RelatedChild/' + this.relatedChildId + '/RelatedChildIncome/add');
+      }
+
   },
   created(){
     console.log('RelatedChild.vue created function. Props: ' + JSON.stringify(this.$options.propsData));

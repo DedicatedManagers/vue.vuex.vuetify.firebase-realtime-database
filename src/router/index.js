@@ -43,6 +43,15 @@ const router = new Router({
       },
     },
     {
+      path: '/PrimaryRelativeCaregiver/:primaryRelativeCaregiverId/RelatedChild/:relatedChildId/RelatedChildIncome/:relatedChildIncomeId',
+      props: true,
+      name: 'RelatedChildIncome',
+      component: ClientContainer,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
       path: '/dashboard',
       name: 'Dashboard',
       component: Dashboard,

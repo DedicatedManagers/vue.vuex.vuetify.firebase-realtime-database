@@ -7,8 +7,9 @@
             <span v-for="(navBreadCrumb, id) in navBreadCrumbs" :key="id">
                 | <router-link  :to="navBreadCrumb.link">{{navBreadCrumb.text}}</router-link>
             </span>
-            <primary-relative-caregiver v-if="!relatedChildId" :primaryRelativeCaregiverId="primaryRelativeCaregiverId"></primary-relative-caregiver>
-            <related-child v-if="relatedChildId" :primaryRelativeCaregiverId="primaryRelativeCaregiverId" :relatedChildId="relatedChildId" ></related-child>
+            <primary-relative-caregiver v-if="!relatedChildId && !relatedChildIncomeId" :primaryRelativeCaregiverId="primaryRelativeCaregiverId"></primary-relative-caregiver>
+            <related-child v-if="relatedChildId && !relatedChildIncomeId" :primaryRelativeCaregiverId="primaryRelativeCaregiverId" :relatedChildId="relatedChildId" ></related-child>
+            <related-child-income v-if="relatedChildIncomeId" :primaryRelativeCaregiverId="primaryRelativeCaregiverId" :relatedChildId="relatedChildId" :relatedChildIncomeId="relatedChildIncomeId"></related-child-income>
           </v-flex>
         </v-layout> 
     </v-container>
@@ -19,13 +20,15 @@
 import firebase from 'firebase/app';
 import PrimaryRelativeCaregiver from '@/components/PrimaryRelativeCaregiver';
 import RelatedChild from '@/components/RelatedChild';
+import RelatedChildIncome from '@/components/RelatedChildIncome';
 
 export default {
   name: 'ClientContainer',
-  props:['primaryRelativeCaregiverId','relatedChildId'],
+  props:['primaryRelativeCaregiverId','relatedChildId', 'relatedChildIncomeId'],
   components:{
       'primary-relative-caregiver':PrimaryRelativeCaregiver,
       'related-child':RelatedChild,
+      'related-child-income':RelatedChildIncome,
   },
   computed:{
       clientFullName:function(){
@@ -40,12 +43,31 @@ export default {
         let fullName = LastName + ", " + FirstName;
         return fullName;
       },
+      relatedChildFullName:function(){
+        // If the RelatedChild has not loaded, return an empty string
+        if( ! ((this.$store.state.currentEntity||{})['RelatedChild']||{}).hasOwnProperty(this.relatedChildId)   ) return ""; 
+        
+        let FirstName = ((((this.$store.state.currentEntity||{})['RelatedChild']||{})[this.relatedChildId]||{}).data||{}).FirstName;
+        if (typeof FirstName === 'undefined') FirstName = "<FIRST NAME NOT SET>";
+
+        let LastName = ((((this.$store.state.currentEntity||{})['RelatedChild']||{})[this.relatedChildId]||{}).data||{}).LastName;
+        if (typeof LastName === 'undefined') LastName = "<LAST NAME NOT SET>";
+
+        let fullName = LastName + ", " + FirstName;
+        return fullName;
+      },
       navBreadCrumbs: function (){
           let crumbs = [];
           if(this.relatedChildId){
             crumbs.push({
                 link:'/PrimaryRelativeCaregiver/'+this.primaryRelativeCaregiverId,
                 text:this.clientFullName,
+            });
+          }
+          if(this.relatedChildIncomeId){
+            crumbs.push({
+                link:'/PrimaryRelativeCaregiver/'+this.primaryRelativeCaregiverId+'/RelatedChild/'+this.relatedChildId,
+                text:this.relatedChildFullName,
             });
           }
           return crumbs;
