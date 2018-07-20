@@ -44,81 +44,29 @@
               </v-flex>
 
               <v-flex xs12>
-                <v-card class="customListExpandable">
-                  <v-toolbar color="blue" dark  @click="kinshipChildrenMenuVisibility=!kinshipChildrenMenuVisibility">
-                    <v-toolbar-title>Kinship Children</v-toolbar-title><v-spacer></v-spacer><v-btn v-if="kinshipChildren" icon><v-icon >{{kinshipChildrenMenuVisibility?'expand_less':'expand_more'}}</v-icon></v-btn>
-                  </v-toolbar>
-                    <v-layout row wrap>
-                      <v-flex xs12>
-                        <v-list v-if="kinshipChildren">
-                          <v-list-group v-model="kinshipChildrenMenuVisibility" >
-                            <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+docId+'/KinshipChild/'+kinshipChildCollectionId" v-for="(kinshipChild, kinshipChildCollectionId) in kinshipChildren" :key="kinshipChildCollectionId">
-                              <v-list-tile-action>
-                                <v-icon>person</v-icon>
-                              </v-list-tile-action>
-                              <v-list-tile-content>
-                                <v-list-tile-title>{{kinshipChild.data.LastName}}, {{kinshipChild.data.FirstName}} {{kinshipChild.data.MiddleName}}</v-list-tile-title>
-                              </v-list-tile-content>
-                            </v-list-tile>
-                          </v-list-group>
-                          <v-list-group :value="!kinshipChildrenMenuVisibility">
-                            <v-list-tile @click="kinshipChildrenMenuVisibility=!kinshipChildrenMenuVisibility">
-                              <v-list-tile-action>
-                                <v-icon>person</v-icon>
-                              </v-list-tile-action>
-                              <v-list-tile-content>
-                                <v-list-tile-title>{{Object.keys(kinshipChildren).length}} Hidden (click to show)</v-list-tile-title>
-                              </v-list-tile-content>                            
-                            </v-list-tile>
-                          </v-list-group>
-                        </v-list>
-                        <div class="text-xs-right">
-                          <v-btn color="success" @click="addKinshipChild">Add Child<v-icon right>person_add</v-icon></v-btn>
-                        </div>
-                      </v-flex>
-                    </v-layout>
-                </v-card>              
+                <subentity-list 
+                  toolbarTitle="Kinship Children"  
+                  :entityList="kinshipChildren" 
+                  :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/KinshipChild/'"
+                  icon="person"
+                  addIcon="person_add"
+                  addButtonText="Add Child"
+                ></subentity-list>
               </v-flex>
-
+              
               <v-flex xs12>
                 &nbsp;
               </v-flex>
 
-            <v-flex xs12>
-                <v-card class="customListExpandable">
-                  <v-toolbar color="blue" dark  @click="otherInHouseholdMenuVisibility=!otherInHouseholdMenuVisibility">
-                    <v-toolbar-title>Others In Household</v-toolbar-title><v-spacer></v-spacer><v-btn v-if="otherInHousehold" icon><v-icon >{{otherInHouseholdMenuVisibility?'expand_less':'expand_more'}}</v-icon></v-btn>
-                  </v-toolbar>
-                    <v-layout row wrap>
-                      <v-flex xs12>
-                        <v-list v-if="otherInHousehold">
-                          <v-list-group v-model="otherInHouseholdMenuVisibility">
-                            <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+docId+'/OtherInHousehold/'+otherInHouseholdCollectionId" v-for="(otherInHousehold, otherInHouseholdCollectionId) in otherInHousehold" :key="otherInHouseholdCollectionId">
-                              <v-list-tile-action>
-                                <v-icon>person</v-icon>
-                              </v-list-tile-action>
-                              <v-list-tile-content>
-                                <v-list-tile-title>{{otherInHousehold.data.LastName}}, {{otherInHousehold.data.FirstName}} {{otherInHousehold.data.MiddleName}}</v-list-tile-title>
-                              </v-list-tile-content>
-                            </v-list-tile>
-                          </v-list-group>
-                          <v-list-group :value="!otherInHouseholdMenuVisibility">
-                            <v-list-tile @click="otherInHouseholdMenuVisibility=!otherInHouseholdMenuVisibility">
-                              <v-list-tile-action>
-                                <v-icon>person</v-icon>
-                              </v-list-tile-action>
-                              <v-list-tile-content>
-                                <v-list-tile-title>{{Object.keys(otherInHousehold).length}} Hidden (click to show)</v-list-tile-title>
-                              </v-list-tile-content>                            
-                            </v-list-tile>
-                          </v-list-group>
-                        </v-list>
-                        <div class="text-xs-right">
-                          <v-btn color="success" @click="addOtherInHousehold">Add Other<v-icon right>person_add</v-icon></v-btn>
-                        </div>
-                      </v-flex>
-                    </v-layout>
-                </v-card>              
+              <v-flex xs12>
+                <subentity-list 
+                  toolbarTitle="Others In Household"  
+                  :entityList="otherInHousehold" 
+                  :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/OtherInHousehold/'"
+                  icon="person"
+                  addIcon="person_add"
+                  addButtonText="Add Other"
+                ></subentity-list>
               </v-flex>
 
             </v-layout>
@@ -143,12 +91,14 @@
 
 <script>
 import DialogConfirm from '@/components/shared/DialogConfirm';
+import SubEntityList from '@/components/shared/SubEntityList';
 
 export default {
   name: 'PrimaryKinshipCaregiver',
   props:['primaryKinshipCaregiverId'],
   components:{
-    'dialog-confirm':DialogConfirm
+    'dialog-confirm':DialogConfirm,
+    'subentity-list':SubEntityList,
   },
   data() {
     return {
