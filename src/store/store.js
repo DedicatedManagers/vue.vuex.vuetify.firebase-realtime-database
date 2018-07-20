@@ -75,21 +75,21 @@ export const store = new Vuex.Store({
         },
         // Initialize an Entity
         // Receives: docEntityContainer{docId:'', collectionId:'',docContainer:{id: '', data:{} } }
-        initialize_currentEntity_byDocEntityContainer(state, docEntityContainer){
-            console.log('initialize_currentEntity_byDocEntityContainer');
+        initializeCurrentEntity(state, docEntityContainer){
+            console.log('initializeCurrentEntity');
             if(!state.currentEntity) state.currentEntity={}; // initialize the holder if its not yet initialized
             if(!state.currentEntity[docEntityContainer.collectionId]) Vue.set(state.currentEntity, docEntityContainer.collectionId, {}); // initialize the entity type / collection holder if its not set yet
             // set the data
             Vue.set(state.currentEntity[docEntityContainer.collectionId], docEntityContainer.docId, docEntityContainer.docContainer);
         },
         // Receives: entityPropertyContainer{ docId:'',collectionId:'',propertiesObject:{prop:val,[prop2:val2]} }
-        mutate_currentEntity_byEntityPropertyContainer(state, entityPropertyContainer){
-            console.log('mutate_currentEntity_byEntityPropertyContainer');
+        mutateCurrentEntity(state, entityPropertyContainer){
+            console.log('mutateCurrentEntity');
             // if the the entity we are trying to set no longer exists - it was probably deleted at the database or on another real-time client
             if(  !(((state.currentEntity||{})[entityPropertyContainer.collectionId]||{})[entityPropertyContainer.docId]||{}).hasOwnProperty('data')   ){
                 // TODO: handle this situation in a better way
                 alert('Sorry, this Entity no longer exists.  Possibly it was deleted by someone else while you had it open.');
-                console.log('mutate_currentEntity_byEntityPropertyContainer - entity no longer exists.   object passed in: ' + JSON.stringify(entityPropertyContainer));
+                console.log('mutateCurrentEntity - entity no longer exists.   object passed in: ' + JSON.stringify(entityPropertyContainer));
             }
             else{
                 // Loop through the key/value pairs sent in the properties object and set them on the collection
@@ -145,11 +145,11 @@ export const store = new Vuex.Store({
         },
         // Retrieve an Entity data from firebase
         // Receives Object: entityContainer{docId:'',collectionId:''}
-        getEntity_ByEntityContainer(context, entityContainer){
-            console.log('store action getEntity_ByEntityContainer. Object received: ' + JSON.stringify(entityContainer));
+        getEntity(context, entityContainer){
+            console.log('store action getEntity. Object received: ' + JSON.stringify(entityContainer));
             // Create New
             if(entityContainer.docId == "add"){
-                context.dispatch('fcreate_Entity_byCollectionContainer', {docId:entityContainer.docId, collectionId:entityContainer.collectionId});
+                context.dispatch('fcreateEntity', {docId:entityContainer.docId, collectionId:entityContainer.collectionId});
             }
             // Get existing
             else{
@@ -163,7 +163,7 @@ export const store = new Vuex.Store({
                 // Remove any old info so it is not shown prior to async call returning info
                 // - Need to check if the info does already exist so that we don't create a currentEntity collection doc property on a request where the entity does not exist
                 if(  ((context.state.currentEntity||{})[entityContainer.collectionId]||{}).hasOwnProperty(entityContainer.docId)  ){
-                    context.commit('initialize_currentEntity_byDocEntityContainer', {docId:entityContainer.docId,collectionId:entityContainer.collectionId,docContainer:null,});
+                    context.commit('initializeCurrentEntity', {docId:entityContainer.docId,collectionId:entityContainer.collectionId,docContainer:null,});
                 }
 
                 // Set up the new query & listener
@@ -179,7 +179,7 @@ export const store = new Vuex.Store({
                         // if the document/entity exists locally, then this must be a delete from the server or via another real-time client
                         if(  ((context.state.currentEntity||{})[entityContainer.collectionId]||{}).hasOwnProperty(entityContainer.docId)  ){
                             // Therefore: Delete the entity & listener locally
-                            context.dispatch('fdelete_Entity_byCollectionContainer', {docId:entityContainer.docId, collectionId:entityContainer.collectionId});
+                            context.dispatch('fdeleteEntity', {docId:entityContainer.docId, collectionId:entityContainer.collectionId});
                             alert('The entity (or one of its child entities) has been deleted on the server.  You may need to reload the application by clicking refresh on your browser.');
                         }
                         // otherwise we must be trying to get a document that doesn't exist
@@ -207,18 +207,18 @@ export const store = new Vuex.Store({
                                         // Check Vuex store to see if there is a listener running on this sub-entity
                                         if( !(typeof ((context.state.entityListeners||{})[collectionId]||{})[docId]  === 'function')  ){
                                             // Listener not found - load the entity
-                                            context.dispatch('getEntity_ByEntityContainer', {docId:docId,collectionId:collectionId})    
+                                            context.dispatch('getEntity', {docId:docId,collectionId:collectionId})    
                                         }
                                         else{
                                             // Listener found
-                                            console.log('getEntity_ByEntityContainer nested collection check - listener already established therefore the sub entity is already loaded. collectionId/docId:' + collectionId + docId);
+                                            console.log('getEntity nested collection check - listener already established therefore the sub entity is already loaded. collectionId/docId:' + collectionId + docId);
                                         }
                                     }
                                 }
                             }
                 
                         }
-                        context.commit('initialize_currentEntity_byDocEntityContainer', {
+                        context.commit('initializeCurrentEntity', {
                             docId:entityContainer.docId,
                             collectionId:entityContainer.collectionId,
                             docContainer:{
@@ -232,9 +232,9 @@ export const store = new Vuex.Store({
         },
         // update the local and remote storage for the entity
         // Receives: entityPropertyContainer{ docId:'',collectionId:'',propertiesObject:{prop:val,[prop2:val2]} }
-        update_currentEntity_byEntityPropertyContainer(context, entityPropertyContainer){
-            context.commit('mutate_currentEntity_byEntityPropertyContainer', entityPropertyContainer);
-            context.dispatch('fcommit_Entity_byCollectionContainer', {docId:entityPropertyContainer.docId,collectionId:entityPropertyContainer.collectionId});
+        updateCurrentEntity(context, entityPropertyContainer){
+            context.commit('mutateCurrentEntity', entityPropertyContainer);
+            context.dispatch('fcommitEntity', {docId:entityPropertyContainer.docId,collectionId:entityPropertyContainer.collectionId});
         },
         
         // Remove an entity from a parent's neste collection
@@ -245,11 +245,11 @@ export const store = new Vuex.Store({
             // delete this child from the parent
             context.commit('deleteNestedCollectionFromParent', parentChildEntityPropertyContainer);
             // commit the parent
-            context.dispatch('fcommit_Entity_byCollectionContainer', {docId:parentChildEntityPropertyContainer.docId, collectionId:parentChildEntityPropertyContainer.collectionId});
+            context.dispatch('fcommitEntity', {docId:parentChildEntityPropertyContainer.docId, collectionId:parentChildEntityPropertyContainer.collectionId});
         },
         // add new entity to firebase
         // Receives collectionContainer: {docId:'', collectionId:''}
-        fcreate_Entity_byCollectionContainer(context, collectionContainer){
+        fcreateEntity(context, collectionContainer){
             console.log('creating new. object passed in: ' + JSON.stringify(collectionContainer));
             let newSubEntityMetaLocal = {}; // empty object means it's not a sub-entity
 
@@ -279,7 +279,7 @@ export const store = new Vuex.Store({
                     let NestedCollections = {};  // holds an object of child entities by child entity type property
                     NestedCollections[collectionContainer.collectionId] = {};
                     NestedCollections[collectionContainer.collectionId][docRef.id] = 1;  // set the docId as a property of the collectionId object
-                    context.dispatch('update_currentEntity_byEntityPropertyContainer', {
+                    context.dispatch('updateCurrentEntity', {
                         docId:newSubEntityMetaLocal.ParentCollectionId,
                         collectionId: newSubEntityMetaLocal.ParentType,
                         propertiesObject:{
@@ -287,7 +287,7 @@ export const store = new Vuex.Store({
                         }
                     });
                 }
-                context.dispatch('getEntity_ByEntityContainer', {docId:docRef.id,collectionId:collectionContainer.collectionId,});  // rerouting to the same route - vue will not call the Created function on the component
+                context.dispatch('getEntity', {docId:docRef.id,collectionId:collectionContainer.collectionId,});  // rerouting to the same route - vue will not call the Created function on the component
                 console.log('router.replace /add: ' + router.currentRoute.fullPath.replace(/add/, "") + docRef.id);
                 router.replace(router.currentRoute.fullPath.replace(/add/, "") + docRef.id);
             })
@@ -298,8 +298,8 @@ export const store = new Vuex.Store({
         },
         // Commit changes to firebase
         // Receives collectionContainer: {docId:'', collectionId:''}
-        fcommit_Entity_byCollectionContainer(context, collectionContainer){
-            console.log('fcommit_Entity_byCollectionContainer');
+        fcommitEntity(context, collectionContainer){
+            console.log('fcommitEntity');
             
             // update if the entity still exists
             // - it's possible the entity has been deleted at the server or by another real-time client
@@ -314,12 +314,12 @@ export const store = new Vuex.Store({
             }
             // the entity no longer exists
             else{
-                console.log('fcommit_Entity_byCollectionContainer - entity no longer exists.  object passed: ' + JSON.stringify(collectionContainer));
+                console.log('fcommitEntity - entity no longer exists.  object passed: ' + JSON.stringify(collectionContainer));
             }
         },
         // Delete Entity / Firebase Document
         // Receives collectionContainer: {docId:'', collectionId:''[, route:{to:'', type:'<replace>'}]}
-        fdelete_Entity_byCollectionContainer(context, collectionContainer){
+        fdeleteEntity(context, collectionContainer){
             console.log('delete Entity. received object: ' + JSON.stringify(collectionContainer))
 
             // Find and call recursively to Delete Nested Collections
@@ -329,7 +329,7 @@ export const store = new Vuex.Store({
                     if ( NestedCollections.hasOwnProperty(collectionId) && typeof NestedCollections[collectionId] === 'object' ) { // sanity check
                         for(let docId in NestedCollections[collectionId]){
                             // Delete this nested collection entity
-                            context.dispatch('fdelete_Entity_byCollectionContainer', {docId:docId, collectionId:collectionId});
+                            context.dispatch('fdeleteEntity', {docId:docId, collectionId:collectionId});
                         }                        
                     }
                 }

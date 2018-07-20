@@ -126,14 +126,14 @@ export default {
         // - its a new entity if the new id (primaryKinshipCaregiverId) doesn't exist already on the root entity (PrimaryKinshipCaregiver)
         if(this.primaryKinshipCaregiverId=="add" || !this.$store.state.currentEntity['PrimaryKinshipCaregiver'].hasOwnProperty(this.primaryKinshipCaregiverId)){
             this.$store.commit('deleteAllCurrentEntitesAndListeners');
-            this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.primaryKinshipCaregiverId, collectionId:'PrimaryKinshipCaregiver'});
+            this.$store.dispatch('getEntity', {docId:this.primaryKinshipCaregiverId, collectionId:'PrimaryKinshipCaregiver'});
         }
       }
     }
     else{
       // this is a new load of the app - get the info for this root level entity
       console.log('new load');
-      this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.primaryKinshipCaregiverId, collectionId:'PrimaryKinshipCaregiver'});      
+      this.$store.dispatch('getEntity', {docId:this.primaryKinshipCaregiverId, collectionId:'PrimaryKinshipCaregiver'});      
     }
   },
 };

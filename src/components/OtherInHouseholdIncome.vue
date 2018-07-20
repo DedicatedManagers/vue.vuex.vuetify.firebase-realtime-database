@@ -60,7 +60,7 @@ export default {
         return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'IncomeType',});
       },
       set(newValue){
-        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{IncomeType: newValue}});
+        this.$store.dispatch('updateCurrentEntity', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{IncomeType: newValue}});
       },
     },
     IncomeAmount:{
@@ -68,7 +68,7 @@ export default {
         return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'IncomeAmount',});
       },
       set(newValue){
-        this.$store.dispatch('update_currentEntity_byEntityPropertyContainer', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{IncomeAmount: newValue}});
+        this.$store.dispatch('updateCurrentEntity', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{IncomeAmount: newValue}});
       },
     },
   },
@@ -76,7 +76,7 @@ export default {
       fDelete(){
         console.log(this.primaryKinshipCaregiverId);
         this.confirmDialogVisibility = false;
-        this.$store.dispatch('fdelete_Entity_byCollectionContainer',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId+'/OtherInHousehold/'+this.otherInHouseholdId}})
+        this.$store.dispatch('fdeleteEntity',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId+'/OtherInHousehold/'+this.otherInHouseholdId}})
       },
   },
   created(){
@@ -85,7 +85,7 @@ export default {
     // if we are adding a new subEntity then create it
     // - otherwise this entity will get loaded by parent ClientContainer.vue created function
     if(this.otherInHouseholdIncomeId == "add"){
-      this.$store.dispatch('getEntity_ByEntityContainer', {docId:this.docId, collectionId:this.componentCollectionId});
+      this.$store.dispatch('getEntity', {docId:this.docId, collectionId:this.componentCollectionId});
     }
 
     // TODO: Need to implement verification of otherInHouseholdIncomeId 
