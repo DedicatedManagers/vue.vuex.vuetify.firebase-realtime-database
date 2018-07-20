@@ -112,7 +112,7 @@ export const store = new Vuex.Store({
 
             }            
         },
-        // removes a nested collection property from a 
+        // removes a NestedCollection item from an Entities list of NestedCollections 
         // receives object: parentChildEntityPropertyContainer{docId:parentDocId, collectionId:parentCollectionId, childDocId:collectionContainer.docId, childCollectionId:collectionContainer.collectionId})
         deleteNestedCollectionFromParent(state, parentChildEntityPropertyContainer){
             // check that the NestedCollections property for the child docId / entity id exists on the parent collectionId / entity type 
@@ -238,7 +238,7 @@ export const store = new Vuex.Store({
         },
         
         // Remove an entity from a parent's neste collection
-        // receives object: parentChildEntityPropertyContainer{docId:parentDocId, collectionId:parentCollectionId, childDocId:collectionContainer.docId, childCollectionId:collectionContainer.collectionId})
+        // receives parentChildEntityPropertyContainer{docId:parentDocId, collectionId:parentCollectionId, childDocId:collectionContainer.docId, childCollectionId:collectionContainer.collectionId})
         removeNestedCollectionFromParent(context, parentChildEntityPropertyContainer){
             console.log('removeNestedCollection - object received: ' + JSON.stringify(parentChildEntityPropertyContainer));
 
@@ -335,7 +335,7 @@ export const store = new Vuex.Store({
                 }
             }
 
-            // If this is a child entity of another entity
+            // If this is a child entity of another entity - remove its reference from its parent
             if(     
                 ((((context.state.currentEntity||{})[collectionContainer.collectionId]||{})[collectionContainer.docId]||{}).data||{}).hasOwnProperty('ParentCollectionId') &&
                 ((((context.state.currentEntity||{})[collectionContainer.collectionId]||{})[collectionContainer.docId]||{}).data||{}).hasOwnProperty('ParentType')
@@ -353,7 +353,7 @@ export const store = new Vuex.Store({
             context.commit('deleteEntityFromEntityListeners', {docId:collectionContainer.docId, collectionId:collectionContainer.collectionId});
 
             // Delete the Entity in the store
-            // NOTE: it seems to be ok to delete a document that does not exist 
+            // NOTE: it seems to be ok to delete a document that does not exist (called by firebase listner when receiving notice of a deleted entity - all the other actions within this function needs to happen locally)
             firebase.firestore().collection(collectionContainer.collectionId).doc(collectionContainer.docId).delete()
                 .then(function() {
                     if(collectionContainer.route && collectionContainer.route.to){
