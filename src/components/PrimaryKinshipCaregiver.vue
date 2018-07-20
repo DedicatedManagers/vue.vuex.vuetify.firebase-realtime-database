@@ -84,31 +84,40 @@
                 &nbsp;
               </v-flex>
 
-              <v-flex xs12>
-                <v-card>
-                  <v-toolbar color="blue" dark>
-                    <v-toolbar-title>Others In Household</v-toolbar-title>
+            <v-flex xs12>
+                <v-card class="customListExpandable">
+                  <v-toolbar color="blue" dark  @click="otherInHouseholdMenuVisibility=!otherInHouseholdMenuVisibility">
+                    <v-toolbar-title>Others In Household</v-toolbar-title><v-spacer></v-spacer><v-btn v-if="otherInHousehold" icon><v-icon >{{otherInHouseholdMenuVisibility?'expand_less':'expand_more'}}</v-icon></v-btn>
                   </v-toolbar>
-                  <v-card-title>
                     <v-layout row wrap>
                       <v-flex xs12>
-                        <v-list v-for="(otherInHousehold, otherInHouseholdCollectionId) in otherInHousehold" :key="otherInHouseholdCollectionId" v-if="otherInHousehold">
-                          <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+docId+'/OtherInHousehold/'+otherInHouseholdCollectionId">
+                        <v-list v-if="otherInHousehold">
+                          <v-list-group v-model="otherInHouseholdMenuVisibility">
+                            <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+docId+'/OtherInHousehold/'+otherInHouseholdCollectionId" v-for="(otherInHousehold, otherInHouseholdCollectionId) in otherInHousehold" :key="otherInHouseholdCollectionId">
                               <v-list-tile-action>
-                              <v-icon>person</v-icon>
-                            </v-list-tile-action>
-
-                            <v-list-tile-content>
-                              <v-list-tile-title>{{otherInHousehold.data.LastName}}, {{otherInHousehold.data.FirstName}} {{otherInHousehold.data.MiddleName}}</v-list-tile-title>
-                            </v-list-tile-content>
-                          </v-list-tile>
+                                <v-icon>person</v-icon>
+                              </v-list-tile-action>
+                              <v-list-tile-content>
+                                <v-list-tile-title>{{otherInHousehold.data.LastName}}, {{otherInHousehold.data.FirstName}} {{otherInHousehold.data.MiddleName}}</v-list-tile-title>
+                              </v-list-tile-content>
+                            </v-list-tile>
+                          </v-list-group>
+                          <v-list-group :value="!otherInHouseholdMenuVisibility">
+                            <v-list-tile @click="otherInHouseholdMenuVisibility=!otherInHouseholdMenuVisibility">
+                              <v-list-tile-action>
+                                <v-icon>person</v-icon>
+                              </v-list-tile-action>
+                              <v-list-tile-content>
+                                <v-list-tile-title>{{Object.keys(otherInHousehold).length}} Hidden (click to show)</v-list-tile-title>
+                              </v-list-tile-content>                            
+                            </v-list-tile>
+                          </v-list-group>
                         </v-list>
                         <div class="text-xs-right">
                           <v-btn color="success" @click="addOtherInHousehold">Add Other<v-icon right>person_add</v-icon></v-btn>
                         </div>
                       </v-flex>
                     </v-layout>
-                  </v-card-title>
                 </v-card>              
               </v-flex>
 
@@ -146,7 +155,8 @@ export default {
       componentCollectionId:'PrimaryKinshipCaregiver',
       confirmDialogVisibility:false,
       BirthDateMenuVisibility:false,
-      kinshipChildrenMenuVisibility:false,
+      kinshipChildrenMenuVisibility:true,
+      otherInHouseholdMenuVisibility:true,
 
       ClientTypeAtIntakeValues:[
         "1- Formal/Licensed",
