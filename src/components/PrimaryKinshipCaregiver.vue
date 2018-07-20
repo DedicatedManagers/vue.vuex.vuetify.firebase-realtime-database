@@ -50,8 +50,8 @@
                   </v-toolbar>
                     <v-layout row wrap>
                       <v-flex xs12>
-                        <v-list>
-                          <v-list-group v-model="kinshipChildrenMenuVisibility" v-if="kinshipChildren">
+                        <v-list v-if="kinshipChildren">
+                          <v-list-group v-model="kinshipChildrenMenuVisibility" >
                             <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+docId+'/KinshipChild/'+kinshipChildCollectionId" v-for="(kinshipChild, kinshipChildCollectionId) in kinshipChildren" :key="kinshipChildCollectionId">
                               <v-list-tile-action>
                                 <v-icon>person</v-icon>
@@ -61,7 +61,7 @@
                               </v-list-tile-content>
                             </v-list-tile>
                           </v-list-group>
-                          <v-list-group :value="!kinshipChildrenMenuVisibility && kinshipChildren">
+                          <v-list-group :value="!kinshipChildrenMenuVisibility">
                             <v-list-tile @click="kinshipChildrenMenuVisibility=!kinshipChildrenMenuVisibility">
                               <v-list-tile-action>
                                 <v-icon>person</v-icon>
