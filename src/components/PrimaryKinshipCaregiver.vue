@@ -44,7 +44,7 @@
               </v-flex>
 
               <v-flex xs12>
-                <v-card>
+                <v-card class="customListExpandable">
                   <v-toolbar color="blue" dark  @click="kinshipChildrenMenuVisibility=!kinshipChildrenMenuVisibility">
                     <v-toolbar-title>Kinship Children</v-toolbar-title><v-spacer></v-spacer><v-btn v-if="kinshipChildren" icon><v-icon >{{kinshipChildrenMenuVisibility?'expand_less':'expand_more'}}</v-icon></v-btn>
                   </v-toolbar>
@@ -257,11 +257,10 @@ export default {
 </script>
  
 <style>
-.v-list__group__header{
-  display: none
+.customListExpandable .v-toolbar{
+  cursor:pointer;
 }
-
-.v-list__group__header__append-iconx{
+.customListExpandable .v-list__group__header{
   display: none
 }
 </style>
