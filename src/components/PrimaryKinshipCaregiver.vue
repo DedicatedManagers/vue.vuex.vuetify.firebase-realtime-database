@@ -45,29 +45,38 @@
 
               <v-flex xs12>
                 <v-card>
-                  <v-toolbar color="blue" dark>
-                    <v-toolbar-title>Kinship Children</v-toolbar-title>
+                  <v-toolbar color="blue" dark  @click="kinshipChildrenMenuVisibility=!kinshipChildrenMenuVisibility">
+                    <v-toolbar-title>Kinship Children</v-toolbar-title><v-spacer></v-spacer><v-btn v-if="kinshipChildren" icon><v-icon >{{kinshipChildrenMenuVisibility?'expand_less':'expand_more'}}</v-icon></v-btn>
                   </v-toolbar>
-                  <v-card-title>
                     <v-layout row wrap>
                       <v-flex xs12>
-                        <v-list v-for="(kinshipChild, kinshipChildCollectionId) in kinshipChildren" :key="kinshipChildCollectionId" v-if="kinshipChild">
-                          <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+docId+'/KinshipChild/'+kinshipChildCollectionId">
+                        <v-list>
+                          <v-list-group v-model="kinshipChildrenMenuVisibility" v-if="kinshipChildren">
+                            <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+docId+'/KinshipChild/'+kinshipChildCollectionId" v-for="(kinshipChild, kinshipChildCollectionId) in kinshipChildren" :key="kinshipChildCollectionId">
                               <v-list-tile-action>
-                              <v-icon>person</v-icon>
-                            </v-list-tile-action>
-
-                            <v-list-tile-content>
-                              <v-list-tile-title>{{kinshipChild.data.LastName}}, {{kinshipChild.data.FirstName}} {{kinshipChild.data.MiddleName}}</v-list-tile-title>
-                            </v-list-tile-content>
-                          </v-list-tile>
+                                <v-icon>person</v-icon>
+                              </v-list-tile-action>
+                              <v-list-tile-content>
+                                <v-list-tile-title>{{kinshipChild.data.LastName}}, {{kinshipChild.data.FirstName}} {{kinshipChild.data.MiddleName}}</v-list-tile-title>
+                              </v-list-tile-content>
+                            </v-list-tile>
+                          </v-list-group>
+                          <v-list-group :value="!kinshipChildrenMenuVisibility && kinshipChildren">
+                            <v-list-tile @click="kinshipChildrenMenuVisibility=!kinshipChildrenMenuVisibility">
+                              <v-list-tile-action>
+                                <v-icon>person</v-icon>
+                              </v-list-tile-action>
+                              <v-list-tile-content>
+                                <v-list-tile-title>{{Object.keys(kinshipChildren).length}} Hidden (click to show)</v-list-tile-title>
+                              </v-list-tile-content>                            
+                            </v-list-tile>
+                          </v-list-group>
                         </v-list>
                         <div class="text-xs-right">
                           <v-btn color="success" @click="addKinshipChild">Add Child<v-icon right>person_add</v-icon></v-btn>
                         </div>
                       </v-flex>
                     </v-layout>
-                  </v-card-title>
                 </v-card>              
               </v-flex>
 
@@ -137,6 +146,7 @@ export default {
       componentCollectionId:'PrimaryKinshipCaregiver',
       confirmDialogVisibility:false,
       BirthDateMenuVisibility:false,
+      kinshipChildrenMenuVisibility:false,
 
       ClientTypeAtIntakeValues:[
         "1- Formal/Licensed",
@@ -247,4 +257,11 @@ export default {
 </script>
  
 <style>
+.v-list__group__header{
+  display: none
+}
+
+.v-list__group__header__append-iconx{
+  display: none
+}
 </style>
