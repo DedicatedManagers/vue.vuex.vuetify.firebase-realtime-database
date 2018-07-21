@@ -6,7 +6,7 @@
     </v-toolbar>
     <v-layout row wrap>
         <v-flex xs12>
-        <v-list v-if="entityList">
+        <v-list v-if="entityList" subheader>
             <v-list-group v-model="listVisibility">
             <v-list-tile  :to="baseUrl+entityListCollectionId" v-for="(entityList, entityListCollectionId) in entityList" :key="entityListCollectionId">
                 <v-list-tile-action>
