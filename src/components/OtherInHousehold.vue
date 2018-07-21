@@ -38,32 +38,16 @@
               </v-flex>
 
               <v-flex xs12>
-                <v-card>
-                <v-toolbar color="blue" dark>
-                    <v-toolbar-title>Incomes</v-toolbar-title>
-                </v-toolbar>
-                <v-card-title>
-                    <v-layout row wrap>
-                    <v-flex xs12>
-                        <v-list v-for="(otherInHouseholdIncome, otherInHouseholdIncomeCollectionId) in otherInHouseholdIncomes" :key="otherInHouseholdIncomeCollectionId" v-if="otherInHouseholdIncome">
-                        <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+primaryKinshipCaregiverId+'/OtherInHousehold/'+otherInHouseholdId+'/OtherInHouseholdIncome/'+otherInHouseholdIncomeCollectionId">
-                            <v-list-tile-action>
-                            <v-icon>monetization_on</v-icon>
-                            </v-list-tile-action>
-
-                            <v-list-tile-content>
-                            <v-list-tile-title>{{otherInHouseholdIncome.data.IncomeType}} - {{otherInHouseholdIncome.data.IncomeAmount}}</v-list-tile-title>
-                            </v-list-tile-content>
-                        </v-list-tile>
-                        </v-list>
-                        <div class="text-xs-right">
-                        <v-btn color="success" @click="addOtherInHouseholdIncome">Add Income<v-icon right>monetization_on</v-icon></v-btn>
-                        </div>
-                    </v-flex>
-                    </v-layout>
-                </v-card-title>
-                </v-card>
+                    <subentity-list 
+                      toolbarTitle="Incomes"  
+                      :entityList="otherInHouseholdIncomes" 
+                      :baseUrl="'/PrimaryKinshipCaregiver/'+primaryKinshipCaregiverId+'/OtherInHousehold/'+otherInHouseholdId+'/OtherInHouseholdIncome/'"
+                      icon="monetization_on"
+                      addIcon="monetization_on"
+                      addButtonText="Add Income"
+                    ></subentity-list>
               </v-flex>
+
             </v-layout>              
           </v-flex>
       </v-layout>
@@ -81,12 +65,14 @@
 
 <script>
 import DialogConfirm from '@/components/shared/DialogConfirm';
+import SubEntityList from '@/components/shared/SubEntityList';
 
 export default {
   name: 'OtherInHousehold',
   props:['otherInHouseholdId', 'primaryKinshipCaregiverId'],
   components:{
-    'dialog-confirm':DialogConfirm
+    'dialog-confirm':DialogConfirm,
+    'subentity-list':SubEntityList,
   },
   data() {
     return {
@@ -100,18 +86,7 @@ export default {
       return this.otherInHouseholdId;
     },
     otherInHouseholdIncomes(){
-      // if the parent entity has not loaded, return an empty object
-      if(!(((((this.$store.state.currentEntity||{})['OtherInHousehold']||{})[this.otherInHouseholdId]||{}).data||{}).NestedCollections||{}).hasOwnProperty('OtherInHouseholdIncome')) return {};
-
-      // the parent entity has been loaded
-      let otherInHouseholdIncomesFiltered = {};
-      for(let otherInHouseholdIncomeDocId in this.$store.state.currentEntity['OtherInHousehold'][this.otherInHouseholdId].data.NestedCollections.OtherInHouseholdIncome){
-        // Verify the child entity has been loaded
-        if(  ((this.$store.state.currentEntity||{})['OtherInHouseholdIncome']||{}).hasOwnProperty(otherInHouseholdIncomeDocId)  ){
-          otherInHouseholdIncomesFiltered[otherInHouseholdIncomeDocId] = this.$store.state.currentEntity['OtherInHouseholdIncome'][otherInHouseholdIncomeDocId];
-        }
-      }
-      return otherInHouseholdIncomesFiltered;
+      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'OtherInHouseholdIncome', parentEntityId:this.docId});
     },
     FirstName:{
       get(){

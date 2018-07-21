@@ -13,7 +13,7 @@
                 <v-icon>{{icon}}</v-icon>
                 </v-list-tile-action>
                 <v-list-tile-content>
-                <v-list-tile-title>{{entityList.data.LastName}}, {{entityList.data.FirstName}} {{entityList.data.MiddleName}}</v-list-tile-title>
+                <v-list-tile-title>{{entityList.ListDisplayText}}</v-list-tile-title>
                 </v-list-tile-content>
             </v-list-tile>
             </v-list-group>
@@ -29,7 +29,7 @@
             </v-list-group>
         </v-list>
         <div class="text-xs-right">
-            <v-btn color="success" @click="addEntity">{{addButtonText}}<v-icon right>{{addIcon}}</v-icon></v-btn>
+            <v-btn color="warning" @click="addEntity">{{addButtonText}}<v-icon right>{{addIcon}}</v-icon></v-btn>
         </div>
         </v-flex>
     </v-layout>
@@ -56,3 +56,13 @@ export default {
   },
 }
 </script>
+
+
+<style>
+.customListExpandable .v-toolbar{
+  cursor:pointer;
+}
+.customListExpandable .v-list__group__header{
+  display: none
+}
+</style>

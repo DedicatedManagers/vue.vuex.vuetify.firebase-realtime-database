@@ -130,12 +130,10 @@ export default {
       return this.primaryKinshipCaregiverId;
     },
     kinshipChildren(){
-      if(!this.$store.state.currentEntity) return null
-      return this.$store.state.currentEntity['KinshipChild'];
+      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'KinshipChild', parentEntityId:null});
     },
     otherInHousehold(){
-      if(!this.$store.state.currentEntity) return null
-      return this.$store.state.currentEntity['OtherInHousehold'];
+      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'OtherInHousehold', parentEntityId:null});
     },
     FirstName:{
       get(){
@@ -217,10 +215,4 @@ export default {
 </script>
  
 <style>
-.customListExpandable .v-toolbar{
-  cursor:pointer;
-}
-.customListExpandable .v-list__group__header{
-  display: none
-}
 </style>
