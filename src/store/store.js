@@ -17,8 +17,8 @@ export const store = new Vuex.Store({
     getters:{
         // Receives fieldValueCollectionContainer: {docId:'', collectionId:'', fieldName:''}
         getCurrentEntityFieldValue: (state) => (fieldValueCollectionContainer) => {
-            if (   !((((store.state.currentEntity||{})[fieldValueCollectionContainer.collectionId]||{})[fieldValueCollectionContainer.docId]||{}).data||{}).hasOwnProperty(fieldValueCollectionContainer.fieldName)    ) return "";
-            return store.state.currentEntity[fieldValueCollectionContainer.collectionId][fieldValueCollectionContainer.docId].data[fieldValueCollectionContainer.fieldName];
+            if (   !((((state.currentEntity||{})[fieldValueCollectionContainer.collectionId]||{})[fieldValueCollectionContainer.docId]||{}).data||{}).hasOwnProperty(fieldValueCollectionContainer.fieldName)    ) return "";
+            return state.currentEntity[fieldValueCollectionContainer.collectionId][fieldValueCollectionContainer.docId].data[fieldValueCollectionContainer.fieldName];
         },
         // Receives entityContainer {entityType:'', parentEntityId:''}
         getCurrentEntityTypeAmmendedWithListDisplay: (state) => (entityContainer) => {
@@ -27,31 +27,31 @@ export const store = new Vuex.Store({
             // Need to ammend the Entity to Let SubEntityList component know what to display for each entity when rendered as a list item (as the variables can change between entity types) 
             let ammendedCurrentEntity = {};
             for (let entityId in state.currentEntity[entityContainer.entityType]){
-                // Create the ListDisplayText based on Entity Type
-                // Some entity types also filter out other entities in the same type that don't have the same parent
-                if(entityContainer.entityType=='KinshipChild' || entityContainer.entityType=="OtherInHousehold"){
-                    ammendedCurrentEntity[entityId]=state.currentEntity[entityContainer.entityType][entityId];
-                    ammendedCurrentEntity[entityId]['ListDisplayText'] =
-                        // Create the format of what do display when this entity is rendered as a list item
-                        (state.currentEntity[entityContainer.entityType][entityId].data.LastName||"") + ", " +
-                        (state.currentEntity[entityContainer.entityType][entityId].data.FirstName||"") + " " +
-                        (state.currentEntity[entityContainer.entityType][entityId].data.MiddleName||"");    
-                }
-                else if(entityContainer.entityType=='OtherInHouseholdIncome' || entityContainer.entityType=="PrimaryKinshipCaregiverIncome"){
-                    if(state.currentEntity[entityContainer.entityType][entityId].data.ParentCollectionId == entityContainer.parentEntityId){
-                        ammendedCurrentEntity[entityId]=state.currentEntity[entityContainer.entityType][entityId]; // only adding entities that have the same individual parent
+                // Check that the parent of the entity being checked matches the parent sent in - necessary for nested entities
+                if(state.currentEntity[entityContainer.entityType][entityId].data.ParentCollectionId == entityContainer.parentEntityId){  // sanity check?  This may not be necessary
+                    // only including entities that have the same individual parent
+                    ammendedCurrentEntity[entityId]=state.currentEntity[entityContainer.entityType][entityId]; 
+                    
+                    // Create the ListDisplayText based on Entity Type
+                    // Some entity types also filter out other entities in the same type that don't have the same parent
+                    if(entityContainer.entityType=='KinshipChild' || entityContainer.entityType=="OtherInHousehold"){
                         ammendedCurrentEntity[entityId]['ListDisplayText'] =
                             // Create the format of what do display when this entity is rendered as a list item
-                            (state.currentEntity[entityContainer.entityType][entityId].data.IncomeType||"") + " - $" +
-                            (state.currentEntity[entityContainer.entityType][entityId].data.IncomeAmount||"");    
+                            (state.currentEntity[entityContainer.entityType][entityId].data.LastName||"") + ", " +
+                            (state.currentEntity[entityContainer.entityType][entityId].data.FirstName||"") + " " +
+                            (state.currentEntity[entityContainer.entityType][entityId].data.MiddleName||"");    
                     }
-                }                
-                else{
-                    // The entity type has not been defined.  Need to define the entity above.
-                    ammendedCurrentEntity[entityId]=state.currentEntity[entityContainer.entityType][entityId];
-                    ammendedCurrentEntity[entityId]['ListDisplayText'] ='Error #INOS2833'
-
-                }
+                    else if(entityContainer.entityType=='OtherInHouseholdIncome' || entityContainer.entityType=="PrimaryKinshipCaregiverIncome"){
+                            ammendedCurrentEntity[entityId]['ListDisplayText'] =
+                                // Create the format of what do display when this entity is rendered as a list item
+                                (state.currentEntity[entityContainer.entityType][entityId].data.IncomeType||"") + " - $" +
+                                (state.currentEntity[entityContainer.entityType][entityId].data.IncomeAmount||"");    
+                    }                
+                    else{
+                        // The entity type has not been defined.  Need to define the entity above.
+                        ammendedCurrentEntity[entityId]['ListDisplayText'] ='Error #INOS2833';
+                    }
+            }
             }
             return ammendedCurrentEntity;
         }

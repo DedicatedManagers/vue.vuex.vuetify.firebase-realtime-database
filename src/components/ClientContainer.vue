@@ -91,6 +91,12 @@ export default {
       },
       navBreadCrumbs: function (){
         let crumbs = [];
+        if(this.primaryKinshipCaregiverIncomeId){
+          crumbs.push({
+              link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId,
+              text:this.clientFullName,
+          });
+        }
         if(this.kinshipChildId){
           crumbs.push({
               link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId,

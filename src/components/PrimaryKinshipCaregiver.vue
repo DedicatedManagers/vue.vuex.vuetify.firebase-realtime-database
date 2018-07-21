@@ -146,10 +146,10 @@ export default {
       return this.primaryKinshipCaregiverId;
     },
     kinshipChildren(){
-      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'KinshipChild', parentEntityId:null});
+      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'KinshipChild', parentEntityId:this.docId});
     },
     otherInHousehold(){
-      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'OtherInHousehold', parentEntityId:null});
+      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'OtherInHousehold', parentEntityId:this.docId});
     },
     primaryKinshipCaregiverIncome(){
       return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'PrimaryKinshipCaregiverIncome', parentEntityId:this.docId});
