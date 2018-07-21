@@ -45,6 +45,22 @@
 
               <v-flex xs12>
                 <subentity-list 
+                  toolbarTitle="Primary Kinship Caregiver Income"  
+                  :entityList="primaryKinshipCaregiverIncome" 
+                  :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/PrimaryKinshipCaregiverIncome/'"
+                  icon="monetization_on"
+                  addIcon="monetization_on"
+                  addButtonText="Add Income"
+                ></subentity-list>
+              </v-flex>
+              
+              <v-flex xs12>
+                &nbsp;
+              </v-flex>
+
+
+              <v-flex xs12>
+                <subentity-list 
                   toolbarTitle="Kinship Children"  
                   :entityList="kinshipChildren" 
                   :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/KinshipChild/'"
@@ -134,6 +150,9 @@ export default {
     },
     otherInHousehold(){
       return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'OtherInHousehold', parentEntityId:null});
+    },
+    primaryKinshipCaregiverIncome(){
+      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'PrimaryKinshipCaregiverIncome', parentEntityId:this.docId});
     },
     FirstName:{
       get(){

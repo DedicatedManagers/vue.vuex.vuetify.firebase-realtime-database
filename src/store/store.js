@@ -37,12 +37,12 @@ export const store = new Vuex.Store({
                         (state.currentEntity[entityContainer.entityType][entityId].data.FirstName||"") + " " +
                         (state.currentEntity[entityContainer.entityType][entityId].data.MiddleName||"");    
                 }
-                else if(entityContainer.entityType=='OtherInHouseholdIncome'){
+                else if(entityContainer.entityType=='OtherInHouseholdIncome' || entityContainer.entityType=="PrimaryKinshipCaregiverIncome"){
                     if(state.currentEntity[entityContainer.entityType][entityId].data.ParentCollectionId == entityContainer.parentEntityId){
                         ammendedCurrentEntity[entityId]=state.currentEntity[entityContainer.entityType][entityId]; // only adding entities that have the same individual parent
                         ammendedCurrentEntity[entityId]['ListDisplayText'] =
                             // Create the format of what do display when this entity is rendered as a list item
-                            (state.currentEntity[entityContainer.entityType][entityId].data.IncomeType||"") + ", " +
+                            (state.currentEntity[entityContainer.entityType][entityId].data.IncomeType||"") + " - $" +
                             (state.currentEntity[entityContainer.entityType][entityId].data.IncomeAmount||"");    
                     }
                 }                

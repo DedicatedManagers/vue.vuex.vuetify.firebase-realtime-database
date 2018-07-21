@@ -8,7 +8,10 @@
                 | <router-link  :to="navBreadCrumb.link">{{navBreadCrumb.text}}</router-link>
             </span>
 
-            <template v-if="kinshipChildId">
+            <template v-if="primaryKinshipCaregiverIncomeId">
+              <primarykinshipcaregiver-income  :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :primaryKinshipCaregiverIncomeId="primaryKinshipCaregiverIncomeId"></primarykinshipcaregiver-income>
+            </template>
+            <template v-else-if="kinshipChildId">
               <kinshipchild  v-if="!kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" ></kinshipchild>
               <kinshipchild-income v-if="kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" :kinshipChildIncomeId="kinshipChildIncomeId"></kinshipchild-income>
             </template>
@@ -33,16 +36,19 @@ import KinshipChild from '@/components/KinshipChild';
 import KinshipChildIncome from '@/components/KinshipChildIncome';
 import OtherInHousehold from '@/components/OtherInHousehold';
 import OtherInHouseholdIncome from '@/components/OtherInHouseholdIncome';
+import PrimaryKinshipCaregiverIncome from '@/components/PrimaryKinshipCaregiverIncome';
+
 
 export default {
   name: 'ClientContainer',
-  props:['primaryKinshipCaregiverId','kinshipChildId', 'kinshipChildIncomeId','otherInHouseholdId', 'otherInHouseholdIncomeId'],
+  props:['primaryKinshipCaregiverId','kinshipChildId', 'kinshipChildIncomeId','otherInHouseholdId', 'otherInHouseholdIncomeId','primaryKinshipCaregiverIncomeId'],
   components:{
       'primary-kinship-caregiver':PrimaryKinshipCaregiver,
       'kinshipchild':KinshipChild,
       'kinshipchild-income':KinshipChildIncome,
       'otherinhousehold':OtherInHousehold,
       'otherinhousehold-income':OtherInHouseholdIncome,
+      'primarykinshipcaregiver-income':PrimaryKinshipCaregiverIncome,
   },
   computed:{
       clientFullName:function(){
