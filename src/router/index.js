@@ -59,6 +59,15 @@ const router = new Router({
       },
     },
     {
+      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/KinshipChild/:kinshipChildId/KinshipChildCustodyStatus/:kinshipChildCustodyStatusId',
+      props: true,
+      name: 'KinshipChildCustodyStatus',
+      component: ClientContainer,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
       path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/OtherInHousehold/:otherInHouseholdId',
       props: true,
       name: 'OtherInHousehold',

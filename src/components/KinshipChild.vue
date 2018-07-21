@@ -64,6 +64,21 @@
                   </v-card-title>
                 </v-card>              
               </v-flex>
+
+              <v-flex xs12>
+                &nbsp;
+              </v-flex>
+
+              <v-flex xs12>
+                <subentity-list 
+                  toolbarTitle="Kinship Custody Status"  
+                  :entityList="kinshipCustodyStatus" 
+                  :baseUrl="'/PrimaryKinshipCaregiver/'+primaryKinshipCaregiverId+'/KinshipChild/'+kinshipChildId+'/KinshipChildCustodyStatus/'"
+                  icon="person"
+                  addIcon="person_add"
+                  addButtonText="Add Status"
+                ></subentity-list>
+              </v-flex>              
             </v-layout>
           </v-flex>
       </v-layout>
@@ -81,12 +96,14 @@
 
 <script>
 import DialogConfirm from '@/components/shared/DialogConfirm';
+import SubEntityList from '@/components/shared/SubEntityList';
 
 export default {
   name: 'KinshipChild',
   props:['kinshipChildId', 'primaryKinshipCaregiverId'],
   components:{
-    'dialog-confirm':DialogConfirm
+    'dialog-confirm':DialogConfirm,
+    'subentity-list':SubEntityList,
   },
   data() {
     return {
@@ -98,6 +115,9 @@ export default {
   computed:{
     docId: function(){
       return this.kinshipChildId;
+    },
+    kinshipCustodyStatus(){
+      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'KinshipChildCustodyStatus', parentEntityId:this.docId});
     },
     kinshipChildIncomes(){
       // if the parent entity has not loaded, return an empty object

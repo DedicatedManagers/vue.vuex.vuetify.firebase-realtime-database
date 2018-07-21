@@ -12,8 +12,9 @@
               <primarykinshipcaregiver-income  :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :primaryKinshipCaregiverIncomeId="primaryKinshipCaregiverIncomeId"></primarykinshipcaregiver-income>
             </template>
             <template v-else-if="kinshipChildId">
-              <kinshipchild  v-if="!kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" ></kinshipchild>
+              <kinshipchild  v-if="!(kinshipChildIncomeId || kinshipChildCustodyStatusId)" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" ></kinshipchild>
               <kinshipchild-income v-if="kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" :kinshipChildIncomeId="kinshipChildIncomeId"></kinshipchild-income>
+              <kinshipchild-custodystatus v-if="kinshipChildCustodyStatusId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" :kinshipChildCustodyStatusId="kinshipChildCustodyStatusId"></kinshipchild-custodystatus>
             </template>
             <template v-else-if="otherInHouseholdId">
               <otherinhousehold v-if="!otherInHouseholdIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :otherInHouseholdId="otherInHouseholdId" ></otherinhousehold>
@@ -37,11 +38,12 @@ import KinshipChildIncome from '@/components/KinshipChildIncome';
 import OtherInHousehold from '@/components/OtherInHousehold';
 import OtherInHouseholdIncome from '@/components/OtherInHouseholdIncome';
 import PrimaryKinshipCaregiverIncome from '@/components/PrimaryKinshipCaregiverIncome';
+import KinshipChildCustodyStatus from '@/components/KinshipChildCustodyStatus';
 
 
 export default {
   name: 'ClientContainer',
-  props:['primaryKinshipCaregiverId','kinshipChildId', 'kinshipChildIncomeId','otherInHouseholdId', 'otherInHouseholdIncomeId','primaryKinshipCaregiverIncomeId'],
+  props:['primaryKinshipCaregiverId','kinshipChildId', 'kinshipChildIncomeId','otherInHouseholdId', 'otherInHouseholdIncomeId','primaryKinshipCaregiverIncomeId','kinshipChildCustodyStatusId'],
   components:{
       'primary-kinship-caregiver':PrimaryKinshipCaregiver,
       'kinshipchild':KinshipChild,
@@ -49,6 +51,7 @@ export default {
       'otherinhousehold':OtherInHousehold,
       'otherinhousehold-income':OtherInHouseholdIncome,
       'primarykinshipcaregiver-income':PrimaryKinshipCaregiverIncome,
+      'kinshipchild-custodystatus':KinshipChildCustodyStatus,
   },
   computed:{
       clientFullName:function(){
@@ -103,14 +106,12 @@ export default {
               text:this.clientFullName,
           });
         }
-        if(this.kinshipChildIncomeId){
+        if(this.kinshipChildIncomeId || this.kinshipChildCustodyStatusId){
           crumbs.push({
               link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId+'/KinshipChild/'+this.kinshipChildId,
               text:this.kinshipChildFullName,
           });
         }
-
-
         if(this.otherInHouseholdId){
           crumbs.push({
               link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId,
