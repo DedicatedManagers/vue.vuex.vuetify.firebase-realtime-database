@@ -40,7 +40,8 @@
               <v-flex xs12>
                 <subentity-list 
                   toolbarTitle="Incomes"  
-                  :entityList="kinshipChildIncomes" 
+                  entityType="KinshipChildIncome" 
+                  :parentCollectionId="this.docId"
                   :baseUrl="'/PrimaryKinshipCaregiver/'+primaryKinshipCaregiverId+'/KinshipChild/'+kinshipChildId+'/KinshipChildIncome/'"
                   icon="monetization_on"
                   addIcon="monetization_on"
@@ -55,7 +56,8 @@
               <v-flex xs12>
                 <subentity-list 
                   toolbarTitle="Kinship Custody Status"  
-                  :entityList="kinshipCustodyStatus" 
+                  entityType="KinshipChildCustodyStatus" 
+                  :parentCollectionId="this.docId"
                   :baseUrl="'/PrimaryKinshipCaregiver/'+primaryKinshipCaregiverId+'/KinshipChild/'+kinshipChildId+'/KinshipChildCustodyStatus/'"
                   icon="person"
                   addIcon="person_add"
@@ -98,12 +100,6 @@ export default {
   computed:{
     docId: function(){
       return this.kinshipChildId;
-    },
-    kinshipCustodyStatus(){
-      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'KinshipChildCustodyStatus', parentCollectionId:this.docId});
-    },
-    kinshipChildIncomes(){
-      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'KinshipChildIncome', parentCollectionId:this.docId});
     },
     FirstName:{
       get(){

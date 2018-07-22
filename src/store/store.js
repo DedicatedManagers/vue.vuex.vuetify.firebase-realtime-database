@@ -20,53 +20,6 @@ export const store = new Vuex.Store({
             if (   !((((state.currentEntity||{})[fieldValueCollectionContainer.collectionId]||{})[fieldValueCollectionContainer.docId]||{}).data||{}).hasOwnProperty(fieldValueCollectionContainer.fieldName)    ) return "";
             return state.currentEntity[fieldValueCollectionContainer.collectionId][fieldValueCollectionContainer.docId].data[fieldValueCollectionContainer.fieldName];
         },
-        // Receives entityContainer {entityType:'', parentCollectionId:''}
-        getCurrentEntityTypeAmmendedWithListDisplay: (state) => (entityContainer) => {
-            if(  !(state.currentEntity||{}).hasOwnProperty(entityContainer.entityType) )  return null;
-
-            // Need to ammend the Entity to Let SubEntityList component know what to display for each entity when rendered as a list item (as the variables can change between entity types) 
-            let ammendedCurrentEntity = {};
-            for (let entityId in state.currentEntity[entityContainer.entityType]){
-                // Check that the parent of the entity being checked matches the parent sent in - necessary for nested entities?  Could just be sanity check
-                if(state.currentEntity[entityContainer.entityType][entityId].data.ParentCollectionId == entityContainer.parentCollectionId){  // sanity check?  This may not be necessary
-                    // only including entities that have the same individual parent
-                    ammendedCurrentEntity[entityId]=state.currentEntity[entityContainer.entityType][entityId]; 
-                    
-                    // Create the ListDisplayText based on Entity Type
-                    // Some entity types also filter out other entities in the same type that don't have the same parent
-                    if(entityContainer.entityType=='KinshipChild' || entityContainer.entityType=="OtherInHousehold"){
-                        ammendedCurrentEntity[entityId]['ListDisplayText'] =
-                            // Create the format of what do display when this entity is rendered as a list item
-                            (state.currentEntity[entityContainer.entityType][entityId].data.LastName||"") + ", " +
-                            (state.currentEntity[entityContainer.entityType][entityId].data.FirstName||"") + " " +
-                            (state.currentEntity[entityContainer.entityType][entityId].data.MiddleName||"");    
-                    }
-                    else if(entityContainer.entityType=='OtherInHouseholdIncome' || entityContainer.entityType=="PrimaryKinshipCaregiverIncome" || entityContainer.entityType=='KinshipChildIncome'){
-                            ammendedCurrentEntity[entityId]['ListDisplayText'] =
-                                // Create the format of what do display when this entity is rendered as a list item
-                                (state.currentEntity[entityContainer.entityType][entityId].data.IncomeType||"") + " - $" +
-                                (state.currentEntity[entityContainer.entityType][entityId].data.IncomeAmount||"");    
-                    }
-                    else if(entityContainer.entityType=='KinshipChildCustodyStatus'){
-                        ammendedCurrentEntity[entityId]['ListDisplayText'] =
-                            // Create the format of what do display when this entity is rendered as a list item
-                            (state.currentEntity[entityContainer.entityType][entityId].data.CustodyDate||"") + " - " +
-                            (state.currentEntity[entityContainer.entityType][entityId].data.CustodyStatus||"");
-                    }
-                    else if(entityContainer.entityType=='PrimaryKinshipCaregiverContact'){
-                        ammendedCurrentEntity[entityId]['ListDisplayText'] =
-                            // Create the format of what do display when this entity is rendered as a list item
-                            (state.currentEntity[entityContainer.entityType][entityId].data.ContactDate||"") + " - " +
-                            (state.currentEntity[entityContainer.entityType][entityId].data.ContactType||"");
-                    }
-                    else{
-                            // The entity type has not been defined.  Need to define the entity above.
-                            ammendedCurrentEntity[entityId]['ListDisplayText'] ='Error #INOS2833';
-                    }
-            }
-            }
-            return ammendedCurrentEntity;
-        }
     },
     mutations:{
         setUserIsAuthenticated(state, replace){

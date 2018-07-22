@@ -40,7 +40,8 @@
               <v-flex xs12>
                     <subentity-list 
                       toolbarTitle="Incomes"  
-                      :entityList="otherInHouseholdIncomes" 
+                      entityType="OtherInHouseholdIncome" 
+                      :parentCollectionId="this.docId"
                       :baseUrl="'/PrimaryKinshipCaregiver/'+primaryKinshipCaregiverId+'/OtherInHousehold/'+otherInHouseholdId+'/OtherInHouseholdIncome/'"
                       icon="monetization_on"
                       addIcon="monetization_on"
@@ -84,9 +85,6 @@ export default {
   computed:{
     docId: function(){
       return this.otherInHouseholdId;
-    },
-    otherInHouseholdIncomes(){
-      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'OtherInHouseholdIncome', parentCollectionId:this.docId});
     },
     FirstName:{
       get(){

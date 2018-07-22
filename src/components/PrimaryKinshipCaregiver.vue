@@ -46,7 +46,8 @@
               <v-flex xs12>
                 <subentity-list 
                   toolbarTitle="Primary Kinship Caregiver Income"  
-                  :entityList="primaryKinshipCaregiverIncome" 
+                  entityType="PrimaryKinshipCaregiverIncome" 
+                  :parentCollectionId="this.docId"
                   :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/PrimaryKinshipCaregiverIncome/'"
                   icon="monetization_on"
                   addIcon="monetization_on"
@@ -62,7 +63,8 @@
               <v-flex xs12>
                 <subentity-list 
                   toolbarTitle="Kinship Children"  
-                  :entityList="kinshipChildren" 
+                  entityType="KinshipChild" 
+                  :parentCollectionId="this.docId"
                   :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/KinshipChild/'"
                   icon="person"
                   addIcon="person_add"
@@ -77,7 +79,8 @@
               <v-flex xs12>
                 <subentity-list 
                   toolbarTitle="Others In Household"  
-                  :entityList="otherInHousehold" 
+                  entityType="OtherInHousehold" 
+                  :parentCollectionId="this.docId"
                   :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/OtherInHousehold/'"
                   icon="person"
                   addIcon="person_add"
@@ -97,7 +100,8 @@
               <v-flex xs12>
                 <subentity-list 
                   toolbarTitle="Contacts With Caregiver"  
-                  :entityList="primaryKinshipCaregiverContact" 
+                  entityType="PrimaryKinshipCaregiverContact" 
+                  :parentCollectionId="this.docId"
                   :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/PrimaryKinshipCaregiverContact/'"
                   icon="phone"
                   addIcon="phone_forwarded"
@@ -163,18 +167,6 @@ export default {
   computed:{
     docId: function(){
       return this.primaryKinshipCaregiverId;
-    },
-    kinshipChildren(){
-      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'KinshipChild', parentCollectionId:this.docId});
-    },
-    otherInHousehold(){
-      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'OtherInHousehold', parentCollectionId:this.docId});
-    },
-    primaryKinshipCaregiverIncome(){
-      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'PrimaryKinshipCaregiverIncome', parentCollectionId:this.docId});
-    },
-    primaryKinshipCaregiverContact(){
-      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'PrimaryKinshipCaregiverContact', parentCollectionId:this.docId});
     },
     FirstName:{
       get(){
