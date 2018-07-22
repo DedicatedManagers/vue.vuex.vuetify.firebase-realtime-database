@@ -2,7 +2,7 @@
   <v-slide-y-transition mode="out-in">
     <v-container fluid>
         <v-layout row wrap>
-          <v-flex xs12 md4>
+          <v-flex xs12 sm6 md4 px-1>
             <v-card>
               <v-toolbar color="blue" dark>
                 <v-toolbar-title>Primary Kinship Caregiver</v-toolbar-title>
@@ -36,25 +36,10 @@
             </v-card> 
           </v-flex>
 
-          <v-flex xs12 md4 offset-md1>
+          <v-flex xs12 sm6 md4 px-1>
 
             <v-layout row wrap>
-              <v-flex xs12 hidden-md-and-up>
-                &nbsp;
-              </v-flex>
-
-              <v-flex xs12>
-                <subentity-list 
-                  toolbarTitle="Contacts With Caregiver"  
-                  :entityList="primaryKinshipCaregiverContact" 
-                  :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/PrimaryKinshipCaregiverContact/'"
-                  icon="phone"
-                  addIcon="phone_forwarded"
-                  addButtonText="Add Contact"
-                ></subentity-list>
-              </v-flex>
-
-              <v-flex xs12>
+              <v-flex xs12 hidden-sm-and-up>
                 &nbsp;
               </v-flex>
 
@@ -102,6 +87,25 @@
 
             </v-layout>
           </v-flex>
+
+
+          <v-flex xs12 md4 px-1>
+              <v-flex xs12 hidden-md-and-up>
+                &nbsp;
+              </v-flex>
+
+              <v-flex xs12>
+                <subentity-list 
+                  toolbarTitle="Contacts With Caregiver"  
+                  :entityList="primaryKinshipCaregiverContact" 
+                  :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/PrimaryKinshipCaregiverContact/'"
+                  icon="phone"
+                  addIcon="phone_forwarded"
+                  addButtonText="Add Contact"
+                ></subentity-list>
+              </v-flex>
+          </v-flex>
+
         </v-layout> 
 
         <template v-if="confirmDialogVisibility">
