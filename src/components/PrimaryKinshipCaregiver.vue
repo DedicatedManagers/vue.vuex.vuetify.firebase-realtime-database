@@ -45,6 +45,21 @@
 
               <v-flex xs12>
                 <subentity-list 
+                  toolbarTitle="Contacts With Caregiver"  
+                  :entityList="primaryKinshipCaregiverContact" 
+                  :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/PrimaryKinshipCaregiverContact/'"
+                  icon="phone"
+                  addIcon="phone_forwarded"
+                  addButtonText="Add Contact"
+                ></subentity-list>
+              </v-flex>
+
+              <v-flex xs12>
+                &nbsp;
+              </v-flex>
+
+              <v-flex xs12>
+                <subentity-list 
                   toolbarTitle="Primary Kinship Caregiver Income"  
                   :entityList="primaryKinshipCaregiverIncome" 
                   :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/PrimaryKinshipCaregiverIncome/'"
@@ -153,6 +168,9 @@ export default {
     },
     primaryKinshipCaregiverIncome(){
       return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'PrimaryKinshipCaregiverIncome', parentCollectionId:this.docId});
+    },
+    primaryKinshipCaregiverContact(){
+      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'PrimaryKinshipCaregiverContact', parentCollectionId:this.docId});
     },
     FirstName:{
       get(){

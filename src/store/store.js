@@ -46,16 +46,22 @@ export const store = new Vuex.Store({
                                 // Create the format of what do display when this entity is rendered as a list item
                                 (state.currentEntity[entityContainer.entityType][entityId].data.IncomeType||"") + " - $" +
                                 (state.currentEntity[entityContainer.entityType][entityId].data.IncomeAmount||"");    
-                    }                
+                    }
                     else if(entityContainer.entityType=='KinshipChildCustodyStatus'){
                         ammendedCurrentEntity[entityId]['ListDisplayText'] =
                             // Create the format of what do display when this entity is rendered as a list item
                             (state.currentEntity[entityContainer.entityType][entityId].data.CustodyDate||"") + " - " +
                             (state.currentEntity[entityContainer.entityType][entityId].data.CustodyStatus||"");
-                }                
-                else{
-                        // The entity type has not been defined.  Need to define the entity above.
-                        ammendedCurrentEntity[entityId]['ListDisplayText'] ='Error #INOS2833';
+                    }
+                    else if(entityContainer.entityType=='PrimaryKinshipCaregiverContact'){
+                        ammendedCurrentEntity[entityId]['ListDisplayText'] =
+                            // Create the format of what do display when this entity is rendered as a list item
+                            (state.currentEntity[entityContainer.entityType][entityId].data.ContactDate||"") + " - " +
+                            (state.currentEntity[entityContainer.entityType][entityId].data.ContactType||"");
+                    }
+                    else{
+                            // The entity type has not been defined.  Need to define the entity above.
+                            ammendedCurrentEntity[entityId]['ListDisplayText'] ='Error #INOS2833';
                     }
             }
             }
