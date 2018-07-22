@@ -86,7 +86,7 @@ export default {
       return this.otherInHouseholdId;
     },
     otherInHouseholdIncomes(){
-      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'OtherInHouseholdIncome', parentEntityId:this.docId});
+      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'OtherInHouseholdIncome', parentCollectionId:this.docId});
     },
     FirstName:{
       get(){
@@ -133,7 +133,6 @@ export default {
   },
   methods:{
       fDelete(){
-        console.log(this.primaryKinshipCaregiverId);
         this.confirmDialogVisibility = false;
         this.$store.dispatch('fdeleteEntity',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId}})
       },     

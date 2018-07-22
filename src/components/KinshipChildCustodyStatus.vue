@@ -83,7 +83,6 @@ export default {
   },
   methods:{
       fDelete(){
-        console.log(this.primaryKinshipCaregiverId);
         this.confirmDialogVisibility = false;
         this.$store.dispatch('fdeleteEntity',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId+'/KinshipChild/'+this.kinshipChildId}})
       },

@@ -38,32 +38,15 @@
               </v-flex>
 
               <v-flex xs12>
-                <v-card>
-                  <v-toolbar color="blue" dark>
-                    <v-toolbar-title>Incomes</v-toolbar-title>
-                  </v-toolbar>
-                  <v-card-title>
-                    <v-layout row wrap>
-                      <v-flex xs12>
-                        <v-list v-for="(kinshipChildIncome, kinshipChildIncomeCollectionId) in kinshipChildIncomes" :key="kinshipChildIncomeCollectionId" v-if="kinshipChildIncome">
-                          <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+primaryKinshipCaregiverId+'/KinshipChild/'+kinshipChildId+'/KinshipChildIncome/'+kinshipChildIncomeCollectionId">
-                              <v-list-tile-action>
-                              <v-icon>monetization_on</v-icon>
-                            </v-list-tile-action>
-
-                            <v-list-tile-content>
-                              <v-list-tile-title>{{kinshipChildIncome.data.IncomeType}} - {{kinshipChildIncome.data.IncomeAmount}}</v-list-tile-title>
-                            </v-list-tile-content>
-                          </v-list-tile>
-                        </v-list>
-                        <div class="text-xs-right">
-                          <v-btn color="success" @click="addKinshipChildIncome">Add Income<v-icon right>monetization_on</v-icon></v-btn>
-                        </div>
-                      </v-flex>
-                    </v-layout>
-                  </v-card-title>
-                </v-card>              
-              </v-flex>
+                <subentity-list 
+                  toolbarTitle="Incomes"  
+                  :entityList="kinshipChildIncomes" 
+                  :baseUrl="'/PrimaryKinshipCaregiver/'+primaryKinshipCaregiverId+'/KinshipChild/'+kinshipChildId+'/KinshipChildIncome/'"
+                  icon="monetization_on"
+                  addIcon="monetization_on"
+                  addButtonText="Add Income"
+                ></subentity-list>
+              </v-flex>              
 
               <v-flex xs12>
                 &nbsp;
@@ -117,21 +100,10 @@ export default {
       return this.kinshipChildId;
     },
     kinshipCustodyStatus(){
-      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'KinshipChildCustodyStatus', parentEntityId:this.docId});
+      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'KinshipChildCustodyStatus', parentCollectionId:this.docId});
     },
     kinshipChildIncomes(){
-      // if the parent entity has not loaded, return an empty object
-      if(!(((((this.$store.state.currentEntity||{})['KinshipChild']||{})[this.kinshipChildId]||{}).data||{}).NestedCollections||{}).hasOwnProperty('KinshipChildIncome')) return {};
-
-      // the parent entity has been loaded
-      let kinshipChildIncomesFiltered = {};
-      for(let kinshipChildIncomeDocId in this.$store.state.currentEntity['KinshipChild'][this.kinshipChildId].data.NestedCollections.KinshipChildIncome){
-        // Verify the child entity has been loaded
-        if(  ((this.$store.state.currentEntity||{})['KinshipChildIncome']||{}).hasOwnProperty(kinshipChildIncomeDocId)  ){
-          kinshipChildIncomesFiltered[kinshipChildIncomeDocId] = this.$store.state.currentEntity['KinshipChildIncome'][kinshipChildIncomeDocId];
-        }
-      }
-      return kinshipChildIncomesFiltered;
+      return this.$store.getters.getCurrentEntityTypeAmmendedWithListDisplay({entityType:'KinshipChildIncome', parentCollectionId:this.docId});
     },
     FirstName:{
       get(){
@@ -178,7 +150,6 @@ export default {
   },
   methods:{
       fDelete(){
-        console.log(this.primaryKinshipCaregiverId);
         this.confirmDialogVisibility = false;
         this.$store.dispatch('fdeleteEntity',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId}})
       },     
