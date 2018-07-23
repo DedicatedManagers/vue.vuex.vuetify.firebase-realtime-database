@@ -87,6 +87,11 @@ export default {
                             (this.$store.state.currentEntity[this.entityType][entityId].data.ContactDate||"") + " - " +
                             (this.$store.state.currentEntity[this.entityType][entityId].data.ContactType||"");
                     }
+                    else if(this.entityType=='PrimaryKinshipCaregiverCasePlan'){
+                        ammendedCurrentEntity[entityId]['ListDisplayText'] =
+                            // Create the format of what do display when this entity is rendered as a list item
+                            'Case Plan Needed: ' + (this.$store.state.currentEntity[this.entityType][entityId].data.CommunityConnectionNeeded?'Yes':'No');
+                    }
                     else{
                             // The entity type has not been defined.  Need to define the entity above.
                             ammendedCurrentEntity[entityId]['ListDisplayText'] ='Error #INOS2833';

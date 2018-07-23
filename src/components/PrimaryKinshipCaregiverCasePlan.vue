@@ -5,14 +5,14 @@
         <v-flex xs12 md4>
           <v-card>
             <v-toolbar color="blue" dark>
-              <v-toolbar-title>Contacts</v-toolbar-title>
+              <v-toolbar-title>Case Plan</v-toolbar-title>
             </v-toolbar>
             <v-card-title>
               <v-layout row wrap>
                 <v-flex xs12>
                   <v-form>
-                    <v-text-field  v-model="ContactDate" label="Contact Date" required ></v-text-field>
-                    <v-text-field  v-model="ContactType" label="Contact Type" required ></v-text-field>
+                    <v-checkbox v-model="CommunityConnectionNeeded" label="Community Connection Needed"></v-checkbox>
+                    <v-checkbox v-model="CommunityConnectionAchieved" label="Community Connection Achieved"></v-checkbox>
 
                     <div class="text-xs-right">
                       <v-btn color="error" @click="confirmDialogVisibility=true">Delete<v-icon right>delete</v-icon></v-btn>
@@ -28,7 +28,7 @@
       <template v-if="confirmDialogVisibility">
         <dialog-confirm confirmType="error" :confirmVisibilty="confirmDialogVisibility" @confirmAccept="fDelete" @confirmCancel="confirmDialogVisibility=false">
           <template slot="title">Confirm Delete</template>
-          <template slot="text">Are you sure you want to delete this contact from the primary kinship caregiver?</template>
+          <template slot="text">Are you sure you want to delete this case plan from the primary kinship caregiver?</template>
           <template slot="confirmButton">Confirm Delete</template>
         </dialog-confirm>
       </template>
@@ -40,35 +40,35 @@
 import DialogConfirm from '@/components/shared/DialogConfirm';
 
 export default {
-  name: 'PrimaryKinshipCaregiverContact',
-  props:['primaryKinshipCaregiverId', 'primaryKinshipCaregiverContactId'],
+  name: 'PrimaryKinshipCaregiverCasePlan',
+  props:['primaryKinshipCaregiverId', 'primaryKinshipCaregiverCasePlanId'],
   components:{
     'dialog-confirm':DialogConfirm
   },
   data() {
     return {
-      componentCollectionId:'PrimaryKinshipCaregiverContact',
+      componentCollectionId:'PrimaryKinshipCaregiverCasePlan',
       confirmDialogVisibility:false,
     };
   },
   computed:{
     docId: function(){
-      return this.primaryKinshipCaregiverContactId;
+      return this.primaryKinshipCaregiverCasePlanId;
     },
-    ContactDate:{
+    CommunityConnectionNeeded:{
       get(){
-        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'ContactDate',});
+        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'CommunityConnectionNeeded',});
       },
       set(newValue){
-        this.$store.dispatch('updateCurrentEntity', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{ContactDate: newValue}});
+        this.$store.dispatch('updateCurrentEntity', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{CommunityConnectionNeeded: newValue}});
       },
     },
-    ContactType:{
+    CommunityConnectionAchieved:{
       get(){
-        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'ContactType',});
+        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'CommunityConnectionAchieved',});
       },
       set(newValue){
-        this.$store.dispatch('updateCurrentEntity', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{ContactType: newValue}});
+        this.$store.dispatch('updateCurrentEntity', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{CommunityConnectionAchieved: newValue}});
       },
     },
   },
@@ -79,7 +79,7 @@ export default {
       },
   },
   created(){
-    console.log('PrimaryKinshipCaregiverContact.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
+    console.log('PrimaryKinshipCaregiverCasePlan.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
 
     // if we are adding a new subEntity then create it
     // - otherwise this entity will get loaded by parent ClientContainer.vue created function

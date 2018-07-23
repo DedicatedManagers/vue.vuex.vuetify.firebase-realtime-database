@@ -88,6 +88,24 @@
                 ></subentity-list>
               </v-flex>
 
+
+              <v-flex xs12>
+                &nbsp;
+              </v-flex>
+
+              <v-flex xs12>
+                <subentity-list 
+                  toolbarTitle="Case Plan"  
+                  entityType="PrimaryKinshipCaregiverCasePlan" 
+                  :parentCollectionId="this.docId"
+                  :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/PrimaryKinshipCaregiverCasePlan/'"
+                  icon="import_contacts"
+                  addIcon="import_contacts"
+                  addButtonText="Add Case Plan"
+                ></subentity-list>
+              </v-flex>
+
+
             </v-layout>
           </v-flex>
 
