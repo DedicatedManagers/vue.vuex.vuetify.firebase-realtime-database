@@ -96,9 +96,9 @@
               <v-flex xs12>
                 <subentity-list 
                   toolbarTitle="Case Plan"  
-                  entityType="PrimaryKinshipCaregiverCasePlan" 
+                  entityType="FamilyAdvocacyCasePlan" 
                   :parentCollectionId="this.docId"
-                  :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/PrimaryKinshipCaregiverCasePlan/'"
+                  :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/FamilyAdvocacyCasePlan/'"
                   icon="import_contacts"
                   addIcon="import_contacts"
                   addButtonText="Add Case Plan"

@@ -8,10 +8,10 @@
                 | <router-link  :to="navBreadCrumb.link">{{navBreadCrumb.text}}</router-link>
             </span>
 
-            <template v-if="primaryKinshipCaregiverIncomeId || primaryKinshipCaregiverContactId || primaryKinshipCaregiverCasePlanId">
+            <template v-if="primaryKinshipCaregiverIncomeId || primaryKinshipCaregiverContactId || familyAdvocacyCasePlanId">
               <primarykinshipcaregiver-income v-if="primaryKinshipCaregiverIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :primaryKinshipCaregiverIncomeId="primaryKinshipCaregiverIncomeId"></primarykinshipcaregiver-income>
               <primarykinshipcaregiver-contact v-if="primaryKinshipCaregiverContactId"  :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :primaryKinshipCaregiverContactId="primaryKinshipCaregiverContactId"></primarykinshipcaregiver-contact>
-              <primarykinshipcaregiver-caseplan v-if="primaryKinshipCaregiverCasePlanId"  :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :primaryKinshipCaregiverCasePlanId="primaryKinshipCaregiverCasePlanId"></primarykinshipcaregiver-caseplan>
+              <familyadvocacy-caseplan v-if="familyAdvocacyCasePlanId"  :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :familyAdvocacyCasePlanId="familyAdvocacyCasePlanId"></familyadvocacy-caseplan>
             </template>
             <template v-else-if="kinshipChildId">
               <kinshipchild  v-if="!(kinshipChildIncomeId || kinshipChildCustodyStatusId)" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" ></kinshipchild>
@@ -42,14 +42,14 @@ import OtherInHouseholdIncome from '@/components/OtherInHouseholdIncome';
 import PrimaryKinshipCaregiverIncome from '@/components/PrimaryKinshipCaregiverIncome';
 import KinshipChildCustodyStatus from '@/components/KinshipChildCustodyStatus';
 import PrimaryKinshipCaregiverContact from '@/components/PrimaryKinshipCaregiverContact';
-import PrimaryKinshipCaregiverCasePlan from '@/components/PrimaryKinshipCaregiverCasePlan';
+import FamilyAdvocacyCasePlan from '@/components/FamilyAdvocacyCasePlan';
 
 
 export default {
   name: 'ClientContainer',
   props:[
     'primaryKinshipCaregiverId','kinshipChildId', 'kinshipChildIncomeId','otherInHouseholdId', 'otherInHouseholdIncomeId',
-    'primaryKinshipCaregiverIncomeId','kinshipChildCustodyStatusId','primaryKinshipCaregiverContactId','primaryKinshipCaregiverCasePlanId'
+    'primaryKinshipCaregiverIncomeId','kinshipChildCustodyStatusId','primaryKinshipCaregiverContactId','familyAdvocacyCasePlanId'
   ],
   components:{
       'primary-kinship-caregiver':PrimaryKinshipCaregiver,
@@ -59,7 +59,7 @@ export default {
       'otherinhousehold-income':OtherInHouseholdIncome,
       'primarykinshipcaregiver-income':PrimaryKinshipCaregiverIncome,
       'primarykinshipcaregiver-contact':PrimaryKinshipCaregiverContact,
-      'primarykinshipcaregiver-caseplan':PrimaryKinshipCaregiverCasePlan,
+      'familyadvocacy-caseplan':FamilyAdvocacyCasePlan,
       'kinshipchild-custodystatus':KinshipChildCustodyStatus,
   },
   computed:{
@@ -115,7 +115,7 @@ export default {
               text:this.clientFullName,
           });
         }
-        if(this.primaryKinshipCaregiverCasePlanId){
+        if(this.familyAdvocacyCasePlanId){
           crumbs.push({
               link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId,
               text:this.clientFullName,

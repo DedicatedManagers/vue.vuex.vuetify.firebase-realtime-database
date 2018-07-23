@@ -50,9 +50,9 @@ const router = new Router({
       },
     },
     {
-      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/PrimaryKinshipCaregiverCasePlan/:primaryKinshipCaregiverCasePlanId',
+      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/FamilyAdvocacyCasePlan/:familyAdvocacyCasePlanId',
       props: true,
-      name: 'PrimaryKinshipCaregiverCasePlan',
+      name: 'FamilyAdvocacyCasePlan',
       component: ClientContainer,
       meta: {
         requiresAuth: true,

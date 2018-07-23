@@ -40,20 +40,20 @@
 import DialogConfirm from '@/components/shared/DialogConfirm';
 
 export default {
-  name: 'PrimaryKinshipCaregiverCasePlan',
-  props:['primaryKinshipCaregiverId', 'primaryKinshipCaregiverCasePlanId'],
+  name: 'FamilyAdvocacyCasePlan',
+  props:['primaryKinshipCaregiverId', 'familyAdvocacyCasePlanId'],
   components:{
     'dialog-confirm':DialogConfirm
   },
   data() {
     return {
-      componentCollectionId:'PrimaryKinshipCaregiverCasePlan',
+      componentCollectionId:'FamilyAdvocacyCasePlan',
       confirmDialogVisibility:false,
     };
   },
   computed:{
     docId: function(){
-      return this.primaryKinshipCaregiverCasePlanId;
+      return this.familyAdvocacyCasePlanId;
     },
     CommunityConnectionNeeded:{
       get(){
@@ -79,7 +79,7 @@ export default {
       },
   },
   created(){
-    console.log('PrimaryKinshipCaregiverCasePlan.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
+    console.log('FamilyAdvocacyCasePlan.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
 
     // if we are adding a new subEntity then create it
     // - otherwise this entity will get loaded by parent ClientContainer.vue created function
