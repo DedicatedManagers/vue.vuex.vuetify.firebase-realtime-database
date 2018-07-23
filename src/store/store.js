@@ -76,7 +76,6 @@ export const store = new Vuex.Store({
         // Initialize an Entity
         // Receives: docEntityContainer{docId:'', collectionId:'',docContainer:{id: '', data:{} } }
         initializeCurrentEntity(state, docEntityContainer){
-            console.log('initializeCurrentEntity');
             if(!state.currentEntity) state.currentEntity={}; // initialize the holder if its not yet initialized
             if(!state.currentEntity[docEntityContainer.collectionId]) Vue.set(state.currentEntity, docEntityContainer.collectionId, {}); // initialize the entity type / collection holder if its not set yet
             // set the data
@@ -194,16 +193,11 @@ export const store = new Vuex.Store({
                     else{
 
                         // look for nested collections on the loaded entity and load them if they aren't already loaded
-                        console.log('nestedcollections');
                         let NestedCollections = doc.data()['NestedCollections']; 
                         if(typeof NestedCollections === 'object' ){ // the loaded entity has nested collections
                             for (let collectionId in NestedCollections) {
-                                console.log('looping over NestedCollections.  collectionId: ', JSON.stringify(collectionId));
                                 if ( NestedCollections.hasOwnProperty(collectionId) && typeof NestedCollections[collectionId]==='object' ) { // sanity check
-                                    console.log('passed sanity check');
                                     for(let docId in NestedCollections[collectionId]){
-                                        console.log('docId: ' + docId)
-                                        console.log('typeof entity listener: ' + !(typeof ((context.state.entityListeners||{})[collectionId]||{})[docId]  === 'function')  );
                                         // Check Vuex store to see if there is a listener running on this sub-entity
                                         if( !(typeof ((context.state.entityListeners||{})[collectionId]||{})[docId]  === 'function')  ){
                                             // Listener not found - load the entity

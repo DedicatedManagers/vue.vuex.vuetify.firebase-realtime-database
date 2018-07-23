@@ -48,9 +48,7 @@ export default {
   },
   computed:{
         ammendedCollection: function(){
-            console.log('ammendedCurrentEntity');
             if(  !(this.$store.state.currentEntity||{}).hasOwnProperty(this.entityType) )  return null;
-            console.log('entity loaded');
 
             // Need to ammend the Entity to Let SubEntityList component know what to display for each entity when rendered as a list item (as the variables can change between entity types) 
             let ammendedCurrentEntity = {};
@@ -98,7 +96,6 @@ export default {
                     }
             }
             }
-            console.log('returned entity: ' + JSON.stringify(ammendedCurrentEntity));
             return ammendedCurrentEntity;
         }
   },
