@@ -2,14 +2,14 @@
   <v-slide-y-transition mode="out-in">
     <v-container fluid>
         <v-layout row wrap>
-          <v-flex xs12 sm6 md4 px-1>
-            <v-card>
-              <v-toolbar color="blue" dark>
-                <v-toolbar-title>Primary Kinship Caregiver</v-toolbar-title>
-              </v-toolbar>
-              <v-card-title>
-                <v-layout row wrap>
-                  <v-flex xs12>
+          <v-flex xs12 sm6 md4 px-1 class="customListExpandable">
+            <v-toolbar color="blue" dark @click="PrimaryKinshipCaregiverFormVisiblity=!PrimaryKinshipCaregiverFormVisiblity">
+              <v-toolbar-title>Primary Kinship Caregiver</v-toolbar-title><v-spacer></v-spacer><v-btn icon><v-icon >{{PrimaryKinshipCaregiverFormVisiblity?'expand_less':'expand_more'}}</v-icon></v-btn>
+            </v-toolbar>
+            <v-expansion-panel>
+              <v-expansion-panel-content :value="PrimaryKinshipCaregiverFormVisiblity">
+                <v-card >
+                  <v-card-text>
                     <v-form>
                       <v-text-field  v-model="FirstName" label="First Name" required ></v-text-field>
                       <v-text-field  v-model="MiddleName" label="Middle Name" required ></v-text-field>
@@ -30,10 +30,10 @@
                         <v-btn color="error" @click="confirmDialogVisibility=true">Delete<v-icon right>delete</v-icon></v-btn>
                       </div>
                     </v-form>
-                  </v-flex>
-                </v-layout>
-              </v-card-title>
-            </v-card> 
+                    </v-card-text>
+                </v-card> 
+              </v-expansion-panel-content>
+            </v-expansion-panel>
           </v-flex>
 
           <v-flex xs12 sm6 md4 px-1>
@@ -146,6 +146,7 @@ export default {
       BirthDateMenuVisibility:false,
       kinshipChildrenMenuVisibility:true,
       otherInHouseholdMenuVisibility:true,
+      PrimaryKinshipCaregiverFormVisiblity:true,
 
       ClientTypeAtIntakeValues:[
         "1- Formal/Licensed",

@@ -162,4 +162,11 @@ export default {
 </script>
  
 <style>
+
+.customListExpandable .v-toolbar{
+  cursor:pointer;
+}
+.customListExpandable .v-list__group__header{
+  display: none
+}
 </style>
