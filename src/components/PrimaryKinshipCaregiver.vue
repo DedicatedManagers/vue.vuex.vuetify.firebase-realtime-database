@@ -3,11 +3,11 @@
     <v-container fluid>
         <v-layout row wrap>
           <v-flex xs12 sm6 md4 px-1 class="customListExpandable">
-            <v-toolbar color="blue" dark @click="PrimaryKinshipCaregiverFormVisiblity=!PrimaryKinshipCaregiverFormVisiblity">
+            <v-toolbar color="blue" dark @click="PrimaryKinshipCaregiverFormVisiblity=PrimaryKinshipCaregiverFormVisiblity?0:1">
               <v-toolbar-title>Primary Kinship Caregiver</v-toolbar-title><v-spacer></v-spacer><v-btn icon><v-icon >{{PrimaryKinshipCaregiverFormVisiblity?'expand_less':'expand_more'}}</v-icon></v-btn>
             </v-toolbar>
-            <v-expansion-panel>
-              <v-expansion-panel-content :value="PrimaryKinshipCaregiverFormVisiblity">
+            <v-expansion-panel v-model="PrimaryKinshipCaregiverFormVisiblity">
+              <v-expansion-panel-content >
                 <v-card >
                   <v-card-text>
                     <v-form>
@@ -164,7 +164,8 @@ export default {
       BirthDateMenuVisibility:false,
       kinshipChildrenMenuVisibility:true,
       otherInHouseholdMenuVisibility:true,
-      PrimaryKinshipCaregiverFormVisiblity:true,
+      PrimaryKinshipCaregiverFormVisiblity:0,
+      vitems:1,
 
       ClientTypeAtIntakeValues:[
         "1- Formal/Licensed",
@@ -249,16 +250,16 @@ export default {
 
   },
   methods:{
-      fDelete(){
-        this.confirmDialogVisibility = false;
-        this.$store.dispatch('fdeleteEntity',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/dashboard'}})
-      },
-      addKinshipChild(){
-        this.$router.push('/PrimaryKinshipCaregiver/' + this.docId + '/KinshipChild/add');
-      },
-      addOtherInHousehold(){
-        this.$router.push('/PrimaryKinshipCaregiver/' + this.docId + '/OtherInHousehold/add');
-      },
+    fDelete(){
+      this.confirmDialogVisibility = false;
+      this.$store.dispatch('fdeleteEntity',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/dashboard'}})
+    },
+    addKinshipChild(){
+      this.$router.push('/PrimaryKinshipCaregiver/' + this.docId + '/KinshipChild/add');
+    },
+    addOtherInHousehold(){
+      this.$router.push('/PrimaryKinshipCaregiver/' + this.docId + '/OtherInHousehold/add');
+    },
   },
   created(){
     console.log('PrimaryKinshipCaregiver.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
