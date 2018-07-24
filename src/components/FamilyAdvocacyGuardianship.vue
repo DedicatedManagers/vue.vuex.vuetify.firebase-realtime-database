@@ -5,14 +5,14 @@
         <v-flex xs12 md4>
           <v-card>
             <v-toolbar color="blue" dark>
-              <v-toolbar-title>Kinship Child Income</v-toolbar-title>
+              <v-toolbar-title>Guardianship</v-toolbar-title>
             </v-toolbar>
             <v-card-title>
               <v-layout row wrap>
                 <v-flex xs12>
                   <v-form>
-                    <v-text-field  v-model="IncomeType" label="Income Type" required ></v-text-field>
-                    <v-text-field  v-model="IncomeAmount" label="Income Amount" required ></v-text-field>
+                    <v-text-field  v-model="GuardianshipType" label="Guardianship Type" required ></v-text-field>
+                    <v-text-field  v-model="PaperworkProvided" label="Paperwork Provided" required ></v-text-field>
 
                     <div class="text-xs-right">
                       <v-btn color="error" @click="confirmDialogVisibility=true">Delete<v-icon right>delete</v-icon></v-btn>
@@ -40,56 +40,56 @@
 import DialogConfirm from '@/components/shared/DialogConfirm';
 
 export default {
-  name: 'OtherInHouseholdIncome',
-  props:['primaryKinshipCaregiverId', 'otherInHouseholdId', 'otherInHouseholdIncomeId'],
+  name: 'FamilyAdvocacyGuardianship',
+  props:['primaryKinshipCaregiverId', 'familyAdvocacyCasePlanId', 'familyAdvocacyGuardianshipId'],
   components:{
     'dialog-confirm':DialogConfirm
   },
   data() {
     return {
-      componentCollectionId:'OtherInHouseholdIncome',
+      componentCollectionId:'FamilyAdvocacyGuardianship',
       confirmDialogVisibility:false,
     };
   },
   computed:{
     docId: function(){
-      return this.otherInHouseholdIncomeId;
+      return this.familyAdvocacyGuardianshipId;
     },
-    IncomeType:{
+    GuardianshipType:{
       get(){
-        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'IncomeType',});
+        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'GuardianshipType',});
       },
       set(newValue){
-        this.$store.dispatch('updateCurrentEntity', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{IncomeType: newValue}});
+        this.$store.dispatch('updateCurrentEntity', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{GuardianshipType: newValue}});
       },
     },
-    IncomeAmount:{
+    PaperworkProvided:{
       get(){
-        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'IncomeAmount',});
+        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'PaperworkProvided',});
       },
       set(newValue){
-        this.$store.dispatch('updateCurrentEntity', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{IncomeAmount: newValue}});
+        this.$store.dispatch('updateCurrentEntity', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{PaperworkProvided: newValue}});
       },
     },
   },
   methods:{
       fDelete(){
         this.confirmDialogVisibility = false;
-        this.$store.dispatch('fdeleteEntity',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId+'/OtherInHousehold/'+this.otherInHouseholdId}})
+        this.$store.dispatch('fdeleteEntity',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId+'/FamilyAdvocacyCasePlan/'+this.familyAdvocacyCasePlanId}})
       },
   },
   created(){
-    console.log('OtherInHouseholdIncome.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
+    console.log('FamilyAdvocacyGuardianship.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
 
     // if we are adding a new subEntity then create it
     // - otherwise this entity will get loaded by parent ClientContainer.vue created function
-    if(this.otherInHouseholdIncomeId == "add"){
+    if(this.docId == "add"){
       this.$store.dispatch('getEntity', {docId:this.docId, collectionId:this.componentCollectionId});
     }
 
-    // TODO: Need to implement verification of otherInHouseholdIncomeId 
+    // TODO: Need to implement verification of the id that loads the form 
     // - The parent ClientContainer.vue loads the parent entity and its children
-    // - - If the otherInHousehold value is legitimate (not deleted though user saved the link or erroneous value entered in the link) then the otherInHousehold will get loaded
+    // - - If the id that loads the particular value for this form value is legitimate (not deleted though user saved the link or erroneous value entered in the link) then the values will get loaded
     // - - Otherwise - a blank form gets loaded and the user isn't notified of the issue until trying to type something in one of the fields  & the message is for a deleted entity which is confusing
   },
 };

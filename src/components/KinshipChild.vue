@@ -159,7 +159,7 @@ export default {
 
     // if we are adding a new subEntity then create it
     // - otherwise this entity will get loaded by parent ClientContainer.vue created function
-    if(this.kinshipChildId == "add"){
+    if(this.docId == "add"){
       this.$store.dispatch('getEntity', {docId:this.docId, collectionId:this.componentCollectionId});
     }
 
