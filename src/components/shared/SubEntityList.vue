@@ -90,6 +90,11 @@ export default {
                             // Create the format of what do display when this entity is rendered as a list item
                             'Case Plan Needed: ' + (this.$store.state.currentEntity[this.entityType][entityId].data.CommunityConnectionNeeded?'Yes':'No');
                     }
+                    else if(this.entityType=='FamilyAdvocacyGuardianship'){
+                        ammendedCurrentEntity[entityId]['ListDisplayText'] =
+                            // Create the format of what do display when this entity is rendered as a list item
+                            'Guardianship Type: ' + (this.$store.state.currentEntity[this.entityType][entityId].data.GuardianshipType);
+                    }
                     else{
                             // The entity type has not been defined.  Need to define the entity above.
                             ammendedCurrentEntity[entityId]['ListDisplayText'] ='Error #INOS2833';

@@ -23,6 +23,28 @@
             </v-card-title>
           </v-card> 
         </v-flex>
+
+
+       <v-flex xs12 md4 px-1>
+        <v-layout row wrap>
+          <v-flex xs12 hidden-md-and-up>
+            &nbsp;
+          </v-flex>
+
+          <v-flex xs12>
+            <subentity-list 
+              toolbarTitle="Guardianship"  
+              entityType="FamilyAdvocacyGuardianship" 
+              :parentCollectionId="this.docId"
+              :baseUrl="'/PrimaryKinshipCaregiver/'+primaryKinshipCaregiverId+'/FamilyAdvocacyCasePlan/'+docId+'/FamilyAdvocacyGuardianship/'"
+              icon="assignment_ind"
+              addIcon="assignment_ind"
+              addButtonText="Add Guardianship"
+            ></subentity-list>
+          </v-flex>        
+        </v-layout>
+      </v-flex>
+
       </v-layout>
 
       <template v-if="confirmDialogVisibility">
@@ -38,12 +60,14 @@
 
 <script>
 import DialogConfirm from '@/components/shared/DialogConfirm';
+import SubEntityList from '@/components/shared/SubEntityList';
 
 export default {
   name: 'FamilyAdvocacyCasePlan',
   props:['primaryKinshipCaregiverId', 'familyAdvocacyCasePlanId'],
   components:{
-    'dialog-confirm':DialogConfirm
+    'dialog-confirm':DialogConfirm,
+    'subentity-list':SubEntityList,
   },
   data() {
     return {

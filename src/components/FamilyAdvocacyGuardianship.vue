@@ -2,7 +2,7 @@
   <v-slide-y-transition mode="out-in">
     <v-container fluid>
       <v-layout row wrap>
-        <v-flex xs12 md4>
+        <v-flex xs12 md4 px-1>
           <v-card>
             <v-toolbar color="blue" dark>
               <v-toolbar-title>Guardianship</v-toolbar-title>
@@ -23,6 +23,7 @@
             </v-card-title>
           </v-card> 
         </v-flex>
+
       </v-layout>
 
       <template v-if="confirmDialogVisibility">

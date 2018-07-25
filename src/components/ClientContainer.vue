@@ -11,7 +11,8 @@
             <template v-if="primaryKinshipCaregiverIncomeId || primaryKinshipCaregiverContactId || familyAdvocacyCasePlanId">
               <primarykinshipcaregiver-income v-if="primaryKinshipCaregiverIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :primaryKinshipCaregiverIncomeId="primaryKinshipCaregiverIncomeId"></primarykinshipcaregiver-income>
               <primarykinshipcaregiver-contact v-if="primaryKinshipCaregiverContactId"  :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :primaryKinshipCaregiverContactId="primaryKinshipCaregiverContactId"></primarykinshipcaregiver-contact>
-              <familyadvocacy-caseplan v-if="familyAdvocacyCasePlanId"  :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :familyAdvocacyCasePlanId="familyAdvocacyCasePlanId"></familyadvocacy-caseplan>
+              <familyadvocacy-caseplan v-if="familyAdvocacyCasePlanId && !familyAdvocacyGuardianshipId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :familyAdvocacyCasePlanId="familyAdvocacyCasePlanId"></familyadvocacy-caseplan>
+              <familyadvocacy-guardianship v-if="familyAdvocacyGuardianshipId"  :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :familyAdvocacyCasePlanId="familyAdvocacyCasePlanId" :familyAdvocacyGuardianshipId="familyAdvocacyGuardianshipId"></familyadvocacy-guardianship>
             </template>
             <template v-else-if="kinshipChildId">
               <kinshipchild  v-if="!(kinshipChildIncomeId || kinshipChildCustodyStatusId)" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" ></kinshipchild>
@@ -43,13 +44,15 @@ import PrimaryKinshipCaregiverIncome from '@/components/PrimaryKinshipCaregiverI
 import KinshipChildCustodyStatus from '@/components/KinshipChildCustodyStatus';
 import PrimaryKinshipCaregiverContact from '@/components/PrimaryKinshipCaregiverContact';
 import FamilyAdvocacyCasePlan from '@/components/FamilyAdvocacyCasePlan';
+import FamilyAdvocacyGuardianship from '@/components/FamilyAdvocacyGuardianship';
 
 
 export default {
   name: 'ClientContainer',
   props:[
     'primaryKinshipCaregiverId','kinshipChildId', 'kinshipChildIncomeId','otherInHouseholdId', 'otherInHouseholdIncomeId',
-    'primaryKinshipCaregiverIncomeId','kinshipChildCustodyStatusId','primaryKinshipCaregiverContactId','familyAdvocacyCasePlanId'
+    'primaryKinshipCaregiverIncomeId','kinshipChildCustodyStatusId','primaryKinshipCaregiverContactId','familyAdvocacyCasePlanId',
+    'familyAdvocacyGuardianshipId'
   ],
   components:{
       'primary-kinship-caregiver':PrimaryKinshipCaregiver,
@@ -60,6 +63,7 @@ export default {
       'primarykinshipcaregiver-income':PrimaryKinshipCaregiverIncome,
       'primarykinshipcaregiver-contact':PrimaryKinshipCaregiverContact,
       'familyadvocacy-caseplan':FamilyAdvocacyCasePlan,
+      'familyadvocacy-guardianship':FamilyAdvocacyGuardianship,
       'kinshipchild-custodystatus':KinshipChildCustodyStatus,
   },
   computed:{
@@ -119,6 +123,12 @@ export default {
           crumbs.push({
               link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId,
               text:this.clientFullName,
+          });
+        }
+        if(this.familyAdvocacyGuardianshipId){
+          crumbs.push({
+              link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId+'/FamilyAdvocacyCasePlan/'+this.familyAdvocacyCasePlanId,
+              text:'Case Plan',
           });
         }
         if(this.kinshipChildId){
