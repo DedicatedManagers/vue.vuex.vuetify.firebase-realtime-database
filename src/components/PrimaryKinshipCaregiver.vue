@@ -10,8 +10,8 @@
               <v-expansion-panel-content >
                 <v-card >
                   <v-card-text>
-                    <v-form>
-                      <v-text-field  v-model="FirstName" label="First Name" required ></v-text-field>
+                    <v-form ref="profileForm">
+                      <v-text-field  v-model="FirstName" label="First Name" required :rules="Rules_FirstName"></v-text-field>
                       <v-text-field  v-model="MiddleName" label="Middle Name" required ></v-text-field>
                       <v-text-field  v-model="LastName" label="Last Name" required ></v-text-field>
                       <v-text-field  v-model="PrimaryStreetAddress" label="Primary Street Address" required ></v-text-field>
@@ -167,6 +167,11 @@ export default {
       PrimaryKinshipCaregiverFormVisiblity:0,
       vitems:1,
 
+      Rules_FirstName:[
+        v => !!v || 'Required',
+        v => v.length <= 30 || 'Name must be less than 30',
+      ],
+
       ClientTypeAtIntakeValues:[
         "1- Formal/Licensed",
         "2- Formal/Licensing in progress",
@@ -263,6 +268,10 @@ export default {
   },
   created(){
     console.log('PrimaryKinshipCaregiver.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
+  },
+  mounted(){
+    console.log('PrimaryKinshipCaregiver.vue mounted function. Props: ' + JSON.stringify(this.$options.propsData));
+    this.$refs.profileForm.validate();
   },
 };
 </script>
