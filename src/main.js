@@ -10,6 +10,9 @@ import 'vuetify/dist/vuetify.min.css';
 import App from './App';
 import router from './router';
 import {store} from './store/store'
+import InstantSearch from 'vue-instantsearch';
+
+Vue.use(InstantSearch);
 
 // Initialize Firebase
 const config = {
