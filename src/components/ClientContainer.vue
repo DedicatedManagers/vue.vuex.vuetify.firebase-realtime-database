@@ -66,6 +66,33 @@ export default {
       'familyadvocacy-guardianship':FamilyAdvocacyGuardianship,
       'kinshipchild-custodystatus':KinshipChildCustodyStatus,
   },
+  methods:{
+    initializeEntity(){
+      console.log('initializeEntity in ClientContainer.vue');
+      // if we have already loaded the root level Entity (highest parent of the entities)
+      if(this.$store.state.currentEntity){
+        if(this.$store.state.currentEntity['PrimaryKinshipCaregiver']){
+
+          // if we are trying add or to get a new root level Entity, clear out the currentEntity & entityListeners to start fresh with the new root level entity
+          // - its a new entity if the new id (primaryKinshipCaregiverId) doesn't exist already on the root entity (PrimaryKinshipCaregiver)
+          if(this.primaryKinshipCaregiverId=="add" || !this.$store.state.currentEntity['PrimaryKinshipCaregiver'].hasOwnProperty(this.primaryKinshipCaregiverId)){
+              this.$store.commit('deleteAllCurrentEntitesAndListeners');
+              this.$store.dispatch('getEntity', {docId:this.primaryKinshipCaregiverId, collectionId:'PrimaryKinshipCaregiver'});
+          }
+        }
+      }
+      else{
+        // this is a new load of the app - get the info for this root level entity
+        console.log('new load');
+        this.$store.dispatch('getEntity', {docId:this.primaryKinshipCaregiverId, collectionId:'PrimaryKinshipCaregiver'});      
+      }
+    }
+  },
+  watch:{
+    primaryKinshipCaregiverId: function(){
+      this.initializeEntity();
+    }
+  },
   computed:{
       clientFullName:function(){
         if( ! ((this.$store.state.currentEntity||{})['PrimaryKinshipCaregiver']||{}).hasOwnProperty(this.primaryKinshipCaregiverId)   ) return "";  // the async call to get the info hasn't happened yet
@@ -161,24 +188,7 @@ export default {
   },
   created(){
     console.log('ClientContainer.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
-
-    // if we have already loaded the root level Entity (highest parent of the entities)
-    if(this.$store.state.currentEntity){
-      if(this.$store.state.currentEntity['PrimaryKinshipCaregiver']){
-
-        // if we are trying add or to get a new root level Entity, clear out the currentEntity & entityListeners to start fresh with the new root level entity
-        // - its a new entity if the new id (primaryKinshipCaregiverId) doesn't exist already on the root entity (PrimaryKinshipCaregiver)
-        if(this.primaryKinshipCaregiverId=="add" || !this.$store.state.currentEntity['PrimaryKinshipCaregiver'].hasOwnProperty(this.primaryKinshipCaregiverId)){
-            this.$store.commit('deleteAllCurrentEntitesAndListeners');
-            this.$store.dispatch('getEntity', {docId:this.primaryKinshipCaregiverId, collectionId:'PrimaryKinshipCaregiver'});
-        }
-      }
-    }
-    else{
-      // this is a new load of the app - get the info for this root level entity
-      console.log('new load');
-      this.$store.dispatch('getEntity', {docId:this.primaryKinshipCaregiverId, collectionId:'PrimaryKinshipCaregiver'});      
-    }
+    this.initializeEntity();
   },
 };
 </script>

@@ -4,6 +4,7 @@ import Vue from 'vue';
 import ClientContainer from '@/components/ClientContainer';
 import Dashboard from '@/components/Dashboard';
 import Login from '@/components/Login';
+//import {store} from '@/store/store'
 
 Vue.use(Router);
 
@@ -127,9 +128,10 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   const currentUser = firebase.auth().currentUser;
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  // console.log('router.beforeEach');
+   console.log('router.beforeEach');
   // console.log('to:');
   // console.log(to);
+  // console.log(store.state.currentEntity);
   // console.log('from:');
   // console.log(from);
 

@@ -5,7 +5,7 @@
         <v-list three-line>
         <ais-results>
             <template slot-scope="{ result }">
-                <v-list-tile avatar>
+                <v-list-tile avatar :to="'/PrimaryKinshipCaregiver/'+result.objectID">
                 <v-list-tile-avatar>
                     <v-icon>person</v-icon>
                 </v-list-tile-avatar>
