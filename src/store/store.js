@@ -6,6 +6,50 @@ import merge from 'deepmerge';
 
 Vue.use(Vuex);
 
+function debounce(func, wait, immediate) {
+    // 'private' variable for instance
+    // The returned function will be able to reference this due to closure.
+    // Each call to the returned function will share this common timer.
+    var timeout;           
+  
+    // Calling debounce returns a new anonymous function
+    return function() {
+        // reference the context and args for the setTimeout function
+        var context = this, 
+            args = arguments;
+  
+        // Should the function be called now? If immediate is true
+        //   and not already in a timeout then the answer is: Yes
+        var callNow = immediate && !timeout;
+  
+        // This is the basic debounce behaviour where you can call this 
+        //   function several times, but it will only execute once 
+        //   [before or after imposing a delay]. 
+        //   Each time the returned function is called, the timer starts over.
+        clearTimeout(timeout);   
+  
+        // Set the new timeout
+        timeout = setTimeout(function() {
+  
+             // Inside the timeout function, clear the timeout variable
+             // which will let the next execution run when in 'immediate' mode
+             timeout = null;
+  
+             // Check if the function already ran with the immediate flag
+             if (!immediate) {
+               // Call the original function with apply
+               // apply lets you define the 'this' object as well as the arguments 
+               //    (both captured before setTimeout)
+               func.apply(context, args);
+             }
+        }, wait);
+  
+        // Immediate mode and no wait timer? Execute the function..
+        if (callNow) func.apply(context, args);  
+     }; 
+  };
+  
+
 export const store = new Vuex.Store({
     state:{
         user:null,
@@ -13,6 +57,7 @@ export const store = new Vuex.Store({
         entityListeners:null,
         currentEntity:null,
         currentPrimaryKinshipCaregivers:false,
+        entityDebouncers:null,
     },
     getters:{
         // Receives fieldValueCollectionContainer: {docId:'', collectionId:'', fieldName:''}
@@ -71,7 +116,9 @@ export const store = new Vuex.Store({
                     }
                 }
                 state.entityListeners = null;
-            }           
+            }
+            // Clear out the entityDebouncers
+            state.entityDebouncers = null;
         },
         // Initialize an Entity
         // Receives: docEntityContainer{docId:'', collectionId:'',docContainer:{id: '', data:{} } }
@@ -228,7 +275,25 @@ export const store = new Vuex.Store({
         // Receives: entityPropertyContainer{ docId:'',collectionId:'',propertiesObject:{prop:val,[prop2:val2]} }
         updateCurrentEntity(context, entityPropertyContainer){
             context.commit('mutateCurrentEntity', entityPropertyContainer);
-            context.dispatch('fcommitEntity', {docId:entityPropertyContainer.docId,collectionId:entityPropertyContainer.collectionId});
+
+            // if the debouncer for this entity
+            if ( typeof (((context.state||{}).entityDebouncers||{})[entityPropertyContainer.collectionId]||{})[entityPropertyContainer.docId] !== 'function' ){
+                // initialize function holder for this specific entity if not initialized already
+                if(context.state.entityDebouncers === null) context.state.entityDebouncers = {}; // initialize entityDebouncers if not already an object
+                if(typeof context.state.entityDebouncers[entityPropertyContainer.collectionId] !== 'object') context.state.entityDebouncers[entityPropertyContainer.collectionId] = {}; // initialize entityDebouncers for this specific entity if not already an object
+
+                // create the debounce function for this specific entity
+                context.state.entityDebouncers[entityPropertyContainer.collectionId][entityPropertyContainer.docId] = debounce(  
+                    function(ePC){
+                        context.dispatch('fcommitEntity', {docId:ePC.docId,collectionId:ePC.collectionId});
+                    }, 
+                    500, 
+                    false
+                );
+            }
+
+            // call the debouncer
+            context.state.entityDebouncers[entityPropertyContainer.collectionId][entityPropertyContainer.docId](entityPropertyContainer);
         },
         
         // Remove an entity from a parent's neste collection
