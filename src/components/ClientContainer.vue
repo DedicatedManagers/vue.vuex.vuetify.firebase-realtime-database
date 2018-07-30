@@ -189,7 +189,10 @@ export default {
   created(){
     console.log('ClientContainer.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
     this.initializeEntity();
-  },
+  },  
+  beforeDestroy(){
+    console.log('ClientContainer beforeDestroy');
+  }
 };
 </script>
  

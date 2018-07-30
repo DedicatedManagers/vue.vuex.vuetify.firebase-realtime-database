@@ -88,7 +88,7 @@ export const store = new Vuex.Store({
         },
         // Receives: entityPropertyContainer{ docId:'',collectionId:'',propertiesObject:{prop:val,[prop2:val2]} }
         mutateCurrentEntity(state, entityPropertyContainer){
-            console.log('mutateCurrentEntity');
+            console.log('mutateCurrentEntity - object received: ' + JSON.stringify(entityPropertyContainer));
             // if the the entity we are trying to set no longer exists - it was probably deleted at the database or on another real-time client
             if(  !(((state.currentEntity||{})[entityPropertyContainer.collectionId]||{})[entityPropertyContainer.docId]||{}).hasOwnProperty('data')   ){
                 // TODO: handle this situation in a better way
@@ -156,7 +156,7 @@ export const store = new Vuex.Store({
         // Retrieve an Entity data from firebase
         // Receives Object: entityContainer{docId:'',collectionId:''}
         getEntity(context, entityContainer){
-            console.log('store action getEntity. Object received: ' + JSON.stringify(entityContainer));
+            console.log('getEntity - Object received: ' + JSON.stringify(entityContainer));
             // Create New
             if(entityContainer.docId == "add"){
                 context.dispatch('fcreateEntity', {docId:entityContainer.docId, collectionId:entityContainer.collectionId});
@@ -178,6 +178,7 @@ export const store = new Vuex.Store({
 
                 // Set up the new query & listener
                 context.state.entityListeners[entityContainer.collectionId][entityContainer.docId] = firebase.firestore().collection(entityContainer.collectionId).doc(entityContainer.docId).onSnapshot(function(doc){
+                    console.log('EntityListener for: ' + entityContainer.collectionId + entityContainer.docId);
                     if(!doc.exists){
                         console.log('Listener for collectionId/docId: ' + entityContainer.collectionId + '/' + entityContainer.docId + ' called and the !doc.exists returned false.  This document does not exist! (invalid link or the document was deleted and the listener was not removed');
 
@@ -209,9 +210,11 @@ export const store = new Vuex.Store({
                             for (let collectionId in NestedCollections) {
                                 if ( NestedCollections.hasOwnProperty(collectionId) && typeof NestedCollections[collectionId]==='object' ) { // sanity check
                                     for(let docId in NestedCollections[collectionId]){
+                                        console.log('getEntity checking nested collection - main function getEntity - Object received: ' + JSON.stringify(entityContainer));
                                         // Check Vuex store to see if there is a listener running on this sub-entity
                                         if( !(typeof ((context.state.entityListeners||{})[collectionId]||{})[docId]  === 'function')  ){
                                             // Listener not found - load the entity
+                                            console.log('getEntity nested collection check - listener not found.  calling getEntity - collectionId/docId:' + collectionId + docId);
                                             context.dispatch('getEntity', {docId:docId,collectionId:collectionId})    
                                         }
                                         else{
@@ -238,6 +241,7 @@ export const store = new Vuex.Store({
         // update the local and remote storage for the entity
         // Receives: entityPropertyContainer{ docId:'',collectionId:'',propertiesObject:{prop:val,[prop2:val2]} }
         updateCurrentEntity(context, entityPropertyContainer){
+            console.log('updateCurrentEntity - object received: ' + JSON.stringify(entityPropertyContainer));
             context.commit('mutateCurrentEntity', entityPropertyContainer);
 
             // if the debouncer for this entity
@@ -273,7 +277,7 @@ export const store = new Vuex.Store({
         // add new entity to firebase
         // Receives collectionContainer: {docId:'', collectionId:''}
         fcreateEntity(context, collectionContainer){
-            console.log('creating new. object passed in: ' + JSON.stringify(collectionContainer));
+            console.log('fcreateEntity - object received: ' + JSON.stringify(collectionContainer));
             let newSubEntityMetaLocal = {}; // empty object means it's not a sub-entity
             newSubEntityMetaLocal['CreatedAt'] = firebase.firestore.FieldValue.serverTimestamp();
             newSubEntityMetaLocal['CreatedAtUid'] = firebase.auth().currentUser.uid;
@@ -296,7 +300,7 @@ export const store = new Vuex.Store({
 
             firebase.firestore().collection(collectionContainer.collectionId).add(newSubEntityMetaLocal)
             .then(function(docRef) {    
-                console.log('new entity has been created. docRef.id: ' + docRef.id);
+                console.log('firestore add call complete. new entity has been created. docRef.id: ' + docRef.id);
                 // Determine and set the parent to know about the sub/nested entity
                 if(newSubEntityMetaLocal.hasOwnProperty('ParentCollectionId')){ // the newSubEntityMeta object is not empty therefore its a sub entity
                     let NestedCollections = {};  // holds an object of child entities by child entity type property
@@ -310,7 +314,8 @@ export const store = new Vuex.Store({
                         }
                     });
                 }
-                context.dispatch('getEntity', {docId:docRef.id,collectionId:collectionContainer.collectionId,});  // rerouting to the same route - vue will not call the Created function on the component
+                // The call below is no longer needed as the previous step which calls update current entity with children will ultimately get this child as part of the entity listener that is called after the fcommitEntity
+                //context.dispatch('getEntity', {docId:docRef.id,collectionId:collectionContainer.collectionId,});  // rerouting to the same route - vue will not call the Created function on the component
                 console.log('router.replace /add: ' + router.currentRoute.fullPath.replace(/add/, "") + docRef.id);
                 router.replace(router.currentRoute.fullPath.replace(/add/, "") + docRef.id);
             })
@@ -322,7 +327,7 @@ export const store = new Vuex.Store({
         // Commit changes to firebase
         // Receives collectionContainer: {docId:'', collectionId:''}
         fcommitEntity(context, collectionContainer){
-            console.log('fcommitEntity');
+            console.log('fcommitEntity object received: ' + JSON.stringify(collectionContainer));
 
             // update if the entity still exists
             // - it's possible the entity has been deleted at the server or by another real-time client
@@ -343,7 +348,7 @@ export const store = new Vuex.Store({
         // Delete Entity / Firebase Document
         // Receives collectionContainer: {docId:'', collectionId:''[, route:{to:'', type:'<replace>'}]}
         fdeleteEntity(context, collectionContainer){
-            console.log('delete Entity. received object: ' + JSON.stringify(collectionContainer))
+            console.log('delete Entity - object received: ' + JSON.stringify(collectionContainer))
 
             // Find and call recursively to Delete Nested Collections
             let NestedCollections =  ((((context.state.currentEntity[collectionContainer.collectionId]||{})[collectionContainer.docId])||{}).data||{}).NestedCollections;  // NestedCollections exists || undefined

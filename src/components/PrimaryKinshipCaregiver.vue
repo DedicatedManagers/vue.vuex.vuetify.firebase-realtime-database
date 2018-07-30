@@ -273,6 +273,9 @@ export default {
     console.log('PrimaryKinshipCaregiver.vue mounted function. Props: ' + JSON.stringify(this.$options.propsData));
     this.$refs.profileForm.validate();
   },
+  beforeDestroy(){
+    console.log('PrimaryKinshipCaregiver beforeDestroy');
+  }  
 };
 </script>
  

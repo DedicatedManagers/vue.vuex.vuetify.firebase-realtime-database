@@ -92,6 +92,9 @@ export default {
     // - - If the loaded ID value is legitimate (not deleted though user saved the link or erroneous value entered in the link) then this entity will get loaded
     // - - Otherwise - a blank form gets loaded and the user isn't notified of the issue until trying to type something in one of the fields  & the message is for a deleted entity which is confusing
   },
+  beforeDestroy(){
+    console.log('PrimaryKinshipCaregiverIncome beforeDestroy');
+  }
 };
 </script>
  
