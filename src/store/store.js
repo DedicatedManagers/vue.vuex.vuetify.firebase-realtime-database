@@ -98,6 +98,7 @@ export const store = new Vuex.Store({
             else{
                 // Add/adjust the LastUpdated
                 entityPropertyContainer.propertiesObject['LastUpdated'] = firebase.firestore.FieldValue.serverTimestamp();
+                entityPropertyContainer.propertiesObject['LastUpdatedUid'] = firebase.auth().currentUser.uid;
 
                 // Loop through the key/value pairs sent in the properties object and set them on the collection
                 for (var key in entityPropertyContainer.propertiesObject) {
@@ -126,6 +127,7 @@ export const store = new Vuex.Store({
             if(typeof (((((state.currentEntity||{})[parentChildEntityPropertyContainer.collectionId]||{})[parentChildEntityPropertyContainer.docId]||{}).data||{}).NestedCollections||{})[parentChildEntityPropertyContainer.childCollectionId] === 'object'   ){
                 delete state.currentEntity[parentChildEntityPropertyContainer.collectionId][parentChildEntityPropertyContainer.docId].data.NestedCollections[parentChildEntityPropertyContainer.childCollectionId][parentChildEntityPropertyContainer.childDocId]
                 state.currentEntity[parentChildEntityPropertyContainer.collectionId][parentChildEntityPropertyContainer.docId].data['LastUpdated'] = firebase.firestore.FieldValue.serverTimestamp();            
+                state.currentEntity[parentChildEntityPropertyContainer.collectionId][parentChildEntityPropertyContainer.docId].data['LastUpdatedUid'] = firebase.auth().currentUser.uid;
             }
         },
     },
@@ -274,7 +276,8 @@ export const store = new Vuex.Store({
             console.log('creating new. object passed in: ' + JSON.stringify(collectionContainer));
             let newSubEntityMetaLocal = {}; // empty object means it's not a sub-entity
             newSubEntityMetaLocal['CreatedAt'] = firebase.firestore.FieldValue.serverTimestamp();
-
+            newSubEntityMetaLocal['CreatedAtUid'] = firebase.auth().currentUser.uid;
+            
             // check the route to see whether or not we are creating a sub-entity. 
             // ie  /ParentEntityType/xxxParentCollectionIdxxx/NewChild--EntityType-aka-CollectionId/add
             // if we are creating a sub entity:
