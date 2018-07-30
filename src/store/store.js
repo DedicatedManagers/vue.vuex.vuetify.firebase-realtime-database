@@ -96,6 +96,9 @@ export const store = new Vuex.Store({
                 console.log('mutateCurrentEntity - entity no longer exists.   object passed in: ' + JSON.stringify(entityPropertyContainer));
             }
             else{
+                // Add/adjust the LastUpdated
+                entityPropertyContainer.propertiesObject['LastUpdated'] = firebase.firestore.FieldValue.serverTimestamp();
+
                 // Loop through the key/value pairs sent in the properties object and set them on the collection
                 for (var key in entityPropertyContainer.propertiesObject) {
                     if (entityPropertyContainer.propertiesObject.hasOwnProperty(key)) { // only look at key's we set, not any javascript object helper keys on the object
@@ -122,6 +125,7 @@ export const store = new Vuex.Store({
             // check that the NestedCollections property for the child docId / entity id exists on the parent collectionId / entity type 
             if(typeof (((((state.currentEntity||{})[parentChildEntityPropertyContainer.collectionId]||{})[parentChildEntityPropertyContainer.docId]||{}).data||{}).NestedCollections||{})[parentChildEntityPropertyContainer.childCollectionId] === 'object'   ){
                 delete state.currentEntity[parentChildEntityPropertyContainer.collectionId][parentChildEntityPropertyContainer.docId].data.NestedCollections[parentChildEntityPropertyContainer.childCollectionId][parentChildEntityPropertyContainer.childDocId]
+                state.currentEntity[parentChildEntityPropertyContainer.collectionId][parentChildEntityPropertyContainer.docId].data['LastUpdated'] = firebase.firestore.FieldValue.serverTimestamp();            
             }
         },
     },
@@ -269,6 +273,7 @@ export const store = new Vuex.Store({
         fcreateEntity(context, collectionContainer){
             console.log('creating new. object passed in: ' + JSON.stringify(collectionContainer));
             let newSubEntityMetaLocal = {}; // empty object means it's not a sub-entity
+            newSubEntityMetaLocal['CreatedAt'] = firebase.firestore.FieldValue.serverTimestamp();
 
             // check the route to see whether or not we are creating a sub-entity. 
             // ie  /ParentEntityType/xxxParentCollectionIdxxx/NewChild--EntityType-aka-CollectionId/add
@@ -280,10 +285,8 @@ export const store = new Vuex.Store({
             if(found && found[3] == collectionContainer.collectionId){  // sanity check that the url matches the entity we are creating
                 if(found[1] && found[2]){ // Parent Entity Type & CollectionId were found
                     // the entity being created is a subentity/child of a parent entity
-                    newSubEntityMetaLocal = {
-                        ParentType:found[1],
-                        ParentCollectionId:found[2], 
-                    }
+                    newSubEntityMetaLocal.ParentType = found[1];
+                    newSubEntityMetaLocal.ParentCollectionId = found[2];
                     console.log('created newSubEntityMetaLocal:' + JSON.stringify(newSubEntityMetaLocal));
                 }    
             }
@@ -317,7 +320,7 @@ export const store = new Vuex.Store({
         // Receives collectionContainer: {docId:'', collectionId:''}
         fcommitEntity(context, collectionContainer){
             console.log('fcommitEntity');
-            
+
             // update if the entity still exists
             // - it's possible the entity has been deleted at the server or by another real-time client
             if( (((context.state.currentEntity||{})[collectionContainer.collectionId]||{})[collectionContainer.docId]||{}).hasOwnProperty('data') ){
