@@ -7,7 +7,65 @@
     <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <style type="text/css">  
+        .centered {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          transform: -webkit-translate(-50%, -50%);
+          transform: -moz-translate(-50%, -50%);
+          transform: -ms-translate(-50%, -50%);
+          color:darkred;
+        }
+        .loader,
+        .loader:after {
+          border-radius: 50%;
+          width: 10em;
+          height: 10em;
+        }
+        .loader {
+          margin: 60px auto;
+          font-size: 19px;
+          position: relative;
+          text-indent: -9999em;
+          border-top: 1.3em solid rgba(0, 0, 0, 0);
+          border-right: 1.3em solid rgba(0, 0, 0, 0);
+          border-bottom: 1.3em solid rgba(0, 0, 0, 0);
+          border-left: 1.3em solid #2196f3;
+          -webkit-transform: translateZ(0);
+          -ms-transform: translateZ(0);
+          transform: translateZ(0);
+          -webkit-animation: load8 1.1s infinite linear;
+          animation: load8 1.1s infinite linear;
+        }
+        @-webkit-keyframes load8 {
+          0% {
+            -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+          }
+          100% {
+            -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+          }
+        }
+        @keyframes load8 {
+          0% {
+            -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+          }
+          100% {
+            -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+          }
+        }
+      </style>
+      <div class="centered">
+          <div class="loader"></div>
+          <h1 style="font-family:Arial, Helvetica, sans-serif; color:black;">Loading Application</h1>
+      </div>
+    </div>
     <!-- built files will be auto injected -->
   </body>
 </html>
