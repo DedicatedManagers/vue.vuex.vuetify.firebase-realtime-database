@@ -1,50 +1,49 @@
 <template>
-  <v-slide-y-transition mode="out-in">
-    <v-container fluid>
-        <v-layout row wrap>
-          <v-flex xs12>
+  <div>
+    <template v-if="!this.$store.state.currentEntity">
+      <div class="centeredOnScreen" text-xs-center>
+        <v-progress-circular :size="250" :width="30" indeterminate color="blue"></v-progress-circular>
+        <h1>LOADING DATA</h1>
+      </div>
+    </template>
 
-            <v-breadcrumbs style="padding:0px; margin-left:12px;" large divider="/">
-              <v-breadcrumbs-item ripple exact exact-active-class
-                v-for="(navBreadCrumb, id) in navBreadCrumbs" :key="id"
-                :disabled="false"
-                :to="navBreadCrumb.link"
-              >
-                {{ navBreadCrumb.text }}
-              </v-breadcrumbs-item>
-            </v-breadcrumbs>
+    <v-slide-y-transition mode="out-in">
+      <v-container fluid>
+          <v-layout row wrap>
+            <v-flex xs12>
 
-            <template v-if="!this.$store.state.currentEntity">
-              <div class="centeredOnScreen" text-xs-center>
-                <v-progress-circular :size="250" :width="30" indeterminate color="blue"></v-progress-circular>
-                <h1>LOADING DATA</h1>
-              </div>
-            </template>
-            <template v-else>
-              <template v-if="primaryKinshipCaregiverIncomeId || primaryKinshipCaregiverContactId || familyAdvocacyCasePlanId">
-                <primarykinshipcaregiver-income v-if="primaryKinshipCaregiverIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :primaryKinshipCaregiverIncomeId="primaryKinshipCaregiverIncomeId"></primarykinshipcaregiver-income>
-                <primarykinshipcaregiver-contact v-if="primaryKinshipCaregiverContactId"  :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :primaryKinshipCaregiverContactId="primaryKinshipCaregiverContactId"></primarykinshipcaregiver-contact>
-                <familyadvocacy-caseplan v-if="familyAdvocacyCasePlanId && !familyAdvocacyGuardianshipId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :familyAdvocacyCasePlanId="familyAdvocacyCasePlanId"></familyadvocacy-caseplan>
-                <familyadvocacy-guardianship v-if="familyAdvocacyGuardianshipId"  :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :familyAdvocacyCasePlanId="familyAdvocacyCasePlanId" :familyAdvocacyGuardianshipId="familyAdvocacyGuardianshipId"></familyadvocacy-guardianship>
-              </template>
-              <template v-else-if="kinshipChildId">
-                <kinshipchild  v-if="!(kinshipChildIncomeId || kinshipChildCustodyStatusId)" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" ></kinshipchild>
-                <kinshipchild-income v-if="kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" :kinshipChildIncomeId="kinshipChildIncomeId"></kinshipchild-income>
-                <kinshipchild-custodystatus v-if="kinshipChildCustodyStatusId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" :kinshipChildCustodyStatusId="kinshipChildCustodyStatusId"></kinshipchild-custodystatus>
-              </template>
-              <template v-else-if="otherInHouseholdId">
-                <otherinhousehold v-if="!otherInHouseholdIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :otherInHouseholdId="otherInHouseholdId" ></otherinhousehold>
-                <otherinhousehold-income v-if="otherInHouseholdIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :otherInHouseholdId="otherInHouseholdId" :otherInHouseholdIncomeId="otherInHouseholdIncomeId"></otherinhousehold-income>
-              </template>
-              <template v-else>
-                <primary-kinship-caregiver :primaryKinshipCaregiverId="primaryKinshipCaregiverId"></primary-kinship-caregiver>
-              </template>
-            </template>
+              <v-breadcrumbs style="padding:0px; margin-left:12px;" large divider="/">
+                <v-breadcrumbs-item ripple exact exact-active-class v-for="(navBreadCrumb, id) in navBreadCrumbs" :key="id" :disabled="false" :to="navBreadCrumb.link">
+                  {{ navBreadCrumb.text }}
+                </v-breadcrumbs-item>
+              </v-breadcrumbs>
 
-          </v-flex>
-        </v-layout> 
-    </v-container>
-  </v-slide-y-transition>
+              <template v-if="this.$store.state.currentEntity">
+                <template v-if="primaryKinshipCaregiverIncomeId || primaryKinshipCaregiverContactId || familyAdvocacyCasePlanId">
+                  <primarykinshipcaregiver-income v-if="primaryKinshipCaregiverIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :primaryKinshipCaregiverIncomeId="primaryKinshipCaregiverIncomeId"></primarykinshipcaregiver-income>
+                  <primarykinshipcaregiver-contact v-if="primaryKinshipCaregiverContactId"  :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :primaryKinshipCaregiverContactId="primaryKinshipCaregiverContactId"></primarykinshipcaregiver-contact>
+                  <familyadvocacy-caseplan v-if="familyAdvocacyCasePlanId && !familyAdvocacyGuardianshipId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :familyAdvocacyCasePlanId="familyAdvocacyCasePlanId"></familyadvocacy-caseplan>
+                  <familyadvocacy-guardianship v-if="familyAdvocacyGuardianshipId"  :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :familyAdvocacyCasePlanId="familyAdvocacyCasePlanId" :familyAdvocacyGuardianshipId="familyAdvocacyGuardianshipId"></familyadvocacy-guardianship>
+                </template>
+                <template v-else-if="kinshipChildId">
+                  <kinshipchild  v-if="!(kinshipChildIncomeId || kinshipChildCustodyStatusId)" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" ></kinshipchild>
+                  <kinshipchild-income v-if="kinshipChildIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" :kinshipChildIncomeId="kinshipChildIncomeId"></kinshipchild-income>
+                  <kinshipchild-custodystatus v-if="kinshipChildCustodyStatusId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :kinshipChildId="kinshipChildId" :kinshipChildCustodyStatusId="kinshipChildCustodyStatusId"></kinshipchild-custodystatus>
+                </template>
+                <template v-else-if="otherInHouseholdId">
+                  <otherinhousehold v-if="!otherInHouseholdIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :otherInHouseholdId="otherInHouseholdId" ></otherinhousehold>
+                  <otherinhousehold-income v-if="otherInHouseholdIncomeId" :primaryKinshipCaregiverId="primaryKinshipCaregiverId" :otherInHouseholdId="otherInHouseholdId" :otherInHouseholdIncomeId="otherInHouseholdIncomeId"></otherinhousehold-income>
+                </template>
+                <template v-else>
+                  <primary-kinship-caregiver :primaryKinshipCaregiverId="primaryKinshipCaregiverId"></primary-kinship-caregiver>
+                </template>
+              </template>
+
+            </v-flex>
+          </v-layout> 
+      </v-container>
+    </v-slide-y-transition>
+  </div>
 </template>
 
 <script>
