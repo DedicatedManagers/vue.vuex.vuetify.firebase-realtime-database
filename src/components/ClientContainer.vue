@@ -3,14 +3,20 @@
     <v-container fluid>
         <v-layout row wrap>
           <v-flex xs12>
-            <router-link to="/dashbaord">Dashboard</router-link> 
-            <span v-for="(navBreadCrumb, id) in navBreadCrumbs" :key="id">
-                | <router-link  :to="navBreadCrumb.link">{{navBreadCrumb.text}}</router-link>
-            </span>
+
+            <v-breadcrumbs style="padding:0px; margin-left:12px;" large divider="/">
+              <v-breadcrumbs-item ripple exact exact-active-class
+                v-for="(navBreadCrumb, id) in navBreadCrumbs" :key="id"
+                :disabled="false"
+                :to="navBreadCrumb.link"
+              >
+                {{ navBreadCrumb.text }}
+              </v-breadcrumbs-item>
+            </v-breadcrumbs>
 
             <template v-if="!this.$store.state.currentEntity">
-              <div style="margin-top:100px; text-align:center;">
-                <v-progress-circular :size="300" :width="30" indeterminate color="blue"></v-progress-circular>
+              <div class="centeredOnScreen" text-xs-center>
+                <v-progress-circular :size="250" :width="30" indeterminate color="blue"></v-progress-circular>
                 <h1>LOADING DATA</h1>
               </div>
             </template>
@@ -142,53 +148,94 @@ export default {
       },
       navBreadCrumbs: function (){
         let crumbs = [];
-        if(this.primaryKinshipCaregiverIncomeId){
+        crumbs.push({
+            link:'/dashboard',
+            text:'Dashboard',
+        });
+        if(this.primaryKinshipCaregiverId){
+          // create base link
+          let rootLink='/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId;
+
+          // Root Level
           crumbs.push({
-              link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId,
+              link:rootLink,
               text:this.clientFullName,
           });
-        }
-        if(this.primaryKinshipCaregiverContactId){
-          crumbs.push({
-              link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId,
-              text:this.clientFullName,
-          });
-        }
-        if(this.familyAdvocacyCasePlanId){
-          crumbs.push({
-              link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId,
-              text:this.clientFullName,
-          });
-        }
-        if(this.familyAdvocacyGuardianshipId){
-          crumbs.push({
-              link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId+'/FamilyAdvocacyCasePlan/'+this.familyAdvocacyCasePlanId,
-              text:'Case Plan',
-          });
-        }
-        if(this.kinshipChildId){
-          crumbs.push({
-              link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId,
-              text:this.clientFullName,
-          });
-        }
-        if(this.kinshipChildIncomeId || this.kinshipChildCustodyStatusId){
-          crumbs.push({
-              link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId+'/KinshipChild/'+this.kinshipChildId,
-              text:this.kinshipChildFullName,
-          });
-        }
-        if(this.otherInHouseholdId){
-          crumbs.push({
-              link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId,
-              text:this.clientFullName,
-          });
-        }
-        if(this.otherInHouseholdIncomeId){
-          crumbs.push({
-              link:'/PrimaryKinshipCaregiver/'+this.primaryKinshipCaregiverId+'/OtherInHousehold/'+this.otherInHouseholdId,
-              text:this.otherInHouseholdFullName,
-          });
+
+          // 1st child
+          if(this.primaryKinshipCaregiverIncomeId){
+            crumbs.push({
+                link:rootLink + '/PrimaryKinshipCaregiverIncome/'+this.primaryKinshipCaregiverIncomeId,
+                text:'Income: '+ this.primaryKinshipCaregiverIncomeId,
+            });
+          }
+          // 1st child
+          if(this.primaryKinshipCaregiverContactId){
+            crumbs.push({
+                link:rootLink + '/PrimaryKinshipCaregiverContact/'+this.primaryKinshipCaregiverContactId,
+                text:'Contact: '+ this.primaryKinshipCaregiverContactId,
+            });
+          }
+
+          if(this.otherInHouseholdId){
+            // 1st child - Root
+            let othersRootLink =  rootLink + '/OtherInHousehold/'+this.otherInHouseholdId;
+            crumbs.push({
+                link:othersRootLink,
+                text:this.otherInHouseholdFullName,
+            });
+
+            // 1st child - 1st Nested Child
+            if(this.otherInHouseholdIncomeId){
+              crumbs.push({
+                  link:othersRootLink+'/OtherInHouseholdIncome/'+this.otherInHouseholdIncomeId,
+                  text:'Income: '+ this.otherInHouseholdIncomeId,
+              });
+            }
+          }
+
+
+          if(this.familyAdvocacyCasePlanId){
+            // 1st child - Root
+            let familyAdvocacyRootLink = rootLink + '/FamilyAdvocacyCasePlan/'+this.familyAdvocacyCasePlanId;
+            crumbs.push({
+                link:familyAdvocacyRootLink,
+                text:'Case Plan: ' + this.familyAdvocacyCasePlanId,
+            });
+
+            // 1st child - 1st Nested Child
+            if(this.familyAdvocacyGuardianshipId){
+              crumbs.push({
+                  link:familyAdvocacyRootLink+'/FamilyAdvocacyGuardianship/'+this.familyAdvocacyGuardianshipId,
+                  text:'Guardianship: ' + this.familyAdvocacyGuardianshipId,
+              });
+            }
+          }
+
+
+          if(this.kinshipChildId){
+            // 1st child - Root
+            let kinshipChildRootLink = rootLink + '/KinshipChild/'+this.kinshipChildId;
+            crumbs.push({
+                link:kinshipChildRootLink,
+                text:this.kinshipChildFullName,
+            });
+            // 1st child - 1st Nested Child
+            if(this.kinshipChildIncomeId){
+              crumbs.push({
+                  link:kinshipChildRootLink+'/KinshipChildIncomeId/'+this.kinshipChildIncomeId,
+                  text:'Income: ' + this.kinshipChildIncomeId,
+              });
+            }
+            // 1st child - 1st Nested Child
+            if(this.kinshipChildCustodyStatusId){
+              crumbs.push({
+                  link:kinshipChildRootLink+'/KinshipChildCustodyStatusId/'+this.kinshipChildCustodyStatusId,
+                  text:'Custody Status: ' + this.kinshipChildCustodyStatusId,
+              });
+            }
+          }
+
         }
 
         return crumbs;
@@ -205,6 +252,16 @@ export default {
 </script>
  
 <style>
+
+.centeredOnScreen {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transform: -webkit-translate(-50%, -50%);
+  transform: -moz-translate(-50%, -50%);
+  transform: -ms-translate(-50%, -50%);
+}
 
 .customListExpandable .v-toolbar{
   cursor:pointer;
