@@ -36,6 +36,7 @@
               toolbarTitle="Guardianship"  
               entityType="FamilyAdvocacyGuardianship" 
               :parentCollectionId="this.docId"
+              :parentCollectionType="this.componentCollectionId"
               :baseUrl="'/PrimaryKinshipCaregiver/'+primaryKinshipCaregiverId+'/FamilyAdvocacyCasePlan/'+docId+'/FamilyAdvocacyGuardianship/'"
               icon="assignment_ind"
               addIcon="assignment_ind"
@@ -104,12 +105,6 @@ export default {
   },
   created(){
     console.log('FamilyAdvocacyCasePlan.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
-
-    // if we are adding a new subEntity then create it
-    // - otherwise this entity will get loaded by parent ClientContainer.vue created function
-    if(this.docId == "add"){
-      this.$store.dispatch('getEntity', {docId:this.docId, collectionId:this.componentCollectionId});
-    }
 
     // TODO: Need to implement verification of this currnt entity 
     // - The parent ClientContainer.vue loads the parent entity and all its child entities

@@ -275,30 +275,19 @@ export const store = new Vuex.Store({
             context.dispatch('fcommitEntity', {docId:parentChildEntityPropertyContainer.docId, collectionId:parentChildEntityPropertyContainer.collectionId});
         },
         // add new entity to firebase
-        // Receives collectionContainer: {docId:'', collectionId:''}
+        // Receives collectionContainer: {docId:'', collectionId:'', <parentCollectionId:'', parentCollectionType:''>}
         fcreateEntity(context, collectionContainer){
             console.log('fcreateEntity - object received: ' + JSON.stringify(collectionContainer));
             let newSubEntityMetaLocal = {}; // empty object means it's not a sub-entity
             newSubEntityMetaLocal['CreatedAt'] = firebase.firestore.FieldValue.serverTimestamp();
             newSubEntityMetaLocal['CreatedAtUid'] = firebase.auth().currentUser.uid;
-            
-            // check the route to see whether or not we are creating a sub-entity. 
-            // ie  /ParentEntityType/xxxParentCollectionIdxxx/NewChild--EntityType-aka-CollectionId/add
-            // if we are creating a sub entity:
-            // found[1] - Contains the Parent Entity Type
-            // found[2] - Contains the Parent Entity CollectionId
-            // found[3] - Contains the New Child Entity type, which should match the collectionId
-            let found = router.currentRoute.fullPath.match(   /\/((?:[^\/]+?))\/((?:[^\/]+?))\/((?:[^\/]+?))\/add/   );  
-            if(found && found[3] == collectionContainer.collectionId){  // sanity check that the url matches the entity we are creating
-                if(found[1] && found[2]){ // Parent Entity Type & CollectionId were found
-                    // the entity being created is a subentity/child of a parent entity
-                    newSubEntityMetaLocal.ParentType = found[1];
-                    newSubEntityMetaLocal.ParentCollectionId = found[2];
-                    console.log('created newSubEntityMetaLocal:' + JSON.stringify(newSubEntityMetaLocal));
-                }    
+            if(collectionContainer.hasOwnProperty('parentCollectionType') && collectionContainer.hasOwnProperty('parentCollectionId')){
+                newSubEntityMetaLocal.ParentType = collectionContainer.parentCollectionType;
+                newSubEntityMetaLocal.ParentCollectionId = collectionContainer.parentCollectionId;                    
             }
 
-            firebase.firestore().collection(collectionContainer.collectionId).add(newSubEntityMetaLocal)
+
+            return firebase.firestore().collection(collectionContainer.collectionId).add(newSubEntityMetaLocal)
             .then(function(docRef) {    
                 console.log('firestore add call complete. new entity has been created. docRef.id: ' + docRef.id);
                 // Determine and set the parent to know about the sub/nested entity
@@ -314,14 +303,14 @@ export const store = new Vuex.Store({
                         }
                     });
                 }
-                // The call below is no longer needed as the previous step which calls update current entity with children will ultimately get this child as part of the entity listener that is called after the fcommitEntity
-                //context.dispatch('getEntity', {docId:docRef.id,collectionId:collectionContainer.collectionId,});  // rerouting to the same route - vue will not call the Created function on the component
-                console.log('router.replace /add: ' + router.currentRoute.fullPath.replace(/add/, "") + docRef.id);
-                router.replace(router.currentRoute.fullPath.replace(/add/, "") + docRef.id);
+                // It is not needed to load the new entity as it will get loaded either
+                // 1) As part of recursive getEntity listener upon update to the parent
+                // 2) If its the parent, it will get reloaded as a new entity on ClientContainer property watcher for the root entity ID
+                return docRef.id;
             })
             .catch(function(error) {
                 console.error("Error writing document: ", error);
-            });    
+            });  
 
         },
         // Commit changes to firebase

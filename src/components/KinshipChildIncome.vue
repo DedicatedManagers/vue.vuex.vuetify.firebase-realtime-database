@@ -81,12 +81,6 @@ export default {
   created(){
     console.log('KinshipChildIncome.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
 
-    // if we are adding a new subEntity then create it
-    // - otherwise this entity will get loaded by parent ClientContainer.vue created function
-    if(this.docId == "add"){
-      this.$store.dispatch('getEntity', {docId:this.docId, collectionId:this.componentCollectionId});
-    }
-
     // TODO: Need to implement verification of kinshipChildIncomeId 
     // - The parent ClientContainer.vue loads the parent entity and its children
     // - - If the kinshipChild value is legitimate (not deleted though user saved the link or erroneous value entered in the link) then the kinshipChild will get loaded

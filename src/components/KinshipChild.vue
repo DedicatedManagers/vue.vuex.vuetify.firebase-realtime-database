@@ -42,6 +42,7 @@
                   toolbarTitle="Incomes"  
                   entityType="KinshipChildIncome" 
                   :parentCollectionId="this.docId"
+                  :parentCollectionType="this.componentCollectionId"
                   :baseUrl="'/PrimaryKinshipCaregiver/'+primaryKinshipCaregiverId+'/KinshipChild/'+kinshipChildId+'/KinshipChildIncome/'"
                   icon="monetization_on"
                   addIcon="monetization_on"
@@ -58,6 +59,7 @@
                   toolbarTitle="Kinship Custody Status"  
                   entityType="KinshipChildCustodyStatus" 
                   :parentCollectionId="this.docId"
+                  :parentCollectionType="this.componentCollectionId"
                   :baseUrl="'/PrimaryKinshipCaregiver/'+primaryKinshipCaregiverId+'/KinshipChild/'+kinshipChildId+'/KinshipChildCustodyStatus/'"
                   icon="person"
                   addIcon="person_add"
@@ -156,12 +158,6 @@ export default {
   },
   created(){
     console.log('KinshipChild.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
-
-    // if we are adding a new subEntity then create it
-    // - otherwise this entity will get loaded by parent ClientContainer.vue created function
-    if(this.docId == "add"){
-      this.$store.dispatch('getEntity', {docId:this.docId, collectionId:this.componentCollectionId});
-    }
 
     // TODO: Need to implement verification of kinshipChildId 
     // - The parent ClientContainer.vue loads the parent entity and its children

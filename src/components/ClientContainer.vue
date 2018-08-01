@@ -86,9 +86,9 @@ export default {
       if(this.$store.state.currentEntity){
         if(this.$store.state.currentEntity['PrimaryKinshipCaregiver']){
 
-          // if we are trying add or to get a new root level Entity, clear out the currentEntity & entityListeners to start fresh with the new root level entity
+          // if we are trying to get a new root level Entity, clear out the currentEntity & entityListeners to start fresh with the new root level entity
           // - its a new entity if the new id (primaryKinshipCaregiverId) doesn't exist already on the root entity (PrimaryKinshipCaregiver)
-          if(this.primaryKinshipCaregiverId=="add" || !this.$store.state.currentEntity['PrimaryKinshipCaregiver'].hasOwnProperty(this.primaryKinshipCaregiverId)){
+          if(!this.$store.state.currentEntity['PrimaryKinshipCaregiver'].hasOwnProperty(this.primaryKinshipCaregiverId)){
               this.$store.commit('deleteAllCurrentEntitesAndListeners');
               this.$store.dispatch('getEntity', {docId:this.primaryKinshipCaregiverId, collectionId:'PrimaryKinshipCaregiver'});
           }

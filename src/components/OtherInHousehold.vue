@@ -42,6 +42,7 @@
                       toolbarTitle="Incomes"  
                       entityType="OtherInHouseholdIncome" 
                       :parentCollectionId="this.docId"
+                      :parentCollectionType="this.componentCollectionId"
                       :baseUrl="'/PrimaryKinshipCaregiver/'+primaryKinshipCaregiverId+'/OtherInHousehold/'+otherInHouseholdId+'/OtherInHouseholdIncome/'"
                       icon="monetization_on"
                       addIcon="monetization_on"
@@ -141,12 +142,6 @@ export default {
   },
   created(){
     console.log('OtherInHousehold.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
-
-    // if we are adding a new subEntity then create it
-    // - otherwise this entity will get loaded by parent ClientContainer.vue created function
-    if(this.docId == "add"){
-      this.$store.dispatch('getEntity', {docId:this.docId, collectionId:this.componentCollectionId});
-    }
 
     // TODO: Need to implement verification of otherInHouseholdId 
     // - The parent ClientContainer.vue loads the parent entity and its children

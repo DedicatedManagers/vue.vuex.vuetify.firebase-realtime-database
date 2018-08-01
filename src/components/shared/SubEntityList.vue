@@ -40,7 +40,7 @@
 <script>
 export default {
   name: 'SubEntityList',
-  props:['baseUrl','toolbarTitle','icon','addIcon','addButtonText','entityType', 'parentCollectionId'],
+  props:['baseUrl','toolbarTitle','icon','addIcon','addButtonText','entityType', 'parentCollectionId', 'parentCollectionType'],
   data() {
     return {
         listVisibility:true,
@@ -106,7 +106,10 @@ export default {
   },
   methods:{
     addEntity(){
-    this.$router.push(this.baseUrl + "add");
+        this.$store.dispatch('fcreateEntity', {docId:'add', collectionId:this.entityType, parentCollectionId:this.parentCollectionId, parentCollectionType:this.parentCollectionType}).then(createdDocId=>{
+            console.log( 'addEntity received: ' + createdDocId  );
+            this.$router.push(this.baseUrl + createdDocId);
+        });
     },
   },
 }

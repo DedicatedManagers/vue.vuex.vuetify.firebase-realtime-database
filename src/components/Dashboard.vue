@@ -22,7 +22,7 @@
                       </v-list-tile>
                     </v-list>
                     <div class="text-xs-right">
-                      <v-btn color="success" :to="'/PrimaryKinshipCaregiver/add'">Add New Client<v-icon right>person_add</v-icon></v-btn>
+                      <v-btn color="success" @click="addNewClient">Add New Client<v-icon right>person_add</v-icon></v-btn>
                     </div>
                   </v-flex>
                 </v-layout>
@@ -45,6 +45,14 @@ export default {
   computed:{
     clients(){
       return this.$store.state.currentPrimaryKinshipCaregivers;
+    }
+  },
+  methods:{
+    addNewClient(){
+      this.$store.dispatch('fcreateEntity', {docId:'add', collectionId:'PrimaryKinshipCaregiver'}).then(createdDocId=>{
+          console.log( 'addEntity received: ' + createdDocId  );
+          this.$router.push('/PrimaryKinshipCaregiver/' + createdDocId);
+      });
     }
   },
   created(){
