@@ -162,17 +162,23 @@ export const store = new Vuex.Store({
             if(!context.state.entityListeners[entityContainer.collectionId]) context.state.entityListeners[entityContainer.collectionId]={};
             
             // If there is already a listener for this collection, unsubscribe it
-            if(typeof context.state.entityListeners[entityContainer.collectionId][entityContainer.docId] === 'function') context.state.entityListeners[entityContainer.collectionId][entityContainer.docId]();
+            if(typeof context.state.entityListeners[entityContainer.collectionId][entityContainer.docId] === 'function'){
+                console.log('deleting listener');
+                context.state.entityListeners[entityContainer.collectionId][entityContainer.docId]();
+            }
 
             // Remove any old info so it is not shown prior to async call returning info
             // - Need to check if the info does already exist so that we don't create a currentEntity collection doc property on a request where the entity does not exist
             if(  ((context.state.currentEntity||{})[entityContainer.collectionId]||{}).hasOwnProperty(entityContainer.docId)  ){
                 context.commit('initializeCurrentEntity', {docId:entityContainer.docId,collectionId:entityContainer.collectionId,docContainer:null,});
             }
-
+let trackingVar = Math.floor(Math.random() * 100);  // prove we aren't calling a 2nd instance listenter on the same collection/document
             // Set up the new query & listener
-            context.state.entityListeners[entityContainer.collectionId][entityContainer.docId] = firebase.firestore().collection(entityContainer.collectionId).doc(entityContainer.docId).onSnapshot(function(doc){
+            context.state.entityListeners[entityContainer.collectionId][entityContainer.docId] = firebase.firestore().collection(entityContainer.collectionId).doc(entityContainer.docId).onSnapshot({includeMetadataChanges:false}, function(doc){
                 console.log('EntityListener for: ' + entityContainer.collectionId + entityContainer.docId);
+                console.log(doc);
+                console.log(doc.metadata);
+console.log(trackingVar);
                 if(!doc.exists){
                     console.log('Listener for collectionId/docId: ' + entityContainer.collectionId + '/' + entityContainer.docId + ' called and the !doc.exists returned false.  This document does not exist! (invalid link or the document was deleted and the listener was not removed');
 
@@ -197,37 +203,42 @@ export const store = new Vuex.Store({
                 // - commits to firebase from our app will also call this listener and it got difficult to try and ingnore the listner when new entites were added 
                 // - if this becomes an issue look into setting some kind of flag passed when it should be ignored locally (as opposed to checking when it shouldn't be ignored)
                 else{
-
                     // look for nested collections on the loaded entity and load them if they aren't already loaded
                     let NestedCollections = doc.data()['NestedCollections']; 
                     if(typeof NestedCollections === 'object' ){ // the loaded entity has nested collections
                         for (let collectionId in NestedCollections) {
                             if ( NestedCollections.hasOwnProperty(collectionId) && typeof NestedCollections[collectionId]==='object' ) { // sanity check
                                 for(let docId in NestedCollections[collectionId]){
-                                    console.log('getEntity checking nested collection - main function getEntity - Object received: ' + JSON.stringify(entityContainer));
+//                                    console.log('getEntity checking nested collection - main function getEntity - Object received: ' + JSON.stringify(entityContainer));
                                     // Check Vuex store to see if there is a listener running on this sub-entity
                                     if( !(typeof ((context.state.entityListeners||{})[collectionId]||{})[docId]  === 'function')  ){
                                         // Listener not found - load the entity
-                                        console.log('getEntity nested collection check - listener not found.  calling getEntity - collectionId/docId:' + collectionId + docId);
+//                                        console.log('getEntity nested collection check - listener not found.  calling getEntity - collectionId/docId:' + collectionId + docId);
                                         context.dispatch('getEntity', {docId:docId,collectionId:collectionId})    
                                     }
                                     else{
                                         // Listener found
-                                        console.log('getEntity nested collection check - listener already established therefore the sub entity is already loaded. collectionId/docId:' + collectionId + docId);
+//                                        console.log('getEntity nested collection check - listener already established therefore the sub entity is already loaded. collectionId/docId:' + collectionId + docId);
                                     }
                                 }
                             }
                         }
             
                     }
-                    context.commit('initializeCurrentEntity', {
-                        docId:entityContainer.docId,
-                        collectionId:entityContainer.collectionId,
-                        docContainer:{
-                            id: entityContainer.docId,
-                            data: doc.data(),    
-                        }
-                    })
+
+                    // if its not a local update, then update the entity (otherwise it was already updated locally via updateCurrentEntity)
+                    if(!doc.metadata.hasPendingWrites){
+                        console.log('listenter updateing locally')
+                        context.commit('initializeCurrentEntity', {
+                            docId:entityContainer.docId,
+                            collectionId:entityContainer.collectionId,
+                            docContainer:{
+                                id: entityContainer.docId,
+                                data: doc.data(),    
+                            }
+                        })
+                    }
+
                 }
             });            
         },
@@ -237,24 +248,27 @@ export const store = new Vuex.Store({
             console.log('updateCurrentEntity - object received: ' + JSON.stringify(entityPropertyContainer));
             context.commit('mutateCurrentEntity', entityPropertyContainer);
 
-            // if the debouncer for this entity
-            if ( typeof (((context.state||{}).entityDebouncers||{})[entityPropertyContainer.collectionId]||{})[entityPropertyContainer.docId] !== 'function' ){
-                // initialize function holder for this specific entity if not initialized already
-                if(context.state.entityDebouncers === null) context.state.entityDebouncers = {}; // initialize entityDebouncers if not already an object
-                if(typeof context.state.entityDebouncers[entityPropertyContainer.collectionId] !== 'object') context.state.entityDebouncers[entityPropertyContainer.collectionId] = {}; // initialize entityDebouncers for this specific entity if not already an object
+            // Undebounced
+            context.dispatch('fcommitEntity', {docId:entityPropertyContainer.docId,collectionId:entityPropertyContainer.collectionId});
 
-                // create the debounce function for this specific entity
-                context.state.entityDebouncers[entityPropertyContainer.collectionId][entityPropertyContainer.docId] = debounce(  
-                    function(ePC){
-                        context.dispatch('fcommitEntity', {docId:ePC.docId,collectionId:ePC.collectionId});
-                    }, 
-                    500, 
-                    false
-                );
-            }
+            // // if the debouncer for this entity
+            // if ( typeof (((context.state||{}).entityDebouncers||{})[entityPropertyContainer.collectionId]||{})[entityPropertyContainer.docId] !== 'function' ){
+            //     // initialize function holder for this specific entity if not initialized already
+            //     if(context.state.entityDebouncers === null) context.state.entityDebouncers = {}; // initialize entityDebouncers if not already an object
+            //     if(typeof context.state.entityDebouncers[entityPropertyContainer.collectionId] !== 'object') context.state.entityDebouncers[entityPropertyContainer.collectionId] = {}; // initialize entityDebouncers for this specific entity if not already an object
 
-            // call the debouncer
-            context.state.entityDebouncers[entityPropertyContainer.collectionId][entityPropertyContainer.docId](entityPropertyContainer);
+            //     // create the debounce function for this specific entity
+            //     context.state.entityDebouncers[entityPropertyContainer.collectionId][entityPropertyContainer.docId] = debounce(  
+            //         function(ePC){
+            //             context.dispatch('fcommitEntity', {docId:ePC.docId,collectionId:ePC.collectionId});
+            //         }, 
+            //         5000, 
+            //         false
+            //     );
+            // }
+
+            // // call the debouncer
+            // context.state.entityDebouncers[entityPropertyContainer.collectionId][entityPropertyContainer.docId](entityPropertyContainer);
         },
         
         // Remove an entity from a parent's neste collection
@@ -321,7 +335,7 @@ export const store = new Vuex.Store({
             if( (((context.state.currentEntity||{})[collectionContainer.collectionId]||{})[collectionContainer.docId]||{}).hasOwnProperty('data') ){
                 firebase.firestore().collection(collectionContainer.collectionId).doc(context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId].id).update(context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId].data)
                 .then(function() {
-                    //console.log("Document successfully written!");
+                    console.log("Document successfully written!");
                 })
                 .catch(function(error) {
                     console.error("Error writing document: ", error);
