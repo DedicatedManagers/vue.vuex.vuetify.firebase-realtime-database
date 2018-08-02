@@ -272,18 +272,23 @@ export const store = new Vuex.Store({
         fcreateEntity(context, collectionContainer){
             console.log('fcreateEntity - object received: ' + JSON.stringify(collectionContainer));
             let newSubEntityMetaLocal = {}; // empty object means it's not a sub-entity
+
+            // create meta information for the new entity
             newSubEntityMetaLocal['CreatedAt'] = firebase.firestore.FieldValue.serverTimestamp();
             newSubEntityMetaLocal['CreatedAtUid'] = firebase.auth().currentUser.uid;
+
+            // if this is a child entity, set its information about its parent 
             if(collectionContainer.hasOwnProperty('parentCollectionType') && collectionContainer.hasOwnProperty('parentCollectionId')){
                 newSubEntityMetaLocal.ParentType = collectionContainer.parentCollectionType;
                 newSubEntityMetaLocal.ParentCollectionId = collectionContainer.parentCollectionId;                    
             }
 
-
+            // add the new entity to the firestore
             return firebase.firestore().collection(collectionContainer.collectionId).add(newSubEntityMetaLocal)
             .then(function(docRef) {    
                 console.log('firestore add call complete. new entity has been created. docRef.id: ' + docRef.id);
-                // Determine and set the parent to know about the sub/nested entity
+
+                // if its a sub-entity, add the child information to the parent
                 if(newSubEntityMetaLocal.hasOwnProperty('ParentCollectionId')){ // the newSubEntityMeta object is not empty therefore its a sub entity
                     let NestedCollections = {};  // holds an object of child entities by child entity type property
                     NestedCollections[collectionContainer.collectionId] = {};
