@@ -13,72 +13,13 @@
                 &nbsp;
               </v-flex>
 
-              <v-flex xs12>
-                <subentity-list 
-                  toolbarTitle="Primary Kinship Caregiver Income"  
-                  entityType="PrimaryKinshipCaregiverIncome" 
-                  :parentCollectionId="this.docId"
-                  :parentCollectionType="this.componentCollectionId"
-                  :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/PrimaryKinshipCaregiverIncome/'"
-                  icon="monetization_on"
-                  addIcon="monetization_on"
-                  addButtonText="Add Income"
-                ></subentity-list>
+              <v-flex xs12 v-for="(subEntityConfig, subEntityIndex) in entityConfig.subEntities" :key="subEntityIndex">
+                <subentity-list :entityConfig="entityConfig" :subEntityIndex="subEntityIndex"></subentity-list>
+                <v-flex>
+                  &nbsp;
+                </v-flex>
               </v-flex>
               
-              <v-flex xs12>
-                &nbsp;
-              </v-flex>
-
-
-              <v-flex xs12>
-                <subentity-list 
-                  toolbarTitle="Kinship Children"  
-                  entityType="KinshipChild" 
-                  :parentCollectionId="this.docId"
-                  :parentCollectionType="this.componentCollectionId"
-                  :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/KinshipChild/'"
-                  icon="person"
-                  addIcon="person_add"
-                  addButtonText="Add Child"
-                ></subentity-list>
-              </v-flex>
-              
-              <v-flex xs12>
-                &nbsp;
-              </v-flex>
-
-              <v-flex xs12>
-                <subentity-list 
-                  toolbarTitle="Others In Household"  
-                  entityType="OtherInHousehold" 
-                  :parentCollectionId="this.docId"
-                  :parentCollectionType="this.componentCollectionId"
-                  :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/OtherInHousehold/'"
-                  icon="person"
-                  addIcon="person_add"
-                  addButtonText="Add Other"
-                ></subentity-list>
-              </v-flex>
-
-
-              <v-flex xs12>
-                &nbsp;
-              </v-flex>
-
-              <v-flex xs12>
-                <subentity-list 
-                  toolbarTitle="Case Plan"  
-                  entityType="FamilyAdvocacyCasePlan" 
-                  :parentCollectionId="this.docId"
-                  :parentCollectionType="this.componentCollectionId"
-                  :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/FamilyAdvocacyCasePlan/'"
-                  icon="import_contacts"
-                  addIcon="import_contacts"
-                  addButtonText="Add Case Plan"
-                ></subentity-list>
-              </v-flex>
-
 
             </v-layout>
           </v-flex>
@@ -89,18 +30,6 @@
                 &nbsp;
               </v-flex>
 
-              <v-flex xs12>
-                <subentity-list 
-                  toolbarTitle="Contacts With Caregiver"  
-                  entityType="PrimaryKinshipCaregiverContact" 
-                  :parentCollectionId="this.docId"
-                  :parentCollectionType="this.componentCollectionId"
-                  :baseUrl="'/PrimaryKinshipCaregiver/'+docId+'/PrimaryKinshipCaregiverContact/'"
-                  icon="phone"
-                  addIcon="phone_forwarded"
-                  addButtonText="Add Contact"
-                ></subentity-list>
-              </v-flex>
           </v-flex>
 
         </v-layout> 
@@ -219,6 +148,48 @@ export default {
             ],
           },
         ],
+        subEntities:[
+          {
+            toolbarTitle:"Primary Kinship Caregiver Income", 
+            entityType:"PrimaryKinshipCaregiverIncome",
+            baseUrl:'/PrimaryKinshipCaregiver/'+this.docId+'/PrimaryKinshipCaregiverIncome/',
+            icon:"monetization_on",
+            addIcon:"monetization_on",
+            addButtonText:"Add Income",
+          },
+          {
+            toolbarTitle:"Kinship Children", 
+            entityType:"KinshipChild",
+            baseUrl:'/PrimaryKinshipCaregiver/'+this.docId+'/KinshipChild/',
+            icon:"person",
+            addIcon:"person_add",
+            addButtonText:"Add Child",
+          },
+           {
+            toolbarTitle:"Others In Household", 
+            entityType:"OtherInHousehold",
+            baseUrl:'/PrimaryKinshipCaregiver/'+this.docId+'/OtherInHousehold/',
+            icon:"person",
+            addIcon:"person_add",
+            addButtonText:"Add Other",
+          },
+          {
+            toolbarTitle:"Case Plan", 
+            entityType:"FamilyAdvocacyCasePlan",
+            baseUrl:'/PrimaryKinshipCaregiver/'+this.docId+'/FamilyAdvocacyCasePlan/',
+            icon:"import_contacts",
+            addIcon:"import_contacts",
+            addButtonText:"Add Case Plan",
+          },
+          {
+            toolbarTitle:"Contacts With Caregiver", 
+            entityType:"PrimaryKinshipCaregiverContact",
+            baseUrl:'/PrimaryKinshipCaregiver/'+this.docId+'/PrimaryKinshipCaregiverContact/',
+            icon:"phone",
+            addIcon:"phone_forwarded",
+            addButtonText:"Add Contact",
+          },
+        ]
       }
     }
   },

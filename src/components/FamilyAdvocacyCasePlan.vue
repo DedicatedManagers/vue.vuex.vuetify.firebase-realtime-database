@@ -61,7 +61,7 @@
 
 <script>
 import DialogConfirm from '@/components/shared/DialogConfirm';
-import SubEntityList from '@/components/shared/SubEntityList';
+import SubEntityList from '@/components/shared/SubEntityList.old';
 
 export default {
   name: 'FamilyAdvocacyCasePlan',

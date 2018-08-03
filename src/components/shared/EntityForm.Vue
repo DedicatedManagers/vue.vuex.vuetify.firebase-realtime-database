@@ -63,10 +63,10 @@ export default {
     },
   },
   created(){
-    console.log('EntityForm.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
+    //console.log('EntityForm.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
   },
   mounted(){
-    console.log('EntityForm.vue mounted function. Props: ' + JSON.stringify(this.$options.propsData));
+    //console.log('EntityForm.vue mounted function. Props: ' + JSON.stringify(this.$options.propsData));
     this.$refs.profileForm.validate();
   },
 }
