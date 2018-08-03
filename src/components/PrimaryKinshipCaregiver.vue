@@ -1,58 +1,17 @@
 <template>
-  <v-slide-y-transition mode="out-in">
-    <v-container fluid>
-        <v-layout row wrap>
-          <v-flex xs12 sm6 md4 px-1 class="customListExpandable">
-            <entity-form :entityConfig="entityConfig"></entity-form>
-          </v-flex>
-
-          <v-flex xs12 sm6 md4 px-1>
-
-            <v-layout row wrap>
-              <v-flex xs12 hidden-sm-and-up>
-                &nbsp;
-              </v-flex>
-
-              <v-flex xs12 v-for="(subEntityConfig, subEntityIndex) in entityConfig.subEntities" :key="subEntityIndex">
-                <subentity-list :entityConfig="entityConfig" :subEntityIndex="subEntityIndex"></subentity-list>
-                <v-flex>
-                  &nbsp;
-                </v-flex>
-              </v-flex>
-              
-
-            </v-layout>
-          </v-flex>
-
-
-          <v-flex xs12 md4 px-1>
-              <v-flex xs12 hidden-md-and-up>
-                &nbsp;
-              </v-flex>
-
-          </v-flex>
-
-        </v-layout> 
-
-
-    </v-container>
-  </v-slide-y-transition>
-
-
+  <layout-template :entityConfig="entityConfig" ></layout-template>
 </template>
 
 
 
 <script>
-import SubEntityList from '@/components/shared/SubEntityList';
-import EntityForm from '@/components/shared/EntityForm';
+import Template from '@/components/shared/Templates/Column-Two';
 
 export default {
   name: 'PrimaryKinshipCaregiver',
   props:['primaryKinshipCaregiverId'],
   components:{
-    'subentity-list':SubEntityList,
-    'entity-form':EntityForm,
+    'layout-template':Template,
   },
   data() {
     return {
