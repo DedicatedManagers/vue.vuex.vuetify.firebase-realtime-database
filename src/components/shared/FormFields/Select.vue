@@ -7,7 +7,7 @@
 
 export default {
   name: 'SelectField',
-  props:['fieldName', 'fieldLabel', 'items', 'componentCollectionId', 'docId'],
+  props:['fieldName', 'fieldLabel', 'items', 'collectionId', 'docId'],
   data() {
     return {
     };
@@ -15,10 +15,10 @@ export default {
   computed:{
     localModel:{
       get(){
-        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:this.fieldName,});
+        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.collectionId,fieldName:this.fieldName,});
       },
       set(newValue){
-        this.$store.dispatch('updateCurrentEntity', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{[this.fieldName]: newValue}});
+        this.$store.dispatch('updateCurrentEntity', {docId:this.docId, collectionId:this.collectionId, propertiesObject:{[this.fieldName]: newValue}});
       },
     },
   },
