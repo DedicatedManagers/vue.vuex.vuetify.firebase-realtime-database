@@ -8,6 +8,7 @@ export default {
   algolia:{
     appId:"xxxxxxxx",
     apiKey:"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    indexName:'YourAlgoliaIndexName',
   },
   // Initialize Firebase
   firebase:{
