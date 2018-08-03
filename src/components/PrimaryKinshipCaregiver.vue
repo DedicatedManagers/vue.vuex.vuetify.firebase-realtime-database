@@ -11,21 +11,12 @@
                 <v-card >
                   <v-card-text>
                     <v-form ref="profileForm">
-                      <v-text-field  v-model="FirstName" label="First Name" required :rules="Rules_FirstName"></v-text-field>
-                      <v-text-field  v-model="MiddleName" label="Middle Name" required ></v-text-field>
-                      <v-text-field  v-model="LastName" label="Last Name" required ></v-text-field>
-                      <v-text-field  v-model="PrimaryStreetAddress" label="Primary Street Address" required ></v-text-field>
-
-                      <v-menu ref="BirthDateMenuRef" :return-value.sync="BirthDate" v-model="BirthDateMenuVisibility" :close-on-content-click="false" :nudge-right="40" lazy transition="scale-transition" offset-y full-width min-width="290px">
-                        <v-text-field slot="activator" v-model="BirthDate" label="Birth Date" prepend-icon="event" readonly ></v-text-field>
-                        <v-date-picker v-model="BirthDate" @input="$refs.BirthDateMenuRef.save(BirthDate);"></v-date-picker>
-                      </v-menu>
-
-                      <v-checkbox v-model="NavigatorProgram" label="Navigator Program"></v-checkbox>
-
-
-                      <v-select v-model="ClientTypeAtIntake" :items="ClientTypeAtIntakeValues" label="Client Type At Intake" ></v-select>
-
+                      <div v-for="(FormField, index) in FormFieldsConfig" :key="index">
+                        <text-field v-if="FormField.fieldType == 'text'" :fieldName="FormField.fieldName" :fieldLabel="FormField.fieldLabel" :rules="FormField.rules" :componentCollectionId="componentCollectionId" :docId="docId"></text-field>
+                        <date-field v-if="FormField.fieldType == 'date'" :fieldName="FormField.fieldName" :fieldLabel="FormField.fieldLabel" :rules="FormField.rules" :componentCollectionId="componentCollectionId" :docId="docId"></date-field>
+                        <checkbox-field v-if="FormField.fieldType == 'checkbox'" :fieldName="FormField.fieldName" :fieldLabel="FormField.fieldLabel" :componentCollectionId="componentCollectionId" :docId="docId"></checkbox-field>
+                        <select-field v-if="FormField.fieldType == 'select'" :items="FormField.fieldItems" :fieldName="FormField.fieldName" :fieldLabel="FormField.fieldLabel" :componentCollectionId="componentCollectionId" :docId="docId"></select-field>
+                      </div>
                       <div class="text-xs-right">
                         <v-btn color="error" @click="confirmDialogVisibility=true">Delete<v-icon right>delete</v-icon></v-btn>
                       </div>
@@ -154,6 +145,10 @@
 <script>
 import DialogConfirm from '@/components/shared/DialogConfirm';
 import SubEntityList from '@/components/shared/SubEntityList';
+import FormTextField from '@/components/shared/FormFields/Text';
+import FormDateField from '@/components/shared/FormFields/Date';
+import FormCheckboxField from '@/components/shared/FormFields/Checkbox';
+import FormSelectField from '@/components/shared/FormFields/Select';
 
 export default {
   name: 'PrimaryKinshipCaregiver',
@@ -161,35 +156,92 @@ export default {
   components:{
     'dialog-confirm':DialogConfirm,
     'subentity-list':SubEntityList,
+    'text-field':FormTextField,
+    'date-field':FormDateField,
+    'checkbox-field':FormCheckboxField,
+    'select-field':FormSelectField,
   },
   data() {
     return {
       componentCollectionId:'PrimaryKinshipCaregiver',
       confirmDialogVisibility:false,
-      BirthDateMenuVisibility:false,
-      kinshipChildrenMenuVisibility:true,
-      otherInHouseholdMenuVisibility:true,
       PrimaryKinshipCaregiverFormVisiblity:0,
       vitems:1,
-
-      Rules_FirstName:[
-        v => !!v || 'Required',
-        v => v.length <= 30 || 'Name must be less than 30',
-      ],
-
-      ClientTypeAtIntakeValues:[
-        "1- Formal/Licensed",
-        "2- Formal/Licensing in progress",
-        "3- Formal/Unable to be licensed; blood relative",
-        "4- Formal/Unable to be licensed; fictive",
-        "5- Informal/Guardianship; blood relative",
-        "6- Informal/Guardianship; fictive",
-        "7- Informal/Temp guardianship; blood relative",
-        "8- Informal/Temp guardianship; fictive",
-        "9- Informal/No guardianship; blood relative",
-        "10- Informal/No guardianship; fictive",
-        "11-Adoptive Parent",
-        "12-No Custody",
+      FormFieldsConfig:[
+        {
+          fieldType:'text',
+          fieldName:"FirstName",
+          fieldLabel:"First Name",
+          rules:[
+            v => !!v || 'Required',
+            v => v.length <= 30 || 'Name must be less than 30',
+          ] ,
+        },
+        {
+          fieldType:'text',
+          fieldName:"MiddleName",
+          fieldLabel:"Middle Name",
+          rules:[
+            v => !!v || 'Required',
+            v => v.length <= 30 || 'Name must be less than 30',
+          ] ,
+        },
+        {
+          fieldType:'text',
+          fieldName:"LastName",
+          fieldLabel:"Last Name",
+          rules:[
+            v => !!v || 'Required',
+            v => v.length <= 30 || 'Name must be less than 30',
+          ] ,
+        },
+        {
+          fieldType:'text',
+          fieldName:"PrimaryStreetAddress",
+          fieldLabel:"Primary Street Address",
+          rules:[
+            v => !!v || 'Required',
+            v => v.length <= 30 || 'Name must be less than 30',
+          ] ,
+        },
+        {
+          fieldType:'date',
+          fieldName:"BirthDate",
+          fieldLabel:"BirthDate",
+          rules:[
+            v => !!v || 'Required',
+            v => v.length <= 30 || 'Name must be less than 30',
+          ] ,
+        },
+        {
+          fieldType:'checkbox',
+          fieldName:"NavigatorProgram",
+          fieldLabel:"Navigator Program",
+        },
+        {
+          fieldType:'checkbox',
+          fieldName:"PresentedID",
+          fieldLabel:"Presented ID",
+        },
+        {
+          fieldType:'select',
+          fieldName:"ClientTypeAtIntake",
+          fieldLabel:"Client Type At Intake",
+          fieldItems:[
+            "1- Formal/Licensed",
+            "2- Formal/Licensing in progress",
+            "3- Formal/Unable to be licensed; blood relative",
+            "4- Formal/Unable to be licensed; fictive",
+            "5- Informal/Guardianship; blood relative",
+            "6- Informal/Guardianship; fictive",
+            "7- Informal/Temp guardianship; blood relative",
+            "8- Informal/Temp guardianship; fictive",
+            "9- Informal/No guardianship; blood relative",
+            "10- Informal/No guardianship; fictive",
+            "11-Adoptive Parent",
+            "12-No Custody",
+          ],
+        },
       ],
 
     };
@@ -198,77 +250,11 @@ export default {
     docId: function(){
       return this.primaryKinshipCaregiverId;
     },
-    FirstName:{
-      get(){
-        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'FirstName',});
-      },
-      set(newValue){
-        this.$store.dispatch('updateCurrentEntity', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{FirstName: newValue}});
-      },
-    },
-    MiddleName:{
-      get(){
-        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'MiddleName',});
-      },
-      set(newValue){
-        this.$store.dispatch('updateCurrentEntity', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{MiddleName: newValue}});
-      },
-    },
-    LastName:{
-      get(){
-        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'LastName',});
-      },
-      set(newValue){
-        this.$store.dispatch('updateCurrentEntity', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{LastName: newValue}});
-      },
-    },
-    PrimaryStreetAddress:{
-      get(){
-        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'PrimaryStreetAddress',});
-      },
-      set(newValue){
-        this.$store.dispatch('updateCurrentEntity', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{PrimaryStreetAddress: newValue}});
-      },
-    },
-    BirthDate:{
-      get(){
-        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'BirthDate',});
-      },
-      set(newValue){
-        this.$store.dispatch('updateCurrentEntity', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{BirthDate: newValue}});
-      },
-    },
-    NavigatorProgram:{
-      get(){
-        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'NavigatorProgram',});
-      },
-      set(newValue){
-        this.$store.dispatch('updateCurrentEntity', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{NavigatorProgram: newValue}});
-      },
-    },
-    
-    ClientTypeAtIntake:{
-      get(){
-        return this.$store.getters.getCurrentEntityFieldValue({docId:this.docId,collectionId:this.componentCollectionId,fieldName:'ClientTypeAtIntake',});
-      },
-      set(newValue){
-        this.$store.dispatch('updateCurrentEntity', {docId:this.docId, collectionId:this.componentCollectionId, propertiesObject:{ClientTypeAtIntake: newValue}});
-      },
-    },
-    
-
-
   },
   methods:{
     fDelete(){
       this.confirmDialogVisibility = false;
       this.$store.dispatch('fdeleteEntity',{collectionId:this.componentCollectionId,docId:this.docId,route:{to:'/dashboard'}})
-    },
-    addKinshipChild(){
-      this.$router.push('/PrimaryKinshipCaregiver/' + this.docId + '/KinshipChild/add');
-    },
-    addOtherInHousehold(){
-      this.$router.push('/PrimaryKinshipCaregiver/' + this.docId + '/OtherInHousehold/add');
     },
   },
   created(){
