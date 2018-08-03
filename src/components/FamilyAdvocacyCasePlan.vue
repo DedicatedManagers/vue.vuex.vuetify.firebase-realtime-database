@@ -14,11 +14,15 @@ export default {
   data() {
     return {
       componentCollectionId:'FamilyAdvocacyCasePlan',
+      parentCollectionId:'PrimaryKinshipCaregiver',
     };
   },
   computed:{
     docId: function(){
       return this.familyAdvocacyCasePlanId;
+    },
+    parentCollectionDocId: function(){
+      return this.primaryKinshipCaregiverId;
     },
     entityConfig:function(){
       return {
@@ -29,7 +33,7 @@ export default {
           confirmMessage:"Are you sure you want to delete case plan from the primary kinship caregiver?",
           route:"/dashboard",
         },
-        baseUrl: '/PrimaryKinshipCaregiver/' + this.primaryKinshipCaregiverId + '/' + this.componentCollectionId + '/'+ this.docId + '/',
+        baseUrl: (this.parentCollectionDocId?'/' +this.parentCollectionId + '/' + this.parentCollectionDocId:"") + '/' + this.componentCollectionId + '/'+ this.docId + '/',
         formFields:[
           {
             fieldType:'checkbox',

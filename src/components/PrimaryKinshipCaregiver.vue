@@ -31,7 +31,7 @@ export default {
           confirmMessage:"Are you sure you want to delete this Primary Kinship Caregiver?",
           route:"/dashboard",
         },
-        baseUrl:'/' + this.componentCollectionId + '/'+ this.docId + '/',
+        baseUrl: (this.parentCollectionDocId?'/' +this.parentCollectionId + '/' + this.parentCollectionDocId:"") + '/' + this.componentCollectionId + '/'+ this.docId + '/',
         formFields:[
           {
             fieldType:'text',
