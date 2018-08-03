@@ -11,20 +11,11 @@ import App from './App';
 import router from './router';
 import {store} from './store/store'
 import InstantSearch from 'vue-instantsearch';
+import credentials from '@/../config/credentials';
 
 Vue.use(InstantSearch);
 
-// Initialize Firebase
-const config = {
-  apiKey: 'AIzaSyA1R6cmxfmdoXsIKRFzy8TKrpdt3F9_zCg',
-  authDomain: 'foster-kinship-clients.firebaseapp.com',
-  databaseURL: 'https://foster-kinship-clients.firebaseio.com',
-  projectId: 'foster-kinship-clients',
-  storageBucket: 'foster-kinship-clients.appspot.com',
-  messagingSenderId: '186407844577',
-};
-
-firebase.initializeApp(config);
+firebase.initializeApp(credentials.firebase);
 const firestore = firebase.firestore();
 firestore.settings({timestampsInSnapshots: true,});
 

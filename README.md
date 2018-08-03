@@ -8,6 +8,9 @@
 # install dependencies
 npm install
 
+# configure api credentials
+see config/credentials.template.js
+
 # serve with hot reload at localhost:8080
 npm run dev
 

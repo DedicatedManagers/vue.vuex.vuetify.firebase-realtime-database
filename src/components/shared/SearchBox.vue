@@ -1,7 +1,7 @@
 <template>
     <v-menu ref="searchMenuRef" max-height="400" v-model="searchMenuVisibility" :close-on-content-click="false"  nudge-bottom="10" lazy transition="scale-transition" offset-y full-width min-width="290px">
     <v-text-field slot="activator" @keyup="searchMenuVisibility=true" v-model="searchQuery" label="Search" append-icon="search" single-line hide-details ></v-text-field>
-    <ais-index app-id="LJ0K5JZG8G" api-key="e30ecedc21c8c5a61dd7f221dca1429e" index-name="PrimaryKinshipCaregiver" :query="searchQuery">
+    <ais-index :app-id="algoliaCredentials.appId" :api-key="algoliaCredentials.apiKey" :index-name="algoliaCredentials.indexName" :query="searchQuery">
         <v-list three-line>
         <ais-results>
             <template slot-scope="{ result }">
@@ -38,6 +38,8 @@
 
 
 <script>
+import credentials from '@/../config/credentials';
+
 export default {
   name: 'SearchBox',
   props:[],
@@ -48,6 +50,9 @@ export default {
     };
   },
   computed:{
+      algoliaCredentials(){
+          return credentials.algolia;
+      }
   },
   methods:{
   },
