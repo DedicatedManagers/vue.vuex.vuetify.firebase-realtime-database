@@ -7,7 +7,7 @@
         <v-flex xs12>
         <v-list v-if="ammendedCollection" subheader>
             <v-list-group v-model="listVisibility">
-            <v-list-tile  :to="entityConfig.subEntities[subEntityIndex].baseUrl+entityListCollectionId" v-for="(ammendedEntity, entityListCollectionId) in ammendedCollection" :key="entityListCollectionId">
+            <v-list-tile  :to="entityConfig.baseUrl + entityConfig.subEntities[subEntityIndex].entityType + '/' + entityListCollectionId" v-for="(ammendedEntity, entityListCollectionId) in ammendedCollection" :key="entityListCollectionId">
                 <v-list-tile-action>
                 <v-icon>{{entityConfig.subEntities[subEntityIndex].icon}}</v-icon>
                 </v-list-tile-action>
@@ -108,7 +108,7 @@ export default {
     addEntity(){
         this.$store.dispatch('fcreateEntity', {docId:'add', collectionId:this.entityConfig.subEntities[this.subEntityIndex].entityType, parentCollectionId:this.entityConfig.docId, parentCollectionType:this.entityConfig.collectionId}).then(createdDocId=>{
             console.log( 'addEntity received: ' + createdDocId  );
-            this.$router.push(this.entityConfig.subEntities[this.subEntityIndex].baseUrl + createdDocId);
+            this.$router.push(this.entityConfig.baseUrl + this.entityConfig.subEntities[this.subEntityIndex].entityType + '/' + createdDocId);
         });
     },
     created(){

@@ -72,6 +72,7 @@ export default {
           confirmMessage:"Are you sure you want to delete this Primary Kinship Caregiver?",
           route:"/dashboard",
         },
+        baseUrl:'/' + this.componentCollectionId + '/'+ this.docId + '/',
         formFields:[
           {
             fieldType:'text',
@@ -152,7 +153,6 @@ export default {
           {
             toolbarTitle:"Primary Kinship Caregiver Income", 
             entityType:"PrimaryKinshipCaregiverIncome",
-            baseUrl:'/PrimaryKinshipCaregiver/'+this.docId+'/PrimaryKinshipCaregiverIncome/',
             icon:"monetization_on",
             addIcon:"monetization_on",
             addButtonText:"Add Income",
@@ -160,7 +160,6 @@ export default {
           {
             toolbarTitle:"Kinship Children", 
             entityType:"KinshipChild",
-            baseUrl:'/PrimaryKinshipCaregiver/'+this.docId+'/KinshipChild/',
             icon:"person",
             addIcon:"person_add",
             addButtonText:"Add Child",
@@ -168,7 +167,6 @@ export default {
            {
             toolbarTitle:"Others In Household", 
             entityType:"OtherInHousehold",
-            baseUrl:'/PrimaryKinshipCaregiver/'+this.docId+'/OtherInHousehold/',
             icon:"person",
             addIcon:"person_add",
             addButtonText:"Add Other",
@@ -176,7 +174,6 @@ export default {
           {
             toolbarTitle:"Case Plan", 
             entityType:"FamilyAdvocacyCasePlan",
-            baseUrl:'/PrimaryKinshipCaregiver/'+this.docId+'/FamilyAdvocacyCasePlan/',
             icon:"import_contacts",
             addIcon:"import_contacts",
             addButtonText:"Add Case Plan",
@@ -184,7 +181,6 @@ export default {
           {
             toolbarTitle:"Contacts With Caregiver", 
             entityType:"PrimaryKinshipCaregiverContact",
-            baseUrl:'/PrimaryKinshipCaregiver/'+this.docId+'/PrimaryKinshipCaregiverContact/',
             icon:"phone",
             addIcon:"phone_forwarded",
             addButtonText:"Add Contact",
