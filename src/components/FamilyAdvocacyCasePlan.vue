@@ -4,6 +4,7 @@
 
 <script>
 import Template from '@/components/shared/Templates/Column-Two';
+import {RootEntity} from '@/../config/Entities/RootEntity.js';
 
 export default {
   name: 'FamilyAdvocacyCasePlan',
@@ -26,35 +27,10 @@ export default {
     },
     entityConfig:function(){
       return {
+        ...RootEntity.subEntities[3],
         collectionId:this.componentCollectionId,
         docId:this.docId,
-        title:'Case Plan',
-        onDelete:{
-          confirmMessage:"Are you sure you want to delete case plan from the primary kinship caregiver?",
-          route:"/dashboard",
-        },
         baseUrl: (this.parentCollectionDocId?'/' +this.parentCollectionId + '/' + this.parentCollectionDocId:"") + '/' + this.componentCollectionId + '/'+ this.docId + '/',
-        formFields:[
-          {
-            fieldType:'checkbox',
-            fieldName:"CommunityConnectionNeeded",
-            fieldLabel:"Community Connection Needed",
-          },
-          {
-            fieldType:'checkbox',
-            fieldName:"CommunityConnectionAchieved",
-            fieldLabel:"Community Connection Achieved",
-          },
-        ],
-        subEntities:[
-          {
-            toolbarTitle:"Guardianship", 
-            entityType:"FamilyAdvocacyGuardianship",
-            icon:"assignment_ind",
-            addIcon:"assignment_ind",
-            addButtonText:"Add Guardianship",
-          },
-        ]
       }
     }
   },
