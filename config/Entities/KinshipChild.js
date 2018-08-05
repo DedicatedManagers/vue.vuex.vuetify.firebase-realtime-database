@@ -10,7 +10,7 @@ export const KinshipChild = {
     addButtonText:"Add Child",
     evalFunctions:{
         breadCrumb:'entityFormFields.LastName + ", " + entityFormFields.FirstName + " " + entityFormFields.MiddleName',
-        subEntityList:'',
+        subEntityListDisplayText:'entityFormFields.LastName + ", " + entityFormFields.FirstName + " " + entityFormFields.MiddleName',
     },
     onDelete:{
       confirmMessage:"Are you sure you want to delete this Kinship Child from his/her Primary Kinship Caregiver?",

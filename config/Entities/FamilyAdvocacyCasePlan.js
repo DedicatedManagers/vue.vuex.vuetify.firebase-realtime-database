@@ -10,7 +10,7 @@ export const FamilyAdvocacyCasePlan = {
     addButtonText:"Add Case Plan",
     evalFunctions:{
       breadCrumb:'"Case Plan - " + entityId',
-      subEntityList:'',
+      subEntityListDisplayText:'"Case Plan Needed: " + (entityFormFields.CommunityConnectionNeeded?"Yes":"No")',
     },
     onDelete:{
       confirmMessage:"Are you sure you want to delete case plan from the primary kinship caregiver?",

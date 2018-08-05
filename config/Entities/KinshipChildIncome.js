@@ -7,7 +7,7 @@ export const KinshipChildIncome = {
     addButtonText:"Add Income",
     evalFunctions:{
       breadCrumb:'"Income - " + entityId',
-      subEntityList:'',
+      subEntityListDisplayText:'(entityFormFields.IncomeType||"") + " - $" + (entityFormFields.IncomeType||"")',
     },
     onDelete:{
       confirmMessage:"Are you sure you want to delete this Income from the Kinship Child?",

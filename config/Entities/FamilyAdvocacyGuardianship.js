@@ -7,7 +7,7 @@ export const FamilyAdvocacyGuardianship = {
     addButtonText:"Add Guardianship",
     evalFunctions:{
       breadCrumb:'"Guardianship - " + entityId',
-      subEntityList:'',
+      subEntityListDisplayText:'"Guardianship Type: " + entityFormFields.GuardianshipType',
     },
     onDelete:{
       confirmMessage:"Are you sure you want to delete this Guardianship from the Family Advocacy Case Plan?",

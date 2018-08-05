@@ -53,54 +53,35 @@ export default {
             // Need to ammend the Entity to Let SubEntityList component know what to display for each entity when rendered as a list item (as the variables can change between entity types) 
             let ammendedCurrentEntity = {};
             for (let entityId in this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType]){
-                // Check that the parent of the entity being checked matches the parent sent in - necessary for nested entities?  Could just be sanity check
-                if(this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId].data.ParentCollectionId == this.entityConfig.docId){  // sanity check?  This may not be necessary
-                    // only including entities that have the same individual parent
-                    ammendedCurrentEntity[entityId]=this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId]; 
-                    
-                    // Create the ListDisplayText based on Entity Type
-                    // Some entity types also filter out other entities in the same type that don't have the same parent
-                    if(this.entityConfig.subEntities[this.subEntityIndex].entityType=='KinshipChild' || this.entityConfig.subEntities[this.subEntityIndex].entityType=="OtherInHousehold"){
-                        ammendedCurrentEntity[entityId]['ListDisplayText'] =
-                            // Create the format of what do display when this entity is rendered as a list item
-                            (this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId].data.LastName||"") + ", " +
-                            (this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId].data.FirstName||"") + " " +
-                            (this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId].data.MiddleName||"");    
+                // check that the data & ParentCollectionId properties exist on the entity - may just be a sanity check
+                if(  ((this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId]||{}).data||{}).hasOwnProperty('ParentCollectionId')  ){
+                    // Check that the parent of the entity being checked matches the parent sent in - necessary for nested entities?  Could just be sanity check
+                    if(this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId].data.ParentCollectionId == this.entityConfig.docId){  // sanity check?  This may not be necessary
+                        // only including entities that have the same individual parent
+                        ammendedCurrentEntity[entityId]=this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId]; 
+                        
+                        // set default text
+                        let listDisplayText = this.entityConfig.subEntities[this.subEntityIndex].title;
+
+                        // if a evalFunctions.breadCrumb is defined
+                        if(  (this.entityConfig.subEntities[this.subEntityIndex].evalFunctions||{}).hasOwnProperty('subEntityListDisplayText')  ){
+                            // evaluate the evalFunctions.breadCrumb
+                            try {
+                                console.log(this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId]);
+                                let entityFormFields = this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId].data;
+                                listDisplayText = eval(this.entityConfig.subEntities[this.subEntityIndex].evalFunctions.subEntityListDisplayText);
+                            }
+                            catch(err) {
+                                alert('There was an error evaluating the list display text in an enttiy in the sub entity list for entity type: ' + this.subEntityIndex);
+                                alert(err);
+                            }
+                        }
+                        // set the computed text on the ammended entity
+                        ammendedCurrentEntity[entityId]['ListDisplayText'] = listDisplayText;
                     }
-                    else if(this.entityConfig.subEntities[this.subEntityIndex].entityType=='OtherInHouseholdIncome' || this.entityConfig.subEntities[this.subEntityIndex].entityType=="PrimaryKinshipCaregiverIncome" || this.entityConfig.subEntities[this.subEntityIndex].entityType=='KinshipChildIncome'){
-                            ammendedCurrentEntity[entityId]['ListDisplayText'] =
-                                // Create the format of what do display when this entity is rendered as a list item
-                                (this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId].data.IncomeType||"") + " - $" +
-                                (this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId].data.IncomeAmount||"");    
-                    }
-                    else if(this.entityConfig.subEntities[this.subEntityIndex].entityType=='KinshipChildCustodyStatus'){
-                        ammendedCurrentEntity[entityId]['ListDisplayText'] =
-                            // Create the format of what do display when this entity is rendered as a list item
-                            (this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId].data.CustodyDate||"") + " - " +
-                            (this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId].data.CustodyStatus||"");
-                    }
-                    else if(this.entityConfig.subEntities[this.subEntityIndex].entityType=='PrimaryKinshipCaregiverContact'){
-                        ammendedCurrentEntity[entityId]['ListDisplayText'] =
-                            // Create the format of what do display when this entity is rendered as a list item
-                            (this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId].data.ContactDate||"") + " - " +
-                            (this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId].data.ContactType||"");
-                    }
-                    else if(this.entityConfig.subEntities[this.subEntityIndex].entityType=='FamilyAdvocacyCasePlan'){
-                        ammendedCurrentEntity[entityId]['ListDisplayText'] =
-                            // Create the format of what do display when this entity is rendered as a list item
-                            'Case Plan Needed: ' + (this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId].data.CommunityConnectionNeeded?'Yes':'No');
-                    }
-                    else if(this.entityConfig.subEntities[this.subEntityIndex].entityType=='FamilyAdvocacyGuardianship'){
-                        ammendedCurrentEntity[entityId]['ListDisplayText'] =
-                            // Create the format of what do display when this entity is rendered as a list item
-                            'Guardianship Type: ' + (this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId].data.GuardianshipType);
-                    }
-                    else{
-                            // The entity type has not been defined.  Need to define the entity above.
-                            ammendedCurrentEntity[entityId]['ListDisplayText'] ='Error #INOS2833';
-                    }
+                }
             }
-            }
+
             return ammendedCurrentEntity;
         }
   },

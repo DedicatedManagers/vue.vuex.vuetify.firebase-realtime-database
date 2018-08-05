@@ -7,7 +7,7 @@ export const KinshipChildCustodyStatus = {
     addButtonText:"Add Status",
     evalFunctions:{
       breadCrumb:'"Custody Status - " + entityId',
-      subEntityList:'',
+      subEntityListDisplayText:'(entityFormFields.CustodyDate||"") + " - " + (entityFormFields.CustodyStatus||"")',
     },
     onDelete:{
       confirmMessage:"Are you sure you want to delete this Custody Status from the Kinship Child?",

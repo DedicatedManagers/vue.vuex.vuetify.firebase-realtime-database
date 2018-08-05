@@ -7,7 +7,7 @@ export const PrimaryKinshipCaregiverContact = {
     addButtonText:"Add Contact",
     evalFunctions:{
       breadCrumb:'"Contact - " + entityId',
-      subEntityList:'',
+      subEntityListDisplayText:'(entityFormFields.ContactDate||"") + " - " + (entityFormFields.ContactType||"")',
     },
     onDelete:{
       confirmMessage:"Are you sure you want to delete this contact from the primary kinship caregiver?",
