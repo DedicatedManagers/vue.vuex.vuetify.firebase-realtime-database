@@ -128,45 +128,6 @@ export default {
 
 
 
-
-      clientFullName:function(){
-        if( ! ((this.$store.state.currentEntity||{})['PrimaryKinshipCaregiver']||{}).hasOwnProperty(this.primaryKinshipCaregiverId)   ) return "";  // the async call to get the info hasn't happened yet
-        
-        let FirstName = ((((this.$store.state.currentEntity||{})['PrimaryKinshipCaregiver']||{})[this.primaryKinshipCaregiverId]||{}).data||{}).FirstName;
-        if (typeof FirstName === 'undefined') FirstName = "<FIRST NAME NOT SET>";
-
-        let LastName = ((((this.$store.state.currentEntity||{})['PrimaryKinshipCaregiver']||{})[this.primaryKinshipCaregiverId]||{}).data||{}).LastName;
-        if (typeof LastName === 'undefined') LastName = "<LAST NAME NOT SET>";
-
-        let fullName = LastName + ", " + FirstName;
-        return fullName;
-      },
-      kinshipChildFullName:function(){
-        // If the KinshipChild has not loaded, return an empty string
-        if( ! ((this.$store.state.currentEntity||{})['KinshipChild']||{}).hasOwnProperty(this.kinshipChildId)   ) return ""; 
-        
-        let FirstName = ((((this.$store.state.currentEntity||{})['KinshipChild']||{})[this.kinshipChildId]||{}).data||{}).FirstName;
-        if (typeof FirstName === 'undefined') FirstName = "<FIRST NAME NOT SET>";
-
-        let LastName = ((((this.$store.state.currentEntity||{})['KinshipChild']||{})[this.kinshipChildId]||{}).data||{}).LastName;
-        if (typeof LastName === 'undefined') LastName = "<LAST NAME NOT SET>";
-
-        let fullName = LastName + ", " + FirstName;
-        return fullName;
-      },
-      otherInHouseholdFullName:function(){
-        // If the OtherInHousehold has not loaded, return an empty string
-        if( ! ((this.$store.state.currentEntity||{})['OtherInHousehold']||{}).hasOwnProperty(this.otherInHouseholdId)   ) return ""; 
-        
-        let FirstName = ((((this.$store.state.currentEntity||{})['OtherInHousehold']||{})[this.otherInHouseholdId]||{}).data||{}).FirstName;
-        if (typeof FirstName === 'undefined') FirstName = "<FIRST NAME NOT SET>";
-
-        let LastName = ((((this.$store.state.currentEntity||{})['OtherInHousehold']||{})[this.otherInHouseholdId]||{}).data||{}).LastName;
-        if (typeof LastName === 'undefined') LastName = "<LAST NAME NOT SET>";
-
-        let fullName = LastName + ", " + FirstName;
-        return fullName;
-      },
       navBreadCrumbs: function (){
         let crumbs = [];
         crumbs.push({
@@ -177,6 +138,21 @@ export default {
             link:'/dashboard',
             text:'NEED TO FIGURE OUT BREADCRUMBS',
         });
+
+        let rootEntityData = (((this.$store.state.currentEntity||{})[this.rootEntityCollectionId]||{})[this.rootEntityDocId]||{}).hasOwnProperty('data');
+        console.log(rootEntityData);
+        if( (((this.$store.state.currentEntity||{})[this.rootEntityCollectionId]||{})[this.rootEntityDocId]||{}).hasOwnProperty('data')   ) {
+          let entityFields = this.$store.state.currentEntity[this.rootEntityCollectionId][this.rootEntityDocId].data;
+          console.log(entityFields);
+          let breadCrumbFunction = RootEntity.breadCrumbFunction;
+          let text = eval(breadCrumbFunction);
+          console.log(text);
+          crumbs.push({
+              link:'/dashboard',
+              text:text,
+          });
+        }
+
         return crumbs;
       },
   },
