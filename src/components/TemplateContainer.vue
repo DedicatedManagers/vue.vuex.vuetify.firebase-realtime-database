@@ -70,6 +70,8 @@ export default {
     }
   },
   computed:{
+    // Returns an array holding the collectionIds & docIds of the matched route
+    // ie   [ {collectionId: 'RootEntity', docId:'xxxxxx'}, {collectionId: 'NestedEntity', docId:'xxxxxx'}, {collectionId: 'NestedEntity2', docId:'xxxxxx'}      ]
     entityPointers:function(){
         let Entities = [];
         function findEntity(urlString){
@@ -106,6 +108,21 @@ export default {
     rootEntityCollectionId: function(){
       return this.entityPointers[0].collectionId;
     },
+    parentEntityUrl:function(){
+      if (this.entityPointers.length == 1) return "/dashboard"; // only 1 pointer means it the parent entity
+      let theUrl = '/db';
+      for (let i=0; i<this.entityPointers.length-1; i++){ // loop over all entities except the last, which is the current entity
+        theUrl += '/' + this.entityPointers[i].collectionId + '/' + this.entityPointers[i].docId;
+      }
+      return theUrl;
+    },
+    entityUrl:function(){
+      let theUrl = '/db';
+      for (let i=0; i<this.entityPointers.length; i++){ // build the url from the entites pointers in case there's extra garbage at the end (ie someone copies malfomed link /RootEntity/xxxxx/NestedEntity/xxxxx/garbage - which still works)
+        theUrl += '/' + this.entityPointers[i].collectionId + '/' + this.entityPointers[i].docId;
+      }
+      return theUrl;
+    },
     docId: function(){
       return this.entityPointers[this.entityPointers.length-1].docId;
     },
@@ -123,7 +140,8 @@ export default {
         ...this.routedEntityConfig,
         collectionId:this.componentCollectionId,
         docId:this.docId,
-        baseUrl: '/db/' + this.DbPath, // TODO - breaks if the path for sub entities is broken (ie someone copies malfomed link /RootEntity/xxxxx/NestedEntity/xxxxx/garbage - which still works) - need to recreate url based on 
+        entityUrl: this.entityUrl,
+        parentEntityUrl: this.parentEntityUrl,
       }
     },
 

@@ -59,8 +59,7 @@ export default {
   methods:{
     fDelete(){
       this.confirmDialogVisibility = false;
-      // TODO: Need to make onDelete route dynamic - Likely need create ParentUrl (as opposed to baseUrl) on the entityConfig passed in via TemplateContainer.vue
-      this.$store.dispatch('fdeleteEntity',{collectionId:this.entityConfig.collectionId,docId:this.entityConfig.docId,route:{to:this.entityConfig.onDelete.route}})
+      this.$store.dispatch('fdeleteEntity',{collectionId:this.entityConfig.collectionId,docId:this.entityConfig.docId,route:{to:this.entityConfig.parentEntityUrl}})
     },
   },
   created(){
