@@ -5,7 +5,7 @@ import ClientContainer from '@/components/ClientContainer';
 import Dashboard from '@/components/Dashboard';
 import Login from '@/components/Login';
 //import {store} from '@/store/store'
-import test from '@/components/test';
+import TemplateContainer from '@/components/TemplateContainer';
 
 Vue.use(Router);
 
@@ -28,7 +28,7 @@ const router = new Router({
       path: '/db/:DbPath(.*)',
       props: true,
       name: 'dbpath',
-      component: test,
+      component: TemplateContainer,
     },
     {
       path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId',
