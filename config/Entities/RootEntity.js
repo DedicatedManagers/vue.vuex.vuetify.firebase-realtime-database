@@ -8,7 +8,10 @@ import {PrimaryKinshipCaregiverContact} from '@/../config/Entities/PrimaryKinshi
 export const RootEntity = {
     entityType:"PrimaryKinshipCaregiver",
     title:'Primary Kinship Caregiver',
-    breadCrumbFunction:'entityFormFields.LastName + ", " + entityFormFields.FirstName + " " + entityFormFields.MiddleName',
+    evalFunctions:{
+      breadCrumb:'entityFormFields.LastName + ", " + entityFormFields.FirstName + " " + entityFormFields.MiddleName',
+      subEntityList:'',
+    },
     onDelete:{
       confirmMessage:"Are you sure you want to delete this Primary Kinship Caregiver?",
       route:"/dashboard",

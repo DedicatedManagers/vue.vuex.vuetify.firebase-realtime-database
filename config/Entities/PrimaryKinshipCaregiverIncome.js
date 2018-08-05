@@ -5,7 +5,10 @@ export const PrimaryKinshipCaregiverIncome = {
     icon:"monetization_on",
     addIcon:"monetization_on",
     addButtonText:"Add Income",
-    breadCrumbFunction:'"Income - " + entityId',
+    evalFunctions:{
+      breadCrumb:'"Income - " + entityId',
+      subEntityList:'',
+    },
     onDelete:{
       confirmMessage:"Are you sure you want to delete this income from the primary kinship caregiver?",
       route:"/dashboard",

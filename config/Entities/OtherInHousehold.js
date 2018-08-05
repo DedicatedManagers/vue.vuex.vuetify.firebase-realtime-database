@@ -7,7 +7,10 @@ export const OtherInHousehold = {
     icon:"person",
     addIcon:"person_add",
     addButtonText:"Add Other",
-    breadCrumbFunction:'entityFormFields.LastName + ", " + entityFormFields.FirstName + " " + entityFormFields.MiddleName',
+    evalFunctions:{
+        breadCrumb:'entityFormFields.LastName + ", " + entityFormFields.FirstName + " " + entityFormFields.MiddleName',
+        subEntityList:'',
+    },
     onDelete:{
       confirmMessage:"Are you sure you want to delete this Other Household Member from his/her Primary Kinship Caregiver?",
       route:"/dashboard",

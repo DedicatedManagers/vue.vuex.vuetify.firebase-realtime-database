@@ -8,7 +8,10 @@ export const FamilyAdvocacyCasePlan = {
     icon:"import_contacts",
     addIcon:"import_contacts",
     addButtonText:"Add Case Plan",
-    breadCrumbFunction:'"Case Plan - " + entityId',
+    evalFunctions:{
+      breadCrumb:'"Case Plan - " + entityId',
+      subEntityList:'',
+    },
     onDelete:{
       confirmMessage:"Are you sure you want to delete case plan from the primary kinship caregiver?",
       route:"/dashboard",

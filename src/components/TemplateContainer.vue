@@ -161,21 +161,21 @@ export default {
 
           // if the entity has asynchronously loaded
           if( (((this.$store.state.currentEntity||{})[this.entityPointers[i].collectionId]||{})[this.entityPointers[i].docId]||{}).hasOwnProperty('data')   ) {
-            // set up variables to be used by breadCrumbFunction
+            // set up variables to be used by evalFunctions.breadCrumb
             let entityFormFields = this.$store.state.currentEntity[this.entityPointers[i].collectionId][this.entityPointers[i].docId].data;
             let entityId = this.$store.state.currentEntity[this.entityPointers[i].collectionId][this.entityPointers[i].docId].id;
 
             // set default text
             let linkText = theConfigEntity.title;
 
-            // if a breadCrumbFunction is defined
-            if(theConfigEntity.hasOwnProperty('breadCrumbFunction')){
-              // evaluate the breadCrumbFunction
+            // if a evalFunctions.breadCrumb is defined
+            if(  ((theConfigEntity||{}).evalFunctions||{}).hasOwnProperty('breadCrumb')  ){
+              // evaluate the evalFunctions.breadCrumb
               try {
-                linkText = eval(theConfigEntity.breadCrumbFunction);
+                linkText = eval(theConfigEntity.evalFunctions.breadCrumb);
               }
               catch(err) {
-                  alert('There was an error evaluating the breadCrumbFunction for entity: ' + this.entityPointers[i].collectionId);
+                  alert('There was an error evaluating the breadCrumb for entity: ' + this.entityPointers[i].collectionId);
               }
             }
 

@@ -5,7 +5,10 @@ export const KinshipChildCustodyStatus = {
     icon:"person",
     addIcon:"person_add",
     addButtonText:"Add Status",
-    breadCrumbFunction:'"Custody Status - " + entityId',
+    evalFunctions:{
+      breadCrumb:'"Custody Status - " + entityId',
+      subEntityList:'',
+    },
     onDelete:{
       confirmMessage:"Are you sure you want to delete this Custody Status from the Kinship Child?",
       route:"/dashboard",

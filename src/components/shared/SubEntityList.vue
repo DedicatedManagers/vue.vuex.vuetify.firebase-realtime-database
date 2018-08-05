@@ -108,7 +108,13 @@ export default {
     addEntity(){
         this.$store.dispatch('fcreateEntity', {docId:'add', collectionId:this.entityConfig.subEntities[this.subEntityIndex].entityType, parentCollectionId:this.entityConfig.docId, parentCollectionType:this.entityConfig.collectionId}).then(createdDocId=>{
             console.log( 'addEntity received: ' + createdDocId  );
-            this.$router.push(this.entityConfig.entityUrl + '/' + this.entityConfig.subEntities[this.subEntityIndex].entityType + '/' + createdDocId);
+            if(createdDocId){
+                this.$router.push(this.entityConfig.entityUrl + '/' + this.entityConfig.subEntities[this.subEntityIndex].entityType + '/' + createdDocId);
+            }
+            else{
+                // TODO: need better action for failure
+                alert('Failed to create new child entity.  You may have lost the connection to the server.  Try reloading the application.');
+            }
         });
     },
     created(){

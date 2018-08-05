@@ -59,6 +59,7 @@ export default {
   methods:{
     fDelete(){
       this.confirmDialogVisibility = false;
+      //TODO: need to handle failure - ie loss of connection to server
       this.$store.dispatch('fdeleteEntity',{collectionId:this.entityConfig.collectionId,docId:this.entityConfig.docId,route:{to:this.entityConfig.parentEntityUrl}})
     },
   },

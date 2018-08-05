@@ -8,7 +8,10 @@ export const KinshipChild = {
     icon:"person",
     addIcon:"person_add",
     addButtonText:"Add Child",
-    breadCrumbFunction:'entityFormFields.LastName + ", " + entityFormFields.FirstName + " " + entityFormFields.MiddleName',
+    evalFunctions:{
+        breadCrumb:'entityFormFields.LastName + ", " + entityFormFields.FirstName + " " + entityFormFields.MiddleName',
+        subEntityList:'',
+    },
     onDelete:{
       confirmMessage:"Are you sure you want to delete this Kinship Child from his/her Primary Kinship Caregiver?",
       route:"/dashboard",
