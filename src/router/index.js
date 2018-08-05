@@ -1,7 +1,6 @@
 import firebase from 'firebase/app';
 import Router from 'vue-router';
 import Vue from 'vue';
-import ClientContainer from '@/components/ClientContainer';
 import Dashboard from '@/components/Dashboard';
 import Login from '@/components/Login';
 //import {store} from '@/store/store'
@@ -29,96 +28,6 @@ const router = new Router({
       props: true,
       name: 'dbpath',
       component: TemplateContainer,
-    },
-    {
-      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId',
-      props: true,
-      name: 'PrimaryKinshipCaregiver',
-      component: ClientContainer,
-      meta: {
-        requiresAuth: true,
-      },
-    },
-    {
-      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/PrimaryKinshipCaregiverIncome/:primaryKinshipCaregiverIncomeId',
-      props: true,
-      name: 'PrimaryKinshipCaregiverIncome',
-      component: ClientContainer,
-      meta: {
-        requiresAuth: true,
-      },
-    },
-    {
-      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/PrimaryKinshipCaregiverContact/:primaryKinshipCaregiverContactId',
-      props: true,
-      name: 'PrimaryKinshipCaregiverContact',
-      component: ClientContainer,
-      meta: {
-        requiresAuth: true,
-      },
-    },
-    {
-      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/FamilyAdvocacyCasePlan/:familyAdvocacyCasePlanId',
-      props: true,
-      name: 'FamilyAdvocacyCasePlan',
-      component: ClientContainer,
-      meta: {
-        requiresAuth: true,
-      },
-    },
-    {
-      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/FamilyAdvocacyCasePlan/:familyAdvocacyCasePlanId/FamilyAdvocacyGuardianship/:familyAdvocacyGuardianshipId',
-      props: true,
-      name: 'FamilyAdvocacyGuardianship',
-      component: ClientContainer,
-      meta: {
-        requiresAuth: true,
-      },
-    },
-    {
-      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/KinshipChild/:kinshipChildId',
-      props: true,
-      name: 'KinshipChild',
-      component: ClientContainer,
-      meta: {
-        requiresAuth: true,
-      },
-    },
-    {
-      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/KinshipChild/:kinshipChildId/KinshipChildIncome/:kinshipChildIncomeId',
-      props: true,
-      name: 'KinshipChildIncome',
-      component: ClientContainer,
-      meta: {
-        requiresAuth: true,
-      },
-    },
-    {
-      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/KinshipChild/:kinshipChildId/KinshipChildCustodyStatus/:kinshipChildCustodyStatusId',
-      props: true,
-      name: 'KinshipChildCustodyStatus',
-      component: ClientContainer,
-      meta: {
-        requiresAuth: true,
-      },
-    },
-    {
-      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/OtherInHousehold/:otherInHouseholdId',
-      props: true,
-      name: 'OtherInHousehold',
-      component: ClientContainer,
-      meta: {
-        requiresAuth: true,
-      },
-    },
-    {
-      path: '/PrimaryKinshipCaregiver/:primaryKinshipCaregiverId/OtherInHousehold/:otherInHouseholdId/OtherInHouseholdIncome/:otherInHouseholdIncomeId',
-      props: true,
-      name: 'OtherInHouseholdIncome',
-      component: ClientContainer,
-      meta: {
-        requiresAuth: true,
-      },
     },
     {
       path: '/dashboard',
