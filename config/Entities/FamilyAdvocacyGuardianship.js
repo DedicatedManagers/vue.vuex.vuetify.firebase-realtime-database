@@ -5,6 +5,7 @@ export const FamilyAdvocacyGuardianship = {
     icon:"assignment_ind",
     addIcon:"assignment_ind",
     addButtonText:"Add Guardianship",
+    breadCrumbFunction:'"Guardianship - " + entityId',
     onDelete:{
       confirmMessage:"Are you sure you want to delete this Guardianship from the Family Advocacy Case Plan?",
       route:"/dashboard",

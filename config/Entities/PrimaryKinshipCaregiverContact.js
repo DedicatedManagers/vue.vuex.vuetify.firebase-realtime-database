@@ -5,6 +5,7 @@ export const PrimaryKinshipCaregiverContact = {
     icon:"phone",
     addIcon:"phone_forwarded",
     addButtonText:"Add Contact",
+    breadCrumbFunction:'"Contact - " + entityId',
     onDelete:{
       confirmMessage:"Are you sure you want to delete this contact from the primary kinship caregiver?",
       route:"/dashboard",

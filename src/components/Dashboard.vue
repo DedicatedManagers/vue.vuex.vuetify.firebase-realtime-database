@@ -11,7 +11,7 @@
                 <v-layout row wrap>
                   <v-flex xs12>
                     <v-list  v-for="(client, id) in clients" :key="id">
-                      <v-list-tile  :to="'/PrimaryKinshipCaregiver/'+id">
+                      <v-list-tile  :to="'/db/PrimaryKinshipCaregiver/'+id">
                           <v-list-tile-action>
                           <v-icon>person</v-icon>
                         </v-list-tile-action>

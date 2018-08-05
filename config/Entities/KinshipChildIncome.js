@@ -5,6 +5,7 @@ export const KinshipChildIncome = {
     icon:"monetization_on",
     addIcon:"monetization_on",
     addButtonText:"Add Income",
+    breadCrumbFunction:'"Income - " + entityId',
     onDelete:{
       confirmMessage:"Are you sure you want to delete this Income from the Kinship Child?",
       route:"/dashboard",

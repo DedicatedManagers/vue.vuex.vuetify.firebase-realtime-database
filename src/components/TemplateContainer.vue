@@ -49,7 +49,7 @@ export default {
   },
   methods:{
     initializeEntity(){
-      console.log('initializeEntity in test.vue');
+      console.log('initializeEntity in TemplateContainer.vue');
       // if we have already loaded the root level Entity (highest parent of the entities)
       if(this.$store.state.currentEntity){
         if(this.$store.state.currentEntity[this.rootEntityCollectionId]){
@@ -80,23 +80,25 @@ export default {
             }
         }
         findEntity(this.DbPath);
+        if(Entities.length < 1){
+          //TODO better way to handle no entity pointers found (ie bad url structure)
+          alert('Malformed route!');
+        }
         return Entities;
-
-        //TODO handle no entity pointers found (ie bad url structure)
     },
     routedEntityConfig:function(){
-      let theEntity = RootEntity;
+      let theConfigEntity = RootEntity;
       for (let i=1; i<this.entityPointers.length; i++){ // skip the root entity
         // if the subEntity exists on the object
-        if(  ((theEntity||{}).subEntities||{}).hasOwnProperty([this.entityPointers[i].collectionId])  ){
+        if(  ((theConfigEntity||{}).subEntities||{}).hasOwnProperty([this.entityPointers[i].collectionId])  ){
           // set the outer entity as the nested entity for the next iteration
-          theEntity = theEntity.subEntities[this.entityPointers[i].collectionId];
+          theConfigEntity = theConfigEntity.subEntities[this.entityPointers[i].collectionId];
         }
         else{
           return "Entity Config Not Found!"
         }
       }
-      return theEntity;
+      return theConfigEntity;
     },
     rootEntityDocId: function(){
       return this.entityPointers[0].docId;
@@ -121,43 +123,65 @@ export default {
         ...this.routedEntityConfig,
         collectionId:this.componentCollectionId,
         docId:this.docId,
-        baseUrl: '/db/' + this.DbPath,
+        baseUrl: '/db/' + this.DbPath, // TODO - breaks if the path for sub entities is broken (ie someone copies malfomed link /RootEntity/xxxxx/NestedEntity/xxxxx/garbage - which still works) - need to recreate url based on 
       }
     },
 
+    navBreadCrumbs: function (){
+      let crumbs = [];
+      crumbs.push({
+          link:'/dashboard',
+          text:'Dashboard',
+      });
 
+      // Make a copy of the entity configuration to manipulate 
+      let theConfigEntity = RootEntity;
+      let theLink = "/db";
+      for (let i=0; i<this.entityPointers.length; i++){ 
+        // if the url subEntity type exists on the configuration object
+        if(  (theConfigEntity||{}).entityType == this.entityPointers[i].collectionId  ){
 
+          // if the entity has asynchronously loaded
+          if( (((this.$store.state.currentEntity||{})[this.entityPointers[i].collectionId]||{})[this.entityPointers[i].docId]||{}).hasOwnProperty('data')   ) {
+            // set up variables to be used by breadCrumbFunction
+            let entityFormFields = this.$store.state.currentEntity[this.entityPointers[i].collectionId][this.entityPointers[i].docId].data;
+            let entityId = this.$store.state.currentEntity[this.entityPointers[i].collectionId][this.entityPointers[i].docId].id;
 
-      navBreadCrumbs: function (){
-        let crumbs = [];
-        crumbs.push({
-            link:'/dashboard',
-            text:'Dashboard',
-        });
-        crumbs.push({
-            link:'/dashboard',
-            text:'NEED TO FIGURE OUT BREADCRUMBS',
-        });
+            // set default text
+            let linkText = theConfigEntity.title;
 
-        let rootEntityData = (((this.$store.state.currentEntity||{})[this.rootEntityCollectionId]||{})[this.rootEntityDocId]||{}).hasOwnProperty('data');
-        console.log(rootEntityData);
-        if( (((this.$store.state.currentEntity||{})[this.rootEntityCollectionId]||{})[this.rootEntityDocId]||{}).hasOwnProperty('data')   ) {
-          let entityFields = this.$store.state.currentEntity[this.rootEntityCollectionId][this.rootEntityDocId].data;
-          console.log(entityFields);
-          let breadCrumbFunction = RootEntity.breadCrumbFunction;
-          let text = eval(breadCrumbFunction);
-          console.log(text);
-          crumbs.push({
-              link:'/dashboard',
-              text:text,
-          });
+            // if a breadCrumbFunction is defined
+            if(theConfigEntity.hasOwnProperty('breadCrumbFunction')){
+              // evaluate the breadCrumbFunction
+              try {
+                linkText = eval(theConfigEntity.breadCrumbFunction);
+              }
+              catch(err) {
+                  alert('There was an error evaluating the breadCrumbFunction for entity: ' + this.entityPointers[i].collectionId);
+              }
+            }
+
+            theLink += "/" + this.entityPointers[i].collectionId + "/" + this.entityPointers[i].docId;
+            crumbs.push({
+                link:theLink,
+                text:linkText,
+            });
+          }
+          // if there is another nested entity in the url
+          if(i+1 < this.entityPointers.length){
+            // if there is nested entity of the same type as the next url entity type
+            if(  theConfigEntity.subEntities.hasOwnProperty(this.entityPointers[i+1].collectionId)  ){
+              // set the outer entity as the nested entity for the next iteration
+              theConfigEntity = theConfigEntity.subEntities[this.entityPointers[i+1].collectionId];    
+            }
+          }
         }
-
-        return crumbs;
-      },
+      }
+      return crumbs;
+    },
   },
   created(){
-    console.log('created function in test.vue');
+    console.log('created function in TemplateContainer.vue');
     this.initializeEntity();
   },
 };
