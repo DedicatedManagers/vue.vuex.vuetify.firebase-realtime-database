@@ -6,6 +6,7 @@ import {PrimaryKinshipCaregiverContact} from '@/../config/Entities/PrimaryKinshi
 
 
 export const RootEntity = {
+    entityType:"PrimaryKinshipCaregiver",
     title:'Primary Kinship Caregiver',
     onDelete:{
       confirmMessage:"Are you sure you want to delete this Primary Kinship Caregiver?",
@@ -87,11 +88,11 @@ export const RootEntity = {
         ],
       },
     ],
-    subEntities:[
-      PrimaryKinshipCaregiverIncome,
-      KinshipChild,
-      OtherInHousehold,
-      FamilyAdvocacyCasePlan,
-      PrimaryKinshipCaregiverContact,
-    ]
+    subEntities:{
+      PrimaryKinshipCaregiverIncome:PrimaryKinshipCaregiverIncome,
+      KinshipChild:KinshipChild,
+      OtherInHousehold:OtherInHousehold,
+      FamilyAdvocacyCasePlan:FamilyAdvocacyCasePlan,
+      PrimaryKinshipCaregiverContact:PrimaryKinshipCaregiverContact,
+    }
   }

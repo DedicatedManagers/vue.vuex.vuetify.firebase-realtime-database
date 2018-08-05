@@ -26,8 +26,11 @@ export default {
       return this.primaryKinshipCaregiverId;
     },
     entityConfig:function(){
+      console.log('entityConfig');
+      console.log(RootEntity.subEntities[this.componentCollectionId]);
+
       return {
-        ...RootEntity.subEntities[0],
+        ...RootEntity.subEntities[this.componentCollectionId],
         collectionId:this.componentCollectionId,
         docId:this.docId,
         baseUrl: (this.parentCollectionDocId?'/' +this.parentCollectionId + '/' + this.parentCollectionDocId:"") + '/' + this.componentCollectionId + '/'+ this.docId + '/',

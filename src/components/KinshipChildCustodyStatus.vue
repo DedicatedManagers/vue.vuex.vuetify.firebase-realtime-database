@@ -27,7 +27,7 @@ export default {
     },
     entityConfig:function(){
       return {
-        ...RootEntity.subEntities[1].subEntities[1],
+        ...RootEntity.subEntities[this.parentCollectionId].subEntities[this.componentCollectionId],
         collectionId:this.componentCollectionId,
         docId:this.docId,
         baseUrl: (this.parentCollectionDocId?'/' +this.parentCollectionId + '/' + this.parentCollectionDocId:"") + '/' + this.componentCollectionId + '/'+ this.docId + '/',

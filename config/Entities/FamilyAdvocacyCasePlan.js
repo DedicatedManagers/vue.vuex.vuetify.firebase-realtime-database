@@ -24,7 +24,7 @@ export const FamilyAdvocacyCasePlan = {
         fieldLabel:"Community Connection Achieved",
       },
     ],
-    subEntities:[
-      FamilyAdvocacyGuardianship,
-    ],
+    subEntities:{
+      FamilyAdvocacyGuardianship:FamilyAdvocacyGuardianship,
+    },
   }

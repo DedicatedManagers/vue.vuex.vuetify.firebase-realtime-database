@@ -58,7 +58,7 @@ export const OtherInHousehold = {
         ] ,
         },
     ],
-    subEntities:[
-        OtherInHouseholdIncome,
-    ],
+    subEntities:{
+        OtherInHouseholdIncome:OtherInHouseholdIncome,
+    },
 }

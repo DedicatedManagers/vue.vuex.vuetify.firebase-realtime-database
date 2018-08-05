@@ -59,8 +59,8 @@ export const KinshipChild = {
         ] ,
         },
     ],
-    subEntities:[
-        KinshipChildIncome,
-        KinshipChildCustodyStatus,
-    ],
+    subEntities:{
+        KinshipChildIncome:KinshipChildIncome,
+        KinshipChildCustodyStatus:KinshipChildCustodyStatus,
+    },
 }

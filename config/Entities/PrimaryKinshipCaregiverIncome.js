@@ -1,5 +1,5 @@
 export const PrimaryKinshipCaregiverIncome = {
-    title:'Primary Kinship Caregiver Income',
+    title:'Income',
     toolbarTitle:"Income", 
     entityType:"PrimaryKinshipCaregiverIncome",
     icon:"monetization_on",
