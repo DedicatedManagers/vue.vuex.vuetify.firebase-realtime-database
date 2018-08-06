@@ -13,6 +13,9 @@ import {store} from './store/store'
 import InstantSearch from 'vue-instantsearch';
 import credentials from '@/../config/credentials';
 
+// Update the display
+document.querySelector('#PreLoader H1').innerHTML = 'Connecting...';;
+
 Vue.use(InstantSearch);
 
 firebase.initializeApp(credentials.firebase);
