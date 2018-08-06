@@ -19,8 +19,7 @@ export const PrimaryKinshipCaregiverContact = {
             fieldName:"ContactDate",
             fieldLabel:"Contact Date",
             rules:[
-              v => !!v || 'Required',
-              v => v.length <= 30 || 'Name must be less than 30',
+              "v => !!v || 'Required'",
             ] ,
         },
         {
@@ -28,8 +27,7 @@ export const PrimaryKinshipCaregiverContact = {
             fieldName:"ContactType",
             fieldLabel:"Contact Type",
             rules:[
-              v => !!v || 'Required',
-              v => v.length <= 30 || 'Name must be less than 30',
+              "v => !!v || 'Required'",
             ] ,
         },
     ],

@@ -22,8 +22,8 @@ export const RootEntity = {
         fieldName:"FirstName",
         fieldLabel:"First Name",
         rules:[
-          v => !!v || 'Required',
-          v => v.length <= 30 || 'Name must be less than 30',
+          "v => !!v || 'Required'",
+          "v => v.length <= 30 || 'Name must be less than 30'",
         ] ,
       },
       {
@@ -31,8 +31,8 @@ export const RootEntity = {
         fieldName:"MiddleName",
         fieldLabel:"Middle Name",
         rules:[
-          v => !!v || 'Required',
-          v => v.length <= 30 || 'Name must be less than 30',
+          "v => !!v || 'Required'",
+          "v => v.length <= 30 || 'Name must be less than 30'",
         ] ,
       },
       {
@@ -40,8 +40,8 @@ export const RootEntity = {
         fieldName:"LastName",
         fieldLabel:"Last Name",
         rules:[
-          v => !!v || 'Required',
-          v => v.length <= 30 || 'Name must be less than 30',
+          "v => !!v || 'Required'",
+          "v => v.length <= 30 || 'Name must be less than 30'",
         ] ,
       },
       {
@@ -49,8 +49,8 @@ export const RootEntity = {
         fieldName:"PrimaryStreetAddress",
         fieldLabel:"Primary Street Address",
         rules:[
-          v => !!v || 'Required',
-          v => v.length <= 30 || 'Name must be less than 30',
+          "v => !!v || 'Required'",
+          "v => v.length <= 30 || 'Name must be less than 30'",
         ] ,
       },
       {
@@ -58,8 +58,8 @@ export const RootEntity = {
         fieldName:"BirthDate",
         fieldLabel:"BirthDate",
         rules:[
-          v => !!v || 'Required',
-          v => v.length <= 30 || 'Name must be less than 30',
+          "v => !!v || 'Required'",
+          "v => v.length <= 30 || 'Name must be less than 30'",
         ] ,
       },
       {

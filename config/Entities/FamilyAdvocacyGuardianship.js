@@ -19,17 +19,15 @@ export const FamilyAdvocacyGuardianship = {
             fieldName:"GuardianshipType",
             fieldLabel:"Guardianship Type",
             rules:[
-              v => !!v || 'Required',
-              v => v.length <= 30 || 'Name must be less than 30',
-            ] ,
+              "v => !!v || 'Required'",
+                ] ,
         },
         {
             fieldType:'text',
             fieldName:"PaperworkProvided",
             fieldLabel:"Paperwork Provided",
             rules:[
-              v => !!v || 'Required',
-              v => v.length <= 30 || 'Name must be less than 30',
+              "v => !!v || 'Required'",
             ] ,
         },
     ],

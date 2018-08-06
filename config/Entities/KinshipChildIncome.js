@@ -19,8 +19,7 @@ export const KinshipChildIncome = {
             fieldName:"IncomeType",
             fieldLabel:"Income Type",
             rules:[
-              v => !!v || 'Required',
-              v => v.length <= 30 || 'Name must be less than 30',
+              "v => !!v || 'Required'",
             ] ,
         },
         {
@@ -28,8 +27,7 @@ export const KinshipChildIncome = {
             fieldName:"IncomeAmount",
             fieldLabel:"Income Amount",
             rules:[
-              v => !!v || 'Required',
-              v => v.length <= 30 || 'Name must be less than 30',
+              "v => !!v || 'Required'",
             ] ,
         },
     ],

@@ -19,8 +19,7 @@ export const KinshipChildCustodyStatus = {
             fieldName:"CustodyDate",
             fieldLabel:"Custody Date",
             rules:[
-              v => !!v || 'Required',
-              v => v.length <= 30 || 'Name must be less than 30',
+              "v => !!v || 'Required'",
             ] ,
         },
         {
@@ -28,8 +27,7 @@ export const KinshipChildCustodyStatus = {
             fieldName:"CustodyStatus",
             fieldLabel:"Custody Status",
             rules:[
-              v => !!v || 'Required',
-              v => v.length <= 30 || 'Name must be less than 30',
+              "v => !!v || 'Required'",
             ] ,
         },
         {
@@ -37,8 +35,7 @@ export const KinshipChildCustodyStatus = {
             fieldName:"CustodyNotes",
             fieldLabel:"Custody Notes",
             rules:[
-              v => !!v || 'Required',
-              v => v.length <= 30 || 'Name must be less than 30',
+              "v => !!v || 'Required'",
             ] ,
         },
     ],

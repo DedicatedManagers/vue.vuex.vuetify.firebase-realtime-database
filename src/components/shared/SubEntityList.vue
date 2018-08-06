@@ -67,7 +67,6 @@ export default {
                         if(  (this.entityConfig.subEntities[this.subEntityIndex].evalFunctions||{}).hasOwnProperty('subEntityListDisplayText')  ){
                             // evaluate the evalFunctions.breadCrumb
                             try {
-                                console.log(this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId]);
                                 let entityFormFields = this.$store.state.currentEntity[this.entityConfig.subEntities[this.subEntityIndex].entityType][entityId].data;
                                 listDisplayText = eval(this.entityConfig.subEntities[this.subEntityIndex].evalFunctions.subEntityListDisplayText);
                             }
