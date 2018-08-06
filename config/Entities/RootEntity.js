@@ -8,6 +8,9 @@ import {PrimaryKinshipCaregiverContact} from '@/../config/Entities/PrimaryKinshi
 export const RootEntity = {
     entityType:"PrimaryKinshipCaregiver",
     title:'Primary Kinship Caregiver',
+    icon:"person",
+    addIcon:"person_add",
+    addButtonText:"Add New Client",
     evalFunctions:{
       breadCrumb:'entityFormFields.LastName + ", " + entityFormFields.FirstName + " " + entityFormFields.MiddleName',
       subEntityList:'',

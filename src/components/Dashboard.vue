@@ -11,9 +11,9 @@
                 <v-layout row wrap>
                   <v-flex xs12>
                     <v-list  v-for="(client, id) in clients" :key="id">
-                      <v-list-tile  :to="'/db/PrimaryKinshipCaregiver/'+id">
+                      <v-list-tile  :to="'/db/' + RootEntity.entityType + '/' + id">
                           <v-list-tile-action>
-                          <v-icon>person</v-icon>
+                          <v-icon>{{RootEntity.icon}}</v-icon>
                         </v-list-tile-action>
 
                         <v-list-tile-content>
@@ -22,7 +22,7 @@
                       </v-list-tile>
                     </v-list>
                     <div class="text-xs-right">
-                      <v-btn color="success" @click="addNewClient">Add New Client<v-icon right>person_add</v-icon></v-btn>
+                      <v-btn color="success" @click="addNewClient">{{RootEntity.addButtonText}}<v-icon right>{{RootEntity.addIcon}}</v-icon></v-btn>
                     </div>
                   </v-flex>
                 </v-layout>
@@ -36,10 +36,13 @@
 
 
 <script>
+import {RootEntity} from '@/../config/Entities/RootEntity.js';
+
 export default {
   name: 'Dashboard',
   data() {
     return {
+      RootEntity:RootEntity,
     };
   },
   computed:{
@@ -49,9 +52,9 @@ export default {
   },
   methods:{
     addNewClient(){
-      this.$store.dispatch('fcreateEntity', {docId:'add', collectionId:'PrimaryKinshipCaregiver'}).then(createdDocId=>{
+      this.$store.dispatch('fcreateEntity', {docId:'add', collectionId:RootEntity.entityType}).then(createdDocId=>{
           console.log( 'addEntity received: ' + createdDocId  );
-          this.$router.push('/PrimaryKinshipCaregiver/' + createdDocId);
+          this.$router.push('/db/' + RootEntity.entityType + '/' + createdDocId);
       });
     }
   },
