@@ -10,6 +10,7 @@ Vue.use(Vuex);
 
 export const store = new Vuex.Store({
     state:{
+        loadingIndicator:false, // each component needs to show/hide its output based on this indicator.  Can't show or hide at the <router-view /> level or the component <script> function's won't ever load (hence the app will stay in the "loading" state indefinitely) 
         user:null,
         userIsAuthenticated:false,
         entityListeners:null,
@@ -30,6 +31,10 @@ export const store = new Vuex.Store({
         },
         setUser(state, replace){
             state.user = replace;
+        },
+        setLoadingIndicator(state,replace){
+            console.log('setLoadingIndicator: ' + replace);
+            state.loadingIndicator = replace;
         },
         
         // Delete Entity from currentEntity
@@ -177,7 +182,7 @@ export const store = new Vuex.Store({
             context.state.entityListeners[entityContainer.collectionId][entityContainer.docId] = firebase.firestore().collection(entityContainer.collectionId).doc(entityContainer.docId).onSnapshot(function(doc){
                 console.log('EntityListener for: ' + entityContainer.collectionId + entityContainer.docId);
 //                console.log(doc);
-                console.log(doc.metadata);
+//                console.log(doc.metadata);
                 if(!doc.exists){
                     console.log('Listener for collectionId/docId: ' + entityContainer.collectionId + '/' + entityContainer.docId + ' called and the !doc.exists returned false.  This document does not exist! (invalid link or the document was deleted and the listener was not removed');
 
@@ -227,7 +232,7 @@ export const store = new Vuex.Store({
 
                     // if its not a local update, then update the entity (otherwise it was already updated locally via updateCurrentEntity)
                     if(!doc.metadata.hasPendingWrites){
-                        console.log('listenter updateing locally')
+//                        console.log('listenter updateing locally')
                         context.commit('initializeCurrentEntity', {
                             docId:entityContainer.docId,
                             collectionId:entityContainer.collectionId,
@@ -395,13 +400,23 @@ export const store = new Vuex.Store({
 
         getPrimaryKinshipCaregivers(context){
             console.log('getPrimaryKinshipCaregivers');
+            console.log(context.state.currentPrimaryKinshipCaregivers);
             firebase.firestore().collection('PrimaryKinshipCaregiver').get()
             .then(function(querySnapshot){
-                let PrimaryKinshipCaregiverOBJ = {};
-                querySnapshot.forEach(function(doc){
-                    PrimaryKinshipCaregiverOBJ[doc.id] = doc.data();
-                });
-                context.state.currentPrimaryKinshipCaregivers=PrimaryKinshipCaregiverOBJ;
+                console.log(querySnapshot);
+                // if not connected, the promise still apparently resolves (hence this .then is called) but the query is empty 
+                if(!querySnapshot.empty){  // TODO - verify .empty is a documented property - found it when viewing the querySnapshot object via console.log
+                    let PrimaryKinshipCaregiverOBJ = {};
+                    querySnapshot.forEach(function(doc){
+                        PrimaryKinshipCaregiverOBJ[doc.id] = doc.data();
+                    });
+                    context.commit('setLoadingIndicator', false);
+                    context.state.currentPrimaryKinshipCaregivers=PrimaryKinshipCaregiverOBJ;    
+                }
+                else{
+                    // TODO: need better error handling
+                    alert('Unable to retrive Root Entity List.  Possibly you are having internet connection problems.');
+                }
             })
             .catch(function(error) {
                 console.error("Error retrieving collection: ", error);

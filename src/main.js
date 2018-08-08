@@ -14,12 +14,12 @@ import InstantSearch from 'vue-instantsearch';
 import credentials from '@/../config/credentials';
 
 // Update the display
-document.querySelector('#PreLoader H1').innerHTML = 'Connecting...';;
+document.querySelector('#PreLoader H1').innerHTML = 'Connecting...';
 
 Vue.use(InstantSearch);
 
-firebase.initializeApp(credentials.firebase);
-const firestore = firebase.firestore();
+firebase.initializeApp(credentials.firebase); // returns FirebaseApplImpl
+const firestore = firebase.firestore(); // returns a firestore object
 firestore.settings({timestampsInSnapshots: true,});
 
 Vue.use(Vuetify, { 

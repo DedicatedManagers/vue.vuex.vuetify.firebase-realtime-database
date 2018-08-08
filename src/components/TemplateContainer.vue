@@ -1,11 +1,5 @@
 <template>
   <div>
-    <template v-if="!this.$store.state.currentEntity">
-      <div class="centeredOnScreen" text-xs-center>
-        <v-progress-circular :size="250" :width="30" indeterminate color="blue"></v-progress-circular>
-        <h1>LOADING DATA</h1>
-      </div>
-    </template>
     <v-slide-y-transition mode="out-in">
       <v-container fluid>
           <v-layout row wrap>
@@ -199,6 +193,7 @@ export default {
     },
   },
   created(){
+    this.$store.commit('setLoadingIndicator', true);
     console.log('created function in TemplateContainer.vue');
     this.initializeEntity();
   },
@@ -206,16 +201,6 @@ export default {
 </script>
  
 <style>
-
-.centeredOnScreen {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  transform: -webkit-translate(-50%, -50%);
-  transform: -moz-translate(-50%, -50%);
-  transform: -ms-translate(-50%, -50%);
-}
 
 .customListExpandable .v-toolbar{
   cursor:pointer;

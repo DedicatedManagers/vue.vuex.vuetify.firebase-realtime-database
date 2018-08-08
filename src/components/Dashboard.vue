@@ -1,6 +1,6 @@
 <template>
   <v-slide-y-transition mode="out-in">
-    <v-container fluid>
+    <v-container fluid v-if="!this.$store.state.loadingIndicator">
         <v-layout row wrap>
           <v-flex xs12 md4>
             <v-card>
@@ -60,6 +60,7 @@ export default {
   },
   created(){
     console.log('created function in dashboard.vue');
+    this.$store.commit('setLoadingIndicator', true);
     this.$store.dispatch('getPrimaryKinshipCaregivers');
   },
 };

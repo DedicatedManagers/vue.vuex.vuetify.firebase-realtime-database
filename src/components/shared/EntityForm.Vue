@@ -1,5 +1,5 @@
-<template>
-    <div>
+<template >
+    <div v-if="!this.$store.state.loadingIndicator">
         <v-toolbar color="blue" dark @click="formVisiblity=formVisiblity?0:1">
             <v-toolbar-title>{{entityConfig.title}}</v-toolbar-title><v-spacer></v-spacer><v-btn icon><v-icon >{{formVisiblity?'expand_less':'expand_more'}}</v-icon></v-btn>
         </v-toolbar>
@@ -54,7 +54,45 @@ export default {
     return {
       confirmDialogVisibility:false,
       formVisiblity:0,
+      currentRoute:"",
     };
+  },
+  watch:{
+    // '$route.path': function(newVal){
+    //   if(this.entityConfig.entityUrl == newVal){
+    //     this.$store.commit('setLoadingIndicator', false);
+    //     this.$nextTick(function () {
+    //       this.$refs.profileForm.validate();
+    //     })
+    //     console.log('hide loader $route.path');
+    //   }
+    //   else{
+    //     this.$store.commit('setLoadingIndicator', true);
+    //     console.log('show loader $route.path');
+    //   }
+    //     console.log(this.entityConfig.entityUrl);
+    //     console.log("route watch: " + newVal);
+    // },
+    
+    // When creating a new entity, the same component (TemplateContainer) is re-used by Vue and therefore the mounted/created functions are not re-run
+    // The new entity is loaded when the entityConfig object updates and therefore entityConfig.entityUrl will be updated to match the new url of the newly created entity
+    'entityConfig.entityUrl':function(newVal){
+      if(this.$route.path == newVal){
+        this.$store.commit('setLoadingIndicator', false);
+        this.$nextTick(function () {
+          // Need to wait until the next 'tick' before calling the validation
+          // https://vuejs.org/v2/guide/reactivity.html#Async-Update-Queue
+          this.$refs.profileForm.validate();
+        })
+        //console.log('hide loader entityConfig.entityUrl');
+      }
+      // else{
+      //   this.$store.commit('setLoadingIndicator', true);
+      //   console.log('show loader entityConfig.entityUrl');
+      // }
+      // console.log('entityUrl change: ' + this.entityConfig.entityUrl);
+      // console.log('router url: ' + this.$route.path);
+    }
   },
   methods:{
     fDelete(){
@@ -64,10 +102,16 @@ export default {
     },
   },
   created(){
+    if(this.entityConfig.entityUrl == this.$route.path){
+      this.$store.commit('setLoadingIndicator', false);
+      console.log('hide loader $route.path');
+    }
+
     //console.log('EntityForm.vue created function. Props: ' + JSON.stringify(this.$options.propsData));
   },
   mounted(){
     //console.log('EntityForm.vue mounted function. Props: ' + JSON.stringify(this.$options.propsData));
+    console.log('EntityForm.vue created function.');
     this.$refs.profileForm.validate();
   },
 }

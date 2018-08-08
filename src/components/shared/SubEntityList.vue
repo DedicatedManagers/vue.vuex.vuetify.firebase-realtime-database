@@ -1,5 +1,5 @@
 <template>
-<v-card class="customListExpandable">
+<v-card class="customListExpandable" v-if="!this.$store.state.loadingIndicator">
     <v-toolbar color="blue" dark  @click="listVisibility=!listVisibility">
     <v-toolbar-title>{{entityConfig.subEntities[subEntityIndex].toolbarTitle}}</v-toolbar-title><v-spacer></v-spacer><v-btn v-if="ammendedCollection" icon><v-icon >{{listVisibility?'expand_less':'expand_more'}}</v-icon></v-btn>
     </v-toolbar>
@@ -86,6 +86,7 @@ export default {
   },
   methods:{
     addEntity(){
+        this.$store.commit('setLoadingIndicator', true);
         this.$store.dispatch('fcreateEntity', {docId:'add', collectionId:this.entityConfig.subEntities[this.subEntityIndex].entityType, parentCollectionId:this.entityConfig.docId, parentCollectionType:this.entityConfig.collectionId}).then(createdDocId=>{
             console.log( 'addEntity received: ' + createdDocId  );
             if(createdDocId){

@@ -43,7 +43,10 @@ export default {
         password: this.password
       });
     }
-  }
+  },
+  created(){
+    console.log('created function in Login.vue');
+  },
 };
 </script>
 
