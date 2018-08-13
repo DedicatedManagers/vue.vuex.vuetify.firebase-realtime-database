@@ -13,6 +13,7 @@ npm install
 # - Aquire Google Firebase Credentials: https://firebase.google.com/
 # Search Functionality uses Algolia Search
 # - Aquire Algolia Search Credentials: https://www.algolia.com/
+# - Create Indexes (see documentation TODO)
 # Then Configure Credentials
 see config/credentials.template.js
 
