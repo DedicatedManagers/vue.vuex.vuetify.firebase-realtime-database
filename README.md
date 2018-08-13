@@ -8,10 +8,15 @@
 # install dependencies
 npm install
 
-# configure api credentials
+
+# Database functionality used Google Firebase
+# - Aquire Google Firebase Credentials: https://firebase.google.com/
+# Search Functionality uses Algolia Search
+# - Aquire Algolia Search Credentials: https://www.algolia.com/
+# Then Configure Credentials
 see config/credentials.template.js
 
-# serve with hot reload at localhost:8080
+# Server for testing with hot reload at localhost:8080
 npm run dev
 
 # build for production with minification
@@ -20,7 +25,6 @@ npm run build
 # build for production and view the bundle analyzer report
 npm run build --report
 
-# You'll also need a Google Firebase Account
 ```
 
 This app was started from the [Vuetify Webpack repository](https://github.com/vuetifyjs/webpack)
