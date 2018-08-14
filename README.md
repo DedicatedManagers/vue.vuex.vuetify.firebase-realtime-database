@@ -11,6 +11,7 @@ npm install
 
 # Database functionality used Google Firebase
 # - Aquire Google Firebase Credentials: https://firebase.google.com/
+# - Don't forget to secure your database with authorization rules
 # Search Functionality uses Algolia Search
 # - Aquire Algolia Search Credentials: https://www.algolia.com/
 # - Create Indexes (see documentation TODO)
