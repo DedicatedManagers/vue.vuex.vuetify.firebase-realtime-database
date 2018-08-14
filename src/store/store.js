@@ -351,7 +351,7 @@ export const store = new Vuex.Store({
             }
         },
         // Delete Entity / Firebase Document
-        // Receives collectionContainer: {docId:'', collectionId:''[, route:{to:'', type:'<replace>'}]}
+        // Receives collectionContainer: {docId:'', collectionId:''[, route:{to:'', type:'<replace>'}, nestedDelete:true]}
         fdeleteEntity(context, collectionContainer){
             console.log('delete Entity - object received: ' + JSON.stringify(collectionContainer))
 
@@ -362,21 +362,25 @@ export const store = new Vuex.Store({
                     if ( NestedCollections.hasOwnProperty(collectionId) && typeof NestedCollections[collectionId] === 'object' ) { // sanity check
                         for(let docId in NestedCollections[collectionId]){
                             // Delete this nested collection entity
-                            context.dispatch('fdeleteEntity', {docId:docId, collectionId:collectionId});
+                            context.dispatch('fdeleteEntity', {docId:docId, collectionId:collectionId, nestedDelete:true});
                         }                        
                     }
                 }
             }
 
-            // If this is a child entity of another entity - remove its reference from its parent
-            if(     
-                ((((context.state.currentEntity||{})[collectionContainer.collectionId]||{})[collectionContainer.docId]||{}).data||{}).hasOwnProperty('ParentCollectionId') &&
-                ((((context.state.currentEntity||{})[collectionContainer.collectionId]||{})[collectionContainer.docId]||{}).data||{}).hasOwnProperty('ParentType')
-            ){
-                let parentDocId = context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId].data.ParentCollectionId;
-                let parentCollectionId = context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId].data.ParentType;
-                console.log('sending dispatch to remove child from parent NestedCollections array.');
-                context.dispatch('removeNestedCollectionFromParent', {docId:parentDocId, collectionId:parentCollectionId, childDocId:collectionContainer.docId, childCollectionId:collectionContainer.collectionId})
+            // If flow is within a recursive delete, the parent doesn't need to be updated as the parent will get deleted anyway
+            // - Allowing the parent to get updated causes race condition with Cloud Function updates to Algolia that is adding parent back after its deleted because of the change from the child entity. 
+            if(collectionContainer.nestedDelete != true){
+                // If this is a child entity of another entity - remove its reference from its parent
+                if(     
+                    ((((context.state.currentEntity||{})[collectionContainer.collectionId]||{})[collectionContainer.docId]||{}).data||{}).hasOwnProperty('ParentCollectionId') &&
+                    ((((context.state.currentEntity||{})[collectionContainer.collectionId]||{})[collectionContainer.docId]||{}).data||{}).hasOwnProperty('ParentType')
+                ){
+                    let parentDocId = context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId].data.ParentCollectionId;
+                    let parentCollectionId = context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId].data.ParentType;
+                    console.log('sending dispatch to remove child from parent NestedCollections array.');
+                    context.dispatch('removeNestedCollectionFromParent', {docId:parentDocId, collectionId:parentCollectionId, childDocId:collectionContainer.docId, childCollectionId:collectionContainer.collectionId})
+                }
             }
 
             // Delete Entity from currentEntity
