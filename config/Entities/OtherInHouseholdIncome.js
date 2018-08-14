@@ -1,7 +1,7 @@
 export const OtherInHouseholdIncome = {
     title:'Income',
     toolbarTitle:"Income", 
-    entityType:"OtherInHouseholdIncome",
+    collectionId:"OtherInHouseholdIncome",
     icon:"monetization_on",
     addIcon:"monetization_on",
     addButtonText:"Add Income",

@@ -1,7 +1,7 @@
 export const FamilyAdvocacyGuardianship = {
     title:'Guardianship',
     toolbarTitle:"Guardianship", 
-    entityType:"FamilyAdvocacyGuardianship",
+    collectionId:"FamilyAdvocacyGuardianship",
     icon:"assignment_ind",
     addIcon:"assignment_ind",
     addButtonText:"Add Guardianship",

@@ -1,7 +1,7 @@
 export const PrimaryKinshipCaregiverContact = {
     title:'Contacts',
     toolbarTitle:"Contacts With Caregiver", 
-    entityType:"PrimaryKinshipCaregiverContact",
+    collectionId:"PrimaryKinshipCaregiverContact",
     icon:"phone",
     addIcon:"phone_forwarded",
     addButtonText:"Add Contact",

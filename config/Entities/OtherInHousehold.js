@@ -3,7 +3,7 @@ import {OtherInHouseholdIncome} from '@/../config/Entities/OtherInHouseholdIncom
 export const OtherInHousehold = {
     title:'Other In Household',
     toolbarTitle:"Others In Household", 
-    entityType:"OtherInHousehold",
+    collectionId:"OtherInHousehold",
     icon:"person",
     addIcon:"person_add",
     addButtonText:"Add Other",

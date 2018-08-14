@@ -1,7 +1,7 @@
 export const KinshipChildCustodyStatus = {
     title:'Custody Status',
     toolbarTitle:"Custody Status", 
-    entityType:"KinshipChildCustodyStatus",
+    collectionId:"KinshipChildCustodyStatus",
     icon:"person",
     addIcon:"person_add",
     addButtonText:"Add Status",

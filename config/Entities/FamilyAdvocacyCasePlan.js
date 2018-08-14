@@ -4,7 +4,7 @@ import {FamilyAdvocacyGuardianship} from '@/../config/Entities/FamilyAdvocacyGua
 export const FamilyAdvocacyCasePlan = {
     title:'Case Plan',
     toolbarTitle:"Case Plan", 
-    entityType:"FamilyAdvocacyCasePlan",
+    collectionId:"FamilyAdvocacyCasePlan",
     icon:"import_contacts",
     addIcon:"import_contacts",
     addButtonText:"Add Case Plan",

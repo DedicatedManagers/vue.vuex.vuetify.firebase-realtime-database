@@ -11,7 +11,7 @@
                 <v-layout row wrap>
                   <v-flex xs12>
                     <v-list  v-for="(client, id) in clients" :key="id">
-                      <v-list-tile  :to="'/db/' + RootEntity.entityType + '/' + id">
+                      <v-list-tile  :to="'/db/' + RootEntity.collectionId + '/' + id">
                           <v-list-tile-action>
                           <v-icon>{{RootEntity.icon}}</v-icon>
                         </v-list-tile-action>
@@ -53,9 +53,9 @@ export default {
   methods:{
     addNewClient(){
       this.$store.commit('setLoadingIndicator', true);
-      this.$store.dispatch('fcreateEntity', {docId:'add', collectionId:RootEntity.entityType}).then(createdDocId=>{
+      this.$store.dispatch('fcreateEntity', {docId:'add', collectionId:RootEntity.collectionId}).then(createdDocId=>{
           console.log( 'addEntity received: ' + createdDocId  );
-          this.$router.push('/db/' + RootEntity.entityType + '/' + createdDocId);
+          this.$router.push('/db/' + RootEntity.collectionId + '/' + createdDocId);
       });
     }
   },

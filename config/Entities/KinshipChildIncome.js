@@ -1,7 +1,7 @@
 export const KinshipChildIncome = {
     title:'Income',
     toolbarTitle:"Income", 
-    entityType:"KinshipChildIncome",
+    collectionId:"KinshipChildIncome",
     icon:"monetization_on",
     addIcon:"monetization_on",
     addButtonText:"Add Income",

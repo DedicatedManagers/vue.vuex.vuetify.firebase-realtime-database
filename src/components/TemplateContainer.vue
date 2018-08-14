@@ -134,7 +134,6 @@ export default {
     entityConfig: function(){
       return {
         ...this.routedEntityConfig,
-        collectionId:this.componentCollectionId,
         docId:this.docId,
         entityUrl: this.entityUrl,
         parentEntityUrl: this.parentEntityUrl,
@@ -153,7 +152,7 @@ export default {
       let theLink = "/db";
       for (let i=0; i<this.entityPointers.length; i++){ 
         // if the url subEntity type exists on the configuration object
-        if(  (theConfigEntity||{}).entityType == this.entityPointers[i].collectionId  ){
+        if(  (theConfigEntity||{}).collectionId == this.entityPointers[i].collectionId  ){
 
           // if the entity has asynchronously loaded
           if( (((this.$store.state.currentEntity||{})[this.entityPointers[i].collectionId]||{})[this.entityPointers[i].docId]||{}).hasOwnProperty('data')   ) {

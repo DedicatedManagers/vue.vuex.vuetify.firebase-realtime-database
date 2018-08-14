@@ -4,7 +4,7 @@ import {KinshipChildCustodyStatus} from '@/../config/Entities/KinshipChildCustod
 export const KinshipChild = {
     title:'Kinship Child',
     toolbarTitle:"Kinship Children", 
-    entityType:"KinshipChild",
+    collectionId:"KinshipChild",
     icon:"person",
     addIcon:"person_add",
     addButtonText:"Add Child",

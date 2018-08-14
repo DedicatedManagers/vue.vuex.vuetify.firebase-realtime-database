@@ -6,7 +6,7 @@ import {PrimaryKinshipCaregiverContact} from '@/../config/Entities/PrimaryKinshi
 
 
 export const RootEntity = {
-    entityType:"PrimaryKinshipCaregiver",
+  collectionId:"PrimaryKinshipCaregiver",
     title:'Primary Kinship Caregiver',
     icon:"person",
     addIcon:"person_add",
