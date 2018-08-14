@@ -37,7 +37,9 @@ export default {
     };
   },
   watch:{
-     rootEntityCollectionId: function(){
+    // watch for route changes to the root entity, as we will need to reload the Entity
+    // -- This happens when on an entity and a search in the toolbar is clicked.
+    rootEntityDocId:function(){
       this.initializeEntity();
     }
   },

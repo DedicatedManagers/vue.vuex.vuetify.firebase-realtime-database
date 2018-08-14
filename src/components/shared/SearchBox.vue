@@ -8,7 +8,7 @@
                     <v-subheader>Kinship Caregivers</v-subheader>
                     <ais-results>
                         <template slot-scope="{ result }">
-                            <v-list-tile avatar :to="'/PrimaryKinshipCaregiver/'+result.objectID">
+                            <v-list-tile avatar :to="'/db/PrimaryKinshipCaregiver/'+result.objectID">
                             <v-list-tile-avatar>
                                 <v-icon>person</v-icon>
                             </v-list-tile-avatar>
@@ -44,7 +44,7 @@
                     <v-subheader>Kinship Children</v-subheader>
                     <ais-results>
                         <template slot-scope="{ result }">
-                            <v-list-tile avatar :to="'/PrimaryKinshipCaregiver/'+result.objectID">
+                            <v-list-tile avatar :to="'/db/PrimaryKinshipCaregiver/'+result.objectID">
                             <v-list-tile-avatar>
                                 <v-icon>person</v-icon>
                             </v-list-tile-avatar>

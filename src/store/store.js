@@ -232,7 +232,7 @@ export const store = new Vuex.Store({
 
                     // if its not a local update, then update the entity (otherwise it was already updated locally via updateCurrentEntity)
                     if(!doc.metadata.hasPendingWrites){
-//                        console.log('listenter updateing locally')
+//                       console.log('listenter updateing locally')
                         context.commit('initializeCurrentEntity', {
                             docId:entityContainer.docId,
                             collectionId:entityContainer.collectionId,
@@ -405,18 +405,21 @@ export const store = new Vuex.Store({
             .then(function(querySnapshot){
                 console.log(querySnapshot);
                 // if not connected, the promise still apparently resolves (hence this .then is called) but the query is empty 
-                if(!querySnapshot.empty){  // TODO - verify .empty is a documented property - found it when viewing the querySnapshot object via console.log
+                // however it the database is empty, it also returns an empty querySnapshot.
+                // TODO:  verify the issue and figure out how to tell the difference
+                // TODO - verify .empty is a documented property - found it when viewing the querySnapshot object via console.log; documentations shows to use isEmpty() function, but doing so returns an error that its an invalid function
+                //if(!querySnapshot.empty){  
                     let PrimaryKinshipCaregiverOBJ = {};
                     querySnapshot.forEach(function(doc){
                         PrimaryKinshipCaregiverOBJ[doc.id] = doc.data();
                     });
                     context.commit('setLoadingIndicator', false);
                     context.state.currentPrimaryKinshipCaregivers=PrimaryKinshipCaregiverOBJ;    
-                }
-                else{
-                    // TODO: need better error handling
-                    alert('Unable to retrive Root Entity List.  Possibly you are having internet connection problems.');
-                }
+                // }
+                // else{
+                //     // TODO: need better error handling
+                //     alert('Unable to retrive Root Entity List.  Possibly you are having internet connection problems.');
+                // }
             })
             .catch(function(error) {
                 console.error("Error retrieving collection: ", error);
