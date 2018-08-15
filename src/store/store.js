@@ -17,6 +17,7 @@ export const store = new Vuex.Store({
         currentEntity:null,
         currentPrimaryKinshipCaregivers:false,
         entityDebouncers:null,
+        localUpdateId:null,
     },
     getters:{
         // Receives fieldValueCollectionContainer: {docId:'', collectionId:'', fieldName:''}
@@ -105,6 +106,9 @@ export const store = new Vuex.Store({
                 entityPropertyContainer.propertiesObject['LastUpdated'] = firebase.firestore.FieldValue.serverTimestamp();
                 entityPropertyContainer.propertiesObject['LastUpdatedUid'] = firebase.auth().currentUser.uid;
 
+                if(!state.localUpdateId) state.localUpdateId = Math.floor(Math.random() * 1000); // set a random id for this current instance to help alleviate timing issue with firestore listener callback (with timestamps enabled)
+                entityPropertyContainer.propertiesObject['LocalUpdateId'] = state.localUpdateId;
+
                 // Loop through the key/value pairs sent in the properties object and set them on the collection
                 for (var key in entityPropertyContainer.propertiesObject) {
                     if (entityPropertyContainer.propertiesObject.hasOwnProperty(key)) { // only look at key's we set, not any javascript object helper keys on the object
@@ -181,8 +185,8 @@ export const store = new Vuex.Store({
             // Set up the new query & listener
             context.state.entityListeners[entityContainer.collectionId][entityContainer.docId] = firebase.firestore().collection(entityContainer.collectionId).doc(entityContainer.docId).onSnapshot(function(doc){
                 console.log('EntityListener for: ' + entityContainer.collectionId + entityContainer.docId);
-//                console.log(doc);
-//                console.log(doc.metadata);
+                console.log(doc.data());
+                console.log(doc.metadata);
                 if(!doc.exists){
                     console.log('Listener for collectionId/docId: ' + entityContainer.collectionId + '/' + entityContainer.docId + ' called and the !doc.exists returned false.  This document does not exist! (invalid link or the document was deleted and the listener was not removed');
 
@@ -232,15 +236,26 @@ export const store = new Vuex.Store({
 
                     // if its not a local update, then update the entity (otherwise it was already updated locally via updateCurrentEntity)
                     if(!doc.metadata.hasPendingWrites){
-//                       console.log('listenter updateing locally')
-                        context.commit('initializeCurrentEntity', {
-                            docId:entityContainer.docId,
-                            collectionId:entityContainer.collectionId,
-                            docContainer:{
-                                id: entityContainer.docId,
-                                data: doc.data(),    
-                            }
-                        })
+                        // Determine if changes should be updated locally
+                        if( 
+                            // if there is no LocalUpdateId, then we're initializing, so commit the changes locally
+                            !((((context.state.currentEntity||{})[entityContainer.collectionId]||{})[entityContainer.docId]||{}).data||{}).hasOwnProperty('LocalUpdateId') 
+                            || // OR
+                            // If the LocalUpdateId has changed, its an update from somewhere else, so commit the changes locally
+                            doc.data().LocalUpdateId != context.state.localUpdateId   
+                            ){
+                                console.log('listenter updateing locally')
+                                console.log(doc.data());
+                                context.commit('initializeCurrentEntity', {
+                                docId:entityContainer.docId,
+                                collectionId:entityContainer.collectionId,
+                                docContainer:{
+                                     id: entityContainer.docId,
+                                     data: doc.data(),    
+                                 }
+                             })
+     
+                        }
                     }
 
                 }
