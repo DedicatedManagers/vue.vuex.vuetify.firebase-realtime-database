@@ -4,7 +4,7 @@ import Vue from 'vue';
 import Dashboard from '@/components/Dashboard';
 import Login from '@/components/Login';
 //import {store} from '@/store/store'
-import TemplateContainer from '@/components/TemplateContainer';
+import TemplateLoader from '@/components/TemplateLoader';
 
 Vue.use(Router);
 
@@ -27,7 +27,7 @@ const router = new Router({
       path: '/db/:DbPath(.*)',
       props: true,
       name: 'dbpath',
-      component: TemplateContainer,
+      component: TemplateLoader,
     },
     {
       path: '/dashboard',

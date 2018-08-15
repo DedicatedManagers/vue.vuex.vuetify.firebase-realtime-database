@@ -27,7 +27,7 @@ import Template from '@/components/shared/Templates/Column-Two';
 import {RootEntity} from '@/../config/Entities/RootEntity.js';
 
 export default {
-  name: 'TemplateContainer',
+  name: 'TemplateLoader',
   props:['DbPath'],
   components:{
     'layout-template':Template,
@@ -45,7 +45,7 @@ export default {
   },
   methods:{
     initializeEntity(){
-      console.log('initializeEntity in TemplateContainer.vue');
+      console.log('initializeEntity in TemplateLoader.vue');
       // if we have already loaded the root level Entity (highest parent of the entities)
       if(this.$store.state.currentEntity){
         if(this.$store.state.currentEntity[this.rootEntityCollectionId]){
@@ -195,7 +195,7 @@ export default {
   },
   created(){
     this.$store.commit('setLoadingIndicator', true);
-    console.log('created function in TemplateContainer.vue');
+    console.log('created function in TemplateLoader.vue');
     this.initializeEntity();
   },
 };

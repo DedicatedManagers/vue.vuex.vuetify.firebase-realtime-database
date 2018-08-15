@@ -58,7 +58,7 @@ export default {
     };
   },
   watch:{
-    // When creating a new entity, the same component (TemplateContainer) is re-used by Vue and therefore the mounted/created functions are not re-run
+    // When creating a new entity, the same component (TemplateLoader) is re-used by Vue and therefore the mounted/created functions are not re-run
     // The new entity is loaded when the entityConfig object updates and therefore entityConfig.entityUrl will be updated to match the new url of the newly created entity
     'entityConfig.entityUrl':function(newVal){
       if(this.$route.path == newVal){
