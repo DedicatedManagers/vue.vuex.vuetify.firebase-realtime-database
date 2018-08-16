@@ -14,6 +14,7 @@
 
 
 <script>
+import firebase from 'firebase/app';
 
 export default {
   name: 'Dashboard',
@@ -26,9 +27,6 @@ export default {
   },
   methods:{
     importFile(){
-        function dispFile(contents) {
-            console.log(Papa.parse(contents, {header:true}));
-        }
         function clickElem(elem) {
             // Thx user1601638 on Stack Overflow (6/6/2018 - https://stackoverflow.com/questions/13405129/javascript-create-and-save-file )
             var eventMouse = document.createEvent("MouseEvents")
@@ -58,11 +56,27 @@ export default {
             console.log(fileInput);
             clickElem(fileInput)
         }
-        openFile(dispFile);
+        openFile(this.parseFile);
+    },
+    parseFile(contents) {
+        let parsedFileContents = Papa.parse(contents, {header:true});
+        for(let i=0; i<parsedFileContents.data.length; i++){
+            let oldDocId = parsedFileContents.data[i].docId;
+            parsedFileContents.data[i].docId = this.idConversionArray[oldDocId];
+        }
+        console.log(parsedFileContents);
+
+        firebase.firestore().collection("IMPORTDATATEST").doc(parsedFileContents.data[0].docId).set(parsedFileContents.data[0])
+            .then(function(docRef) {    
+                console.log('firestore add call complete. docRef: ' + docRef);
+
+            })
+            .catch(function(error) {
+                console.error("Error writing document: ", error);
+            });  
     }
   },
   created(){
-    console.log(Papa.parse("1,2,3,4"));
 
     // create array to convert old ids to firestore ids
     this.idConversionArray = [];
