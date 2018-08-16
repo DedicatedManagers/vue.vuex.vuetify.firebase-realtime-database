@@ -235,29 +235,26 @@ export const store = new Vuex.Store({
                     }
 
                     // if its not a local update, then update the entity (otherwise it was already updated locally via updateCurrentEntity)
-                    if(!doc.metadata.hasPendingWrites){
-                        // Determine if changes should be updated locally
-                        if( 
-                            // if there is no LocalUpdateId, then we're initializing, so commit the changes locally
-                            !((((context.state.currentEntity||{})[entityContainer.collectionId]||{})[entityContainer.docId]||{}).data||{}).hasOwnProperty('LocalUpdateId') 
-                            || // OR
-                            // If the LocalUpdateId has changed, its an update from somewhere else, so commit the changes locally
-                            doc.data().LocalUpdateId != context.state.localUpdateId   
-                            ){
-                                console.log('listenter updateing locally')
-                                console.log(doc.data());
-                                context.commit('initializeCurrentEntity', {
-                                docId:entityContainer.docId,
-                                collectionId:entityContainer.collectionId,
-                                docContainer:{
-                                     id: entityContainer.docId,
-                                     data: doc.data(),    
-                                 }
-                             })
-     
-                        }
+                    // Determine if changes should be updated locally
+                    if( 
+                        // if there is no LocalUpdateId, then we're initializing, so commit the changes locally
+                        !((((context.state.currentEntity||{})[entityContainer.collectionId]||{})[entityContainer.docId]||{}).data||{}).hasOwnProperty('LocalUpdateId') 
+                        || // OR
+                        // If the LocalUpdateId has changed, its an update from somewhere else, so commit the changes locally
+                        doc.data().LocalUpdateId != context.state.localUpdateId   
+                        ){
+                            console.log('listenter updating locally')
+                            console.log(doc.data());
+                            context.commit('initializeCurrentEntity', {
+                            docId:entityContainer.docId,
+                            collectionId:entityContainer.collectionId,
+                            docContainer:{
+                                    id: entityContainer.docId,
+                                    data: doc.data(),    
+                                }
+                            })
+    
                     }
-
                 }
             });            
         },
