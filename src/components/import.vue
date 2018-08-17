@@ -3,7 +3,6 @@
     <v-container fluid>
         <v-layout row wrap>
           <v-flex xs12 md4>
-            
             Import<br>
             <v-btn @click="importFile">Import File</v-btn>     
           </v-flex>
@@ -59,21 +58,66 @@ export default {
         openFile(this.parseFile);
     },
     parseFile(contents) {
-        let parsedFileContents = Papa.parse(contents, {header:true});
+        let parsedFileContents = Papa.parse(contents, {header:true, skipEmptyLines: true, dynamicTyping:true});
+
+        let entities = {};
+        // Loop over the parsed database entries and give them a new firestore style docId
         for(let i=0; i<parsedFileContents.data.length; i++){
-            let oldDocId = parsedFileContents.data[i].docId;
-            parsedFileContents.data[i].docId = this.idConversionArray[oldDocId];
+            let oldDbId = parsedFileContents.data[i].docId;
+
+            // refactor any date data types
+            let oldDatabaseData = parsedFileContents.data[i];
+            const monthsConversionArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; // TODO - need to verify this is the month strings used
+            for (let oldKey in oldDatabaseData){
+
+                // convert month from obvibase format (Jun 01, 2018) to Vuetify format (2018-06-01)
+                if (typeof oldDatabaseData[oldKey] === "string"){
+                    let matches = oldDatabaseData[oldKey].match(/^(\w\w\w) (\d\d), (\d\d\d\d)$/);
+                    if(matches){
+                        let month = monthsConversionArray.indexOf(matches[1]) + 1;
+                        month = month.toString().padStart(2, '0');
+
+                        let day = matches[2].toString().padStart(2, '0');
+                        let year = matches[3].toString();
+
+                        let date = year + "-" + month + "-" + day;
+
+                        // change the date format on the parsedFileContents
+                        oldDatabaseData[oldKey] = date;
+
+                    }
+                }
+            }
+
+            // put the data in entities by firestore docId as key
+            entities[this.idConversionArray[oldDbId]] =  parsedFileContents.data[i];
+
+            // Also tag the entity with the original database id
+            entities[this.idConversionArray[oldDbId]].origDbId = oldDbId;
+            
+            // Delete the header docId
+            delete entities[this.idConversionArray[oldDbId]].docId;
         }
-        console.log(parsedFileContents);
+        console.log(entities);
 
-        firebase.firestore().collection("IMPORTDATATEST").doc(parsedFileContents.data[0].docId).set(parsedFileContents.data[0])
-            .then(function(docRef) {    
-                console.log('firestore add call complete. docRef: ' + docRef);
+        // loop over entities and commit to firestore (waiting for each commit to complete)
+        (async () => {
+            for (let entityDocId in entities) {
+                console.log(entityDocId);
+                console.log(entities[entityDocId]);
 
-            })
-            .catch(function(error) {
-                console.error("Error writing document: ", error);
-            });  
+                await firebase.firestore().collection("IMPORTDATATEST").doc(entityDocId).set(entities[entityDocId])
+                    .then(function() {    
+                        console.log('firestore add call complete. added entity with ID: ' + entityDocId);
+                    })
+                    .catch(function(error) {
+                        console.error("Error writing document: ", error);
+                    });  
+            }
+        })(); // immediately invoked async arrow function
+
+
+       
     }
   },
   created(){
