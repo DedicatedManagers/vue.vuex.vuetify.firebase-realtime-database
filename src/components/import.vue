@@ -4,7 +4,8 @@
         <v-layout row wrap>
           <v-flex xs12 md4>
             Import<br>
-            <v-text-field v-model="ImportCollectionId" label="Collection Id"></v-text-field>
+            <v-select :items="ImportParentCollectionTypes" v-model="ImportParentCollectionId" label="Parent Collection Id"></v-select>
+            <v-select :items="ImportCollectionTypes" v-model="ImportCollectionId"  label="Collection Id"></v-select>
             <v-btn @click="importFile">Import File</v-btn>     
           </v-flex>
         </v-layout>
@@ -20,8 +21,12 @@ export default {
   name: 'Dashboard',
   data() {
     return {
-        idConversionArray:null,
-        ImportCollectionId:"PrimaryKinshipCaregiver",
+        PrimaryKinshipCaregiver_ID_ConversionArray:[],
+        KinshipChild_ID_ConversionArray:[],
+        ImportCollectionTypes:['PrimaryKinshipCaregiver', 'KinshipChild'],
+        ImportParentCollectionTypes:['','PrimaryKinshipCaregiver', 'KinshipChild'],
+        ImportCollectionId:"",
+        ImportParentCollectionId:"",
     };
   },
   computed:{
@@ -65,10 +70,13 @@ export default {
         let entities = {};
         // Loop over the parsed database entries and give them a new firestore style docId
         for(let i=0; i<parsedFileContents.data.length; i++){
+
+            // get the original database ID
             let oldDbId = parsedFileContents.data[i].docId;
+            // get the data object of the original database entry
+            let oldDatabaseData = parsedFileContents.data[i];
 
             // refactor any date data types
-            let oldDatabaseData = parsedFileContents.data[i];
             const monthsConversionArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; // TODO - need to verify this is the month strings used
             for (let oldKey in oldDatabaseData){
 
@@ -91,14 +99,16 @@ export default {
                 }
             }
 
+            // if there's a parent
+
             // put the data in entities by firestore docId as key
-            entities[this.idConversionArray[oldDbId]] =  parsedFileContents.data[i];
+            entities[this.PrimaryKinshipCaregiver_ID_ConversionArray[oldDbId]] =  parsedFileContents.data[i];
 
             // Also tag the entity with the original database id
-            entities[this.idConversionArray[oldDbId]].origDbId = oldDbId;
+            entities[this.PrimaryKinshipCaregiver_ID_ConversionArray[oldDbId]].origDbId = oldDbId;
             
             // Delete the header docId
-            delete entities[this.idConversionArray[oldDbId]].docId;
+            delete entities[this.PrimaryKinshipCaregiver_ID_ConversionArray[oldDbId]].docId;
         }
         console.log(entities);
 
@@ -125,16 +135,20 @@ export default {
   created(){
 
     // create array to convert old ids to firestore ids
-    this.idConversionArray = [];
     for (let i1=0; i1<4000; i1++){
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let autoId = '';
+
+        this.PrimaryKinshipCaregiver_ID_ConversionArray[i1]="";
+        this.KinshipChild_ID_ConversionArray[i1]="";
+
+        // create the random Id's
         for (let i2 = 0; i2 < 20; i2++) {
-            autoId += chars.charAt(Math.floor(Math.random() * chars.length));
+            this.PrimaryKinshipCaregiver_ID_ConversionArray[i1] += chars.charAt(Math.floor(Math.random() * chars.length));
+            this.KinshipChild_ID_ConversionArray[i1] += chars.charAt(Math.floor(Math.random() * chars.length));
         }
-        this.idConversionArray[i1] = autoId;
+
     }
-    //console.log(this.idConversionArray);
+    //console.log(this.PrimaryKinshipCaregiver_ID_ConversionArray);
   },
 };
 </script>
