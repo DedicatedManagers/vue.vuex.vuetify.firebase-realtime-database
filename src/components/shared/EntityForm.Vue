@@ -9,7 +9,7 @@
                 <v-card-text>
                 <v-form ref="profileForm">
                     <div v-for="(formField, index) in entityConfig.formFields" :key="index">
-                    <text-field v-if="formField.fieldType == 'text'" :fieldName="formField.fieldName" :fieldLabel="formField.fieldLabel" :rules="formField.rules" :collectionId="entityConfig.collectionId" :docId="entityConfig.docId"></text-field>
+                    <text-field v-if="formField.fieldType == 'text'" :fieldName="formField.fieldName" :fieldLabel="formField.fieldLabel" :rules="formField.rules" :collectionId="entityConfig.collectionId" :docId="entityConfig.docId" :disabled="formField.disabled"></text-field>
                     <date-field v-if="formField.fieldType == 'date'" :fieldName="formField.fieldName" :fieldLabel="formField.fieldLabel" :rules="formField.rules" :collectionId="entityConfig.collectionId" :docId="entityConfig.docId"></date-field>
                     <checkbox-field v-if="formField.fieldType == 'checkbox'" :fieldName="formField.fieldName" :fieldLabel="formField.fieldLabel" :collectionId="entityConfig.collectionId" :docId="entityConfig.docId"></checkbox-field>
                     <select-field v-if="formField.fieldType == 'select'" :items="formField.fieldItems" :fieldName="formField.fieldName" :fieldLabel="formField.fieldLabel" :collectionId="entityConfig.collectionId" :docId="entityConfig.docId"></select-field>
