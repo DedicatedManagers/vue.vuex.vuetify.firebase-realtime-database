@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import Vue from 'vue';
 import Dashboard from '@/components/Dashboard';
 import Login from '@/components/Login';
+import Import from '@/components/Import';
 //import {store} from '@/store/store'
 import TemplateLoader from '@/components/TemplateLoader';
 
@@ -22,6 +23,11 @@ const router = new Router({
       path: '/login',
       name: 'Login',
       component: Login,
+    },
+    {
+      path: '/import',
+      name: 'Import',
+      component: Import,
     },
     {
       path: '/db/:DbPath(.*)',
