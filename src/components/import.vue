@@ -4,6 +4,7 @@
         <v-layout row wrap>
           <v-flex xs12 md4>
             Import<br>
+            <v-text-field v-model="ImportCollectionId" label="Collection Id"></v-text-field>
             <v-btn @click="importFile">Import File</v-btn>     
           </v-flex>
         </v-layout>
@@ -20,6 +21,7 @@ export default {
   data() {
     return {
         idConversionArray:null,
+        ImportCollectionId:"PrimaryKinshipCaregiver",
     };
   },
   computed:{
@@ -106,7 +108,7 @@ export default {
                 console.log(entityDocId);
                 console.log(entities[entityDocId]);
 
-                await firebase.firestore().collection("IMPORTDATATEST").doc(entityDocId).set(entities[entityDocId])
+                await firebase.firestore().collection(this.ImportCollectionId).doc(entityDocId).set(entities[entityDocId])
                     .then(function() {    
                         console.log('firestore add call complete. added entity with ID: ' + entityDocId);
                     })
