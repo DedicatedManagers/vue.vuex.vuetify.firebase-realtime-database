@@ -94,7 +94,6 @@ export default {
         console.log(parsedFileContents);
 
         (async () => {
-            let entities = {};
             // Loop over the parsed database entries and give them a new firestore style docId
             for(let i=0; i<parsedFileContents.data.length; i++){
 
@@ -133,23 +132,25 @@ export default {
         
 
                 // put the data in entities by firestore docId as key
-                entities[newDocId] =  parsedFileContents.data[i];
+                let newEntity =  parsedFileContents.data[i];
 
                 // Also tag the entity with the original database id
-                entities[newDocId].origDbId = oldDbId;
+                newEntity.origDbId = oldDbId;
                 
                 // Delete the header docId
-                delete entities[newDocId].docId;
+                delete newEntity.docId;
 
+
+                // If this is a child of a parent entity
                 if(this.ImportParentCollectionId){
                     // get the original parent id from the parsed file column
                     let oldParentDbId = parsedFileContents.data[i].parentDocId;
 
                     // add the ParentType & ParentCollectionId
-                    entities[newDocId].ParentType = this.ImportParentCollectionId;
-                    entities[newDocId].ParentCollectionId = this.conversionArrays[this.ImportParentCollectionId][oldParentDbId];
+                    newEntity.ParentType = this.ImportParentCollectionId;
+                    newEntity.ParentCollectionId = this.conversionArrays[this.ImportParentCollectionId][oldParentDbId];
 
-                    // TODO: update the parent's to know about the new child
+                    // update the parent to know about the new child
                     let NestedCollection = {};
                     NestedCollection[this.ImportCollectionId] = {};
                     NestedCollection[this.ImportCollectionId][newDocId] = 1;
@@ -157,9 +158,9 @@ export default {
                     let NestedCollectionsUpdate = {};
                     NestedCollectionsUpdate['NestedCollections.' + this.ImportCollectionId + "." + newDocId] = 1;
 
-                    await firebase.firestore().collection(entities[newDocId].ParentType).doc(entities[newDocId].ParentCollectionId ).update(NestedCollectionsUpdate)
+                    await firebase.firestore().collection(newEntity.ParentType).doc(newEntity.ParentCollectionId ).update(NestedCollectionsUpdate)
                         .then(function() {    
-                            console.log('firestore add call complete. added child to parent with typeID: ' + entities[newDocId].ParentType + entities[newDocId].ParentCollectionId);
+                            console.log('firestore add call complete. added child to parent with typeID: ' + newEntity.ParentType + newEntity.ParentCollectionId);
                             console.log('NestedCollectionsUpdate');
                             console.log(NestedCollectionsUpdate);
                         })
@@ -168,22 +169,17 @@ export default {
                         });  
 
                 }
-            }
-            console.log(entities);
 
-            // loop over entities and commit to firestore (waiting for each commit to complete)
-            for (let entityDocId in entities) {
-                console.log(entityDocId);
-                console.log(entities[entityDocId]);
-
-                await firebase.firestore().collection(this.ImportCollectionId).doc(entityDocId).set(entities[entityDocId])
+                // save the entity to the firestore 
+                // - this must come after updating the parent above as the child link to the parent is set within
+                await firebase.firestore().collection(this.ImportCollectionId).doc(newDocId).set(newEntity)
                     .then(function() {    
-                        console.log('firestore add call complete. added entity with ID: ' + entityDocId);
+                        console.log('firestore add call complete. added entity with ID: ' + newDocId);
                     })
                     .catch(function(error) {
                         console.error("Error writing document: ", error);
                     });  
-            }
+                }
         })(); // immediately invoked async arrow function
 
 
