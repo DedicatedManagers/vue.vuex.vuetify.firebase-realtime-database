@@ -1,6 +1,11 @@
 import {KinshipChildIncome} from '@/../config/Entities/KinshipChildIncome.js';
 import {KinshipChildCustodyStatus} from '@/../config/Entities/KinshipChildCustodyStatus.js';
 
+
+//Import Columns:
+// "parentDocId","docId","DateAdded","FirstName","LastName","Birthdate","RelationOfCaregiver","Family Side of Caregiver","Father on Birth Certificate","Custody History","Incomes","Bio Father Involved","Bio Mother Involved","CPS Involved","Gender","Age (Years)","Income Total"
+
+
 export const KinshipChild = {
     title:'Kinship Child',
     toolbarTitle:"Kinship Children", 
