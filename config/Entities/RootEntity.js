@@ -15,7 +15,7 @@ export const RootEntity = {
   addIcon:"person_add",
   addButtonText:"Add New Client",
   evalFunctions:{
-    breadCrumb:'entityFormFields.LastName + ", " + entityFormFields.FirstName + " " + entityFormFields.MiddleName',
+    breadCrumb:'entityFormFields.LastName + ", " + entityFormFields.FirstName + " " + (entityFormFields.MiddleName?entityFormFields.MiddleName:"")',
     subEntityListDisplayText:'',
   },
   onDelete:{
