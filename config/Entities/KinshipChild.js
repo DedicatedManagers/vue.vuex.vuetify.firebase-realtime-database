@@ -3,7 +3,7 @@ import {KinshipChildCustodyStatus} from '@/../config/Entities/KinshipChildCustod
 
 
 //Import Columns:
-// "parentDocId","docId","DateAdded","FirstName","LastName","Birthdate","RelationOfCaregiver","Family Side of Caregiver","Father on Birth Certificate","Custody History","Incomes","Bio Father Involved","Bio Mother Involved","CPS Involved","Gender","Age (Years)","Income Total"
+// "parentDocId","docId","DateAdded","FirstName","LastName","Birthdate","RelationOfCaregiver","FamilySideOfCaregiver","FatherOnBirthCertificate","BioFatherInvolved","BioMotherInvolved","CPSInvolved","Gender","AgeYears"
 
 
 export const KinshipChild = {
@@ -23,48 +23,108 @@ export const KinshipChild = {
     },
     formFields:[
         {
-        fieldType:'text',
-        fieldName:"FirstName",
-        fieldLabel:"First Name",
-        rules:[
-            "v => !!v || 'Required'",
-            "v => v.length <= 30 || 'Name must be less than 30'",
-          ] ,
+            fieldType:'text',
+            fieldName:"DateAdded",
+            fieldLabel:"Date Added",
+            disabled:true,
         },
         {
-        fieldType:'text',
-        fieldName:"MiddleName",
-        fieldLabel:"Middle Name",
-        rules:[
-            "v => !!v || 'Required'",
-            "v => v.length <= 30 || 'Name must be less than 30'",
-          ] ,
+            fieldType:'text',
+            fieldName:"FirstName",
+            fieldLabel:"First Name",
+            rules:[
+                "v => !!v || 'Required'",
+                "v => v.length <= 30 || 'Name must be less than 30'",
+            ],
         },
         {
-        fieldType:'text',
-        fieldName:"LastName",
-        fieldLabel:"Last Name",
-        rules:[
-            "v => !!v || 'Required'",
-            "v => v.length <= 30 || 'Name must be less than 30'",
-          ] ,
+            fieldType:'text',
+            fieldName:"MiddleName",
+            fieldLabel:"Middle Name",
+            rules:[
+                "v => v.length <= 30 || 'Name must be less than 30'",
+            ],
         },
         {
-        fieldType:'text',
-        fieldName:"PrimaryStreetAddress",
-        fieldLabel:"Primary Street Address",
-        rules:[
-            "v => !!v || 'Required'",
-            "v => v.length <= 30 || 'Name must be less than 30'",
-          ] ,
+            fieldType:'text',
+            fieldName:"LastName",
+            fieldLabel:"Last Name",
+            rules:[
+                "v => !!v || 'Required'",
+                "v => v.length <= 30 || 'Name must be less than 30'",
+            ],
         },
         {
-        fieldType:'date',
-        fieldName:"BirthDate",
-        fieldLabel:"BirthDate",
-        rules:[
-            "v => !!v || 'Required'",
-          ] ,
+            fieldType:'date',
+            fieldName:"Birthdate",
+            fieldLabel:"BirthDate",
+        },
+        {
+            fieldType:'select',
+            fieldName:"RelationOfCaregiver",
+            fieldLabel:"Relation Of Caregiver",
+            fieldItems:[
+              "Grandmother",
+              "Grandfather",
+              "Aunt",
+              "Uncle",
+              "Great Aunt",
+              "Great Uncle",
+              "Great Grandmother",
+              "Great Grandfather",
+              "Cousin",
+              "Sibling",
+              "Step-parent",
+              "Fictive Kin",
+            ],
+        },
+        {
+            fieldType:'select',
+            fieldName:"FamilySideOfCaregiver",
+            fieldLabel:"Family Side Of Caregiver",
+            fieldItems:[
+              "Paternal",
+              "Maternal",
+              "Fictive",
+              "Sibling",
+            ],
+        },
+        {
+            fieldType:'checkbox',
+            fieldName:"FatherOnBirthCertificate",
+            fieldLabel:"Father On Birth Certificate",
+        },
+        {
+            fieldType:'checkbox',
+            fieldName:"BioFatherInvolved",
+            fieldLabel:"Bio Father Involved",
+        },
+        {
+            fieldType:'checkbox',
+            fieldName:"BioMotherInvolved",
+            fieldLabel:"Bio Mother Involved",
+        },
+        {
+            fieldType:'checkbox',
+            fieldName:"CPSInvolved",
+            fieldLabel:"CPS Involved",
+        },
+        {
+            fieldType:'select',
+            fieldName:"Gender",
+            fieldLabel:"Gender",
+            fieldItems:[
+                "M",
+                "F",
+            ],
+        },
+        {
+            fieldType:'text',
+            fieldName:"AgeYears",
+            fieldLabel:"Age (Years)",
+            rules:[
+                "v => !!v || 'Required'",
+            ],
         },
     ],
     subEntities:{

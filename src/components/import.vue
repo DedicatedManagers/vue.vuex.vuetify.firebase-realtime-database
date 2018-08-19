@@ -4,8 +4,7 @@
         <v-layout row wrap>
           <v-flex xs12 md4>
             Import<br>
-            <v-select :items="ImportParentCollectionTypes" v-model="ImportParentCollectionId" label="Parent Collection Id"></v-select>
-            <v-select :items="ImportCollectionTypes" v-model="ImportCollectionId"  label="Collection Id"></v-select>
+            <v-select :items="ImportEntityChoices" v-model="ImportEntityChoice" label="Entity Type"></v-select>
             <v-btn @click="importFile">Import File</v-btn>     
           </v-flex>
         </v-layout>
@@ -22,10 +21,14 @@ export default {
   data() {
     return {
         conversionArrays:[],
-        ImportCollectionTypes:['PrimaryKinshipCaregiver', 'KinshipChild'],
-        ImportParentCollectionTypes:['','PrimaryKinshipCaregiver', 'KinshipChild'],
-        ImportCollectionId:"",
-        ImportParentCollectionId:"",
+        ImportEntityChoices:['PrimaryKinshipCaregiver', 'KinshipChild'],
+        ImportEntityChoice:"",
+        
+        ImportEntity:{
+            PrimaryKinshipCaregiver:{importCollectionName:"PrimaryKinshipCaregiver",importParentCollectionName:""},
+            KinshipChild:{importCollectionName:"KinshipChild",importParentCollectionName:"PrimaryKinshipCaregiver"},
+            PrimaryKinshipCaregiver_Income:{importCollectionName:"PrimaryKinshipCaregiver_Income",importParentCollectionName:"PrimaryKinshipCaregiver"},
+        }
     };
   },
   computed:{
@@ -82,11 +85,11 @@ export default {
         console.log(contents);
 
         // create the entity conversion array if not already created
-        if (!this.conversionArrays[this.ImportCollectionId]){
-            this.conversionArrays[this.ImportCollectionId] = this.createConversionArray();
+        if (!this.conversionArrays[this.ImportEntity[this.ImportEntityChoice]['importCollectionName']]){
+            this.conversionArrays[this.ImportEntity[this.ImportEntityChoice]['importCollectionName']] = this.createConversionArray();
         }
-        if (!this.conversionArrays[this.ImportParentCollectionId]){
-            this.conversionArrays[this.ImportParentCollectionId] = this.createConversionArray();
+        if (!this.conversionArrays[this.ImportEntity[this.ImportEntityChoice]['importParentCollectionName']]){
+            this.conversionArrays[this.ImportEntity[this.ImportEntityChoice]['importParentCollectionName']] = this.createConversionArray();
         }
 
         let parsedFileContents = Papa.parse(contents, {header:true, skipEmptyLines: true, dynamicTyping:true});
@@ -127,8 +130,8 @@ export default {
 
 
                 // get the converted ID
-                let newDocId = this.conversionArrays[this.ImportCollectionId][oldDbId];
-                console.log(newDocId, this.ImportCollectionId, oldDbId);
+                let newDocId = this.conversionArrays[this.ImportEntity[this.ImportEntityChoice]['importCollectionName']][oldDbId];
+                console.log(newDocId, this.ImportEntity[this.ImportEntityChoice]['importCollectionName'], oldDbId);
         
 
                 // put the data in entities by firestore docId as key
@@ -142,21 +145,21 @@ export default {
 
 
                 // If this is a child of a parent entity
-                if(this.ImportParentCollectionId){
+                if(this.ImportEntity[this.ImportEntityChoice]['importParentCollectionName']){
                     // get the original parent id from the parsed file column
                     let oldParentDbId = parsedFileContents.data[i].parentDocId;
 
                     // add the ParentType & ParentCollectionId
-                    newEntity.ParentType = this.ImportParentCollectionId;
-                    newEntity.ParentCollectionId = this.conversionArrays[this.ImportParentCollectionId][oldParentDbId];
+                    newEntity.ParentType = this.ImportEntity[this.ImportEntityChoice]['importParentCollectionName'];
+                    newEntity.ParentCollectionId = this.conversionArrays[this.ImportEntity[this.ImportEntityChoice]['importParentCollectionName']][oldParentDbId];
 
                     // update the parent to know about the new child
                     let NestedCollection = {};
-                    NestedCollection[this.ImportCollectionId] = {};
-                    NestedCollection[this.ImportCollectionId][newDocId] = 1;
+                    NestedCollection[this.ImportEntity[this.ImportEntityChoice]['importCollectionName']] = {};
+                    NestedCollection[this.ImportEntity[this.ImportEntityChoice]['importCollectionName']][newDocId] = 1;
 
                     let NestedCollectionsUpdate = {};
-                    NestedCollectionsUpdate['NestedCollections.' + this.ImportCollectionId + "." + newDocId] = 1;
+                    NestedCollectionsUpdate['NestedCollections.' + this.ImportEntity[this.ImportEntityChoice]['importCollectionName'] + "." + newDocId] = 1;
 
                     await firebase.firestore().collection(newEntity.ParentType).doc(newEntity.ParentCollectionId ).update(NestedCollectionsUpdate)
                         .then(function() {    
@@ -172,7 +175,7 @@ export default {
 
                 // save the entity to the firestore 
                 // - this must come after updating the parent above as the child link to the parent is set within
-                await firebase.firestore().collection(this.ImportCollectionId).doc(newDocId).set(newEntity)
+                await firebase.firestore().collection(this.ImportEntity[this.ImportEntityChoice]['importCollectionName']).doc(newDocId).set(newEntity)
                     .then(function() {    
                         console.log('firestore add call complete. added entity with ID: ' + newDocId);
                     })
