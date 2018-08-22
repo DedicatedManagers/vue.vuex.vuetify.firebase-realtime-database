@@ -12,8 +12,14 @@
   </v-slide-y-transition>
 </template>
 
-
 <script>
+
+// NOTES:
+//  Entities must be imported from top down (root entity first)
+//  All imports must be done in one render - the conversion arrays are renewed with each load, so they won't match up.
+//  Do not change import entity type until importing of the previous entity is complete.
+
+
 import firebase from 'firebase/app';
 
 export default {
@@ -21,12 +27,14 @@ export default {
   data() {
     return {
         conversionArrays:[],
-        ImportEntityChoices:['PrimaryKinshipCaregiver', 'KinshipChild'],
+        ImportEntityChoices:['PrimaryKinshipCaregiver', 'KinshipChild','KinshipChildCustodyStatus','KinshipChildIncome'],
         ImportEntityChoice:"",
         
         ImportEntity:{
             PrimaryKinshipCaregiver:{importCollectionName:"PrimaryKinshipCaregiver",importParentCollectionName:""},
             KinshipChild:{importCollectionName:"KinshipChild",importParentCollectionName:"PrimaryKinshipCaregiver"},
+            KinshipChildCustodyStatus:{importCollectionName:"KinshipChildCustodyStatus",importParentCollectionName:"KinshipChild"},
+            KinshipChildIncome:{importCollectionName:"KinshipChildIncome",importParentCollectionName:"KinshipChild"},
             PrimaryKinshipCaregiver_Income:{importCollectionName:"PrimaryKinshipCaregiver_Income",importParentCollectionName:"PrimaryKinshipCaregiver"},
         }
     };
@@ -111,7 +119,7 @@ export default {
 
                     // convert month from obvibase format (Jun 01, 2018) to Vuetify format (2018-06-01)
                     if (typeof oldDatabaseData[oldKey] === "string"){
-                        let matches = oldDatabaseData[oldKey].match(/^(\w\w\w) (\d\d), (\d\d\d\d)$/);
+                        let matches = oldDatabaseData[oldKey].match(/^(\w\w\w) (\d\d?), (\d\d\d\d)$/);
                         if(matches){
                             let month = monthsConversionArray.indexOf(matches[1]) + 1;
                             month = month.toString().padStart(2, '0');

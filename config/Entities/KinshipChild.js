@@ -14,7 +14,7 @@ export const KinshipChild = {
     addIcon:"person_add",
     addButtonText:"Add Child",
     evalFunctions:{
-        breadCrumb:'entityFormFields.LastName + ", " + entityFormFields.FirstName + " " + entityFormFields.MiddleName',
+        breadCrumb:'entityFormFields.LastName + ", " + entityFormFields.FirstName + " " + (entityFormFields.MiddleName?entityFormFields.MiddleName:"")',
         subEntityListDisplayText:'entityFormFields.LastName + ", " + entityFormFields.FirstName + " " + (entityFormFields.MiddleName?entityFormFields.MiddleName:"")',
     },
     onDelete:{

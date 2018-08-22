@@ -1,3 +1,6 @@
+//"parentDocId","docId","DateAdded","CustodyStartDate","CustodyStatus","Notes"
+
+
 export const KinshipChildCustodyStatus = {
     title:'Custody Status',
     toolbarTitle:"Custody Status", 
@@ -7,7 +10,7 @@ export const KinshipChildCustodyStatus = {
     addButtonText:"Add Status",
     evalFunctions:{
       breadCrumb:'"Custody Status - " + entityId',
-      subEntityListDisplayText:'(entityFormFields.CustodyDate||"") + " - " + (entityFormFields.CustodyStatus||"")',
+      subEntityListDisplayText:'(entityFormFields.CustodyStartDate||"") + " - " + (entityFormFields.CustodyStatus||"")',
     },
     onDelete:{
       confirmMessage:"Are you sure you want to delete this Custody Status from the Kinship Child?",
@@ -16,27 +19,37 @@ export const KinshipChildCustodyStatus = {
     formFields:[
         {
             fieldType:'text',
-            fieldName:"CustodyDate",
-            fieldLabel:"Custody Date",
-            rules:[
-              "v => !!v || 'Required'",
-            ] ,
+            fieldName:"DateAdded",
+            fieldLabel:"Date Added",
+            disabled:true,
+        },
+        {
+          fieldType:'date',
+          fieldName:"CustodyStartDate",
+          fieldLabel:"Custody Start Date",
+        },
+        {
+          fieldType:'select',
+          fieldName:"CustodyStatus",
+          fieldLabel:"Custody Status",
+          fieldItems:[
+            "Physical Custody Only",
+            "Unlicensed Caregiver: Unable to be Licensed",
+            "Unlicensed Relative Caregiver: Working Towards License",
+            "Licensed Relative Caregiver",
+            "6-Month Temporary Guardianship",
+            "Court Ordered Guardianship",
+            "Legal Custody (court ordered)",
+            "Adoption",
+            "Reunification",
+            "Disruption",
+            "Other",
+          ],
         },
         {
             fieldType:'text',
-            fieldName:"CustodyStatus",
-            fieldLabel:"Custody Status",
-            rules:[
-              "v => !!v || 'Required'",
-            ] ,
-        },
-        {
-            fieldType:'text',
-            fieldName:"CustodyNotes",
-            fieldLabel:"Custody Notes",
-            rules:[
-              "v => !!v || 'Required'",
-            ] ,
+            fieldName:"Notes",
+            fieldLabel:"Notes",
         },
     ],
   }
