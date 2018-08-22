@@ -11,7 +11,11 @@
             <br>
             IMPORT NOTES:<br>
                 * Within the imported files: <br>
-                &nbsp; &nbsp; ^ Entity id column should be named "docId", and parent entity column (if nested entity) should be named "parentDocId"
+                &nbsp; &nbsp; ^ File type is csv (comma separated variables)<br>
+                &nbsp; &nbsp; ^ Entity id column should be named "docId"<br>
+                &nbsp; &nbsp; &nbsp; &nbsp; ^ Example Header Row: "docId","DateAdded","FirstName","LastName",<br>
+                &nbsp; &nbsp; ^ Parent entity column (if nested entity) should be named "parentDocId"<br>
+                &nbsp; &nbsp; &nbsp; &nbsp; ^ Example Header Row: "parentDocId","docId","DateAdded","FirstName","LastName",<br>
                 * Entities must be imported from top down (root entity first)<br>
                 * All imports must be done in one render<br>
                 &nbsp; &nbsp; ^ Do save project file or hot reload will rerender<br>
