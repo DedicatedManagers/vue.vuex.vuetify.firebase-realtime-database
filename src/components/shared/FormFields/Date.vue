@@ -1,6 +1,6 @@
 <template>
     <v-menu ref="BirthDateMenuRef" :return-value.sync="localModel" v-model="BirthDateMenuVisibility" :close-on-content-click="false" :nudge-right="40" lazy transition="scale-transition" offset-y full-width min-width="290px">
-    <v-text-field slot="activator" v-model="localModel" :rules="computedRules" label="Birth Date" append-icon="event" readonly ></v-text-field>
+    <v-text-field slot="activator" v-model="localModel" :rules="computedRules" :label="fieldLabel" append-icon="event" readonly ></v-text-field>
     <v-date-picker v-model="localModel" @input="$refs.BirthDateMenuRef.save(localModel);"></v-date-picker>
     </v-menu>
 </template>
