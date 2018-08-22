@@ -17,7 +17,9 @@
                 &nbsp; &nbsp; ^ Parent entity column (if nested entity) should be named "parentDocId"<br>
                 &nbsp; &nbsp; &nbsp; &nbsp; ^ Example Header Row: "parentDocId","docId","DateAdded","FirstName","LastName",<br>
                 * Entities must be imported from top down (root entity first)<br>
+                * Import will fail if child entity is imported and referenced parent id is not found (ie data needs to be verified)
                 * All imports must be done in one render<br>
+                * Entity Names in "ImportEntity" object (this code) should match the Config>>Entities "collectionId" within the file for the object
                 &nbsp; &nbsp; ^ Do save project file or hot reload will rerender<br>
                 &nbsp; &nbsp; ^ The conversion arrays are renewed with each load, so firebase docId's won't match up.<br>
                 * Do not run next entity type import until importing of the previous entity is complete.(see dugger/console for output) <br>
@@ -42,11 +44,18 @@ export default {
         ImportEntityChoice:"",
 
         ImportEntity:{
-            PrimaryKinshipCaregiver:{importCollectionName:"PrimaryKinshipCaregiver",importParentCollectionName:""},
-            KinshipChild:{importCollectionName:"KinshipChild",importParentCollectionName:"PrimaryKinshipCaregiver"},
-            KinshipChildCustodyStatus:{importCollectionName:"KinshipChildCustodyStatus",importParentCollectionName:"KinshipChild"},
-            KinshipChildIncome:{importCollectionName:"KinshipChildIncome",importParentCollectionName:"KinshipChild"},
-            PrimaryKinshipCaregiver_Income:{importCollectionName:"PrimaryKinshipCaregiver_Income",importParentCollectionName:"PrimaryKinshipCaregiver"},
+            '1. PrimaryKinshipCaregiver':{importCollectionName:"PrimaryKinshipCaregiver",importParentCollectionName:""},
+            '1.1 PrimaryKinshipCaregiverIncome':{importCollectionName:"PrimaryKinshipCaregiverIncome",importParentCollectionName:"PrimaryKinshipCaregiver"},
+            '1.2 PrimaryKinshipCaregiverOtherInhousehold':{importCollectionName:"OtherInHousehold",importParentCollectionName:"PrimaryKinshipCaregiver"},
+            '1.2.1 PrimaryKinshipCaregiverOtherInhouseholdIncome':{importCollectionName:"OtherInHouseholdIncome",importParentCollectionName:"OtherInHousehold"},
+            '1.3 PrimaryKinshipCaregiverContact':{importCollectionName:"PrimaryKinshipCaregiverContact",importParentCollectionName:"PrimaryKinshipCaregiver"},
+            '1.4 PrimaryKinshipCaregiverFamilyAdvocacyCasePlan':{importCollectionName:"FamilyAdvocacyCasePlan",importParentCollectionName:"PrimaryKinshipCaregiver"},
+            '1.4.1 PrimaryKinshipCaregiverFamilyAdvocacyCasePlanFamilyAdvocacyGuardianship':{importCollectionName:"FamilyAdvocacyGuardianship",importParentCollectionName:"FamilyAdvocacyCasePlan"},
+            '1.4.2 PrimaryKinshipCaregiverFamilyAdvocacyCasePlanFamilyAdvocacyTanfDetail':{importCollectionName:"FamilyAdvocacyTanfDetail",importParentCollectionName:"FamilyAdvocacyCasePlan"},
+            '1.5 PrimaryKinshipCaregiverFundsDispersed':{importCollectionName:"PrimaryKinshipCaregiverFundsDispersed",importParentCollectionName:"PrimaryKinshipCaregiver"},
+            '1.6 KinshipChild':{importCollectionName:"KinshipChild",importParentCollectionName:"PrimaryKinshipCaregiver"},
+            '1.6.1 KinshipChildIncome':{importCollectionName:"KinshipChildIncome",importParentCollectionName:"KinshipChild"},
+            '1.6.2 KinshipChildCustodyStatus':{importCollectionName:"KinshipChildCustodyStatus",importParentCollectionName:"KinshipChild"},
         }
     };
   },
@@ -175,6 +184,9 @@ export default {
                     newEntity.ParentType = currentImportParentCollectionName;
                     newEntity.ParentCollectionId = this.conversionArrays[currentImportParentCollectionName][oldParentDbId];
 
+                    // Also tag the entity with the original database id
+                    newEntity.origParentDbId = oldParentDbId;
+
                     // update the parent to know about the new child
                     let NestedCollection = {};
                     NestedCollection[currentImportCollectionName] = {};
@@ -212,8 +224,6 @@ export default {
     }
   },
   created(){
-
-
     //console.log(this.PrimaryKinshipCaregiver_ID_ConversionArray);
   },
 };

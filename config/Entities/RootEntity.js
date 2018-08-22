@@ -3,6 +3,8 @@ import {PrimaryKinshipCaregiverIncome} from '@/../config/Entities/PrimaryKinship
 import {KinshipChild} from '@/../config/Entities/KinshipChild.js';
 import {OtherInHousehold} from '@/../config/Entities/OtherInHousehold.js';
 import {PrimaryKinshipCaregiverContact} from '@/../config/Entities/PrimaryKinshipCaregiverContact.js';
+import {PrimaryKinshipCaregiverFundsDispersed} from '@/../config/Entities/PrimaryKinshipCaregiverFundsDispersed.js';
+
 
 
 //Import Columns:
@@ -370,5 +372,6 @@ export const RootEntity = {
     OtherInHousehold:OtherInHousehold,
     FamilyAdvocacyCasePlan:FamilyAdvocacyCasePlan,
     PrimaryKinshipCaregiverContact:PrimaryKinshipCaregiverContact,
+    PrimaryKinshipCaregiverFundsDispersed:PrimaryKinshipCaregiverFundsDispersed,
   }
 }

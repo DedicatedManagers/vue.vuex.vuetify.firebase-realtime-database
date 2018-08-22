@@ -43,5 +43,5 @@ export const KinshipChildIncome = {
         fieldName:"Notes",
         fieldLabel:"Notes",
       },
-  ],
+    ],
   }

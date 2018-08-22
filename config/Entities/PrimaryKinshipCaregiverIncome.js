@@ -7,28 +7,39 @@ export const PrimaryKinshipCaregiverIncome = {
     addButtonText:"Add Income",
     evalFunctions:{
       breadCrumb:'"Income - " + entityId',
-      subEntityListDisplayText:'(entityFormFields.IncomeType||"") + " - $" + (entityFormFields.IncomeType||"")',
+      subEntityListDisplayText:'(entityFormFields.IncomeSource||"") + " - $" + (entityFormFields.IncomePerMonth||"" + "/Month")',
     },
     onDelete:{
       confirmMessage:"Are you sure you want to delete this income from the primary kinship caregiver?",
       route:"/dashboard",
     },
     formFields:[
-        {
-            fieldType:'text',
-            fieldName:"IncomeType",
-            fieldLabel:"Income Type",
-            rules:[
-              "v => !!v || 'Required'",
-            ] ,
-        },
-        {
-            fieldType:'text',
-            fieldName:"IncomeAmount",
-            fieldLabel:"Income Amount",
-            rules:[
-              "v => !!v || 'Required'",
-            ] ,
-        },
+      {
+        fieldType:'text',
+        fieldName:"DateAdded",
+        fieldLabel:"Date Added",
+        disabled:true,
+      },
+      {
+        fieldType:'text',
+        fieldName:"IncomeSource",
+        fieldLabel:"Income Source",
+        rules:[
+          "v => !!v || 'Required'",
+        ] ,
+      },
+      {
+        fieldType:'text',
+        fieldName:"IncomePerMonth",
+        fieldLabel:"Income / Month",
+        rules:[
+          "v => !!v || 'Required'",
+        ] ,
+      },
+      {
+        fieldType:'text',
+        fieldName:"Notes",
+        fieldLabel:"Notes",
+      },
     ],
   }
