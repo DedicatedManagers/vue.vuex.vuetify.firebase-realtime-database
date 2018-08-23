@@ -417,9 +417,9 @@ export const store = new Vuex.Store({
         getPrimaryKinshipCaregivers(context){
             console.log('getPrimaryKinshipCaregivers');
             console.log(context.state.currentPrimaryKinshipCaregivers);
-            firebase.firestore().collection('PrimaryKinshipCaregiver').get()
-            .then(function(querySnapshot){
+            firebase.firestore().collection('PrimaryKinshipCaregiver').orderBy('LastName').limit(30).onSnapshot(function(querySnapshot){
                 console.log(querySnapshot);
+                console.log(querySnapshot.docChanges());
                 // if not connected, the promise still apparently resolves (hence this .then is called) but the query is empty 
                 // however it the database is empty, it also returns an empty querySnapshot.
                 // TODO:  verify the issue and figure out how to tell the difference
@@ -427,6 +427,7 @@ export const store = new Vuex.Store({
                 //if(!querySnapshot.empty){  
                     let PrimaryKinshipCaregiverOBJ = {};
                     querySnapshot.forEach(function(doc){
+                        //console.log(doc);
                         PrimaryKinshipCaregiverOBJ[doc.id] = doc.data();
                     });
                     context.commit('setLoadingIndicator', false);
@@ -436,10 +437,11 @@ export const store = new Vuex.Store({
                 //     // TODO: need better error handling
                 //     alert('Unable to retrive Root Entity List.  Possibly you are having internet connection problems.');
                 // }
-            })
-            .catch(function(error) {
-                console.error("Error retrieving collection: ", error);
             });
+            // .then()
+            // .catch(function(error) {
+            //     console.error("Error retrieving collection: ", error);
+            // });
         },
     }
 })
