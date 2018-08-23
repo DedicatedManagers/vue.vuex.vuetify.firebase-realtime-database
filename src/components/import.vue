@@ -9,6 +9,8 @@
             </v-radio-group>
             <v-btn @click="importFile">Import File</v-btn><br>
             <br>
+            <v-btn @click="fCommit">Commit To Firebase</v-btn><br>
+            <br>
             IMPORT NOTES:<br>
                 * Within the imported files: <br>
                 &nbsp; &nbsp; ^ File type is csv (comma separated variables)<br>
@@ -37,107 +39,108 @@
 import firebase from 'firebase/app';
 
 export default {
-  name: 'Dashboard',
-  data() {
-    return {
-        conversionArrays:[],
-        ImportEntityChoice:"",
+    name: 'Dashboard',
+    data() {
+        return {
+            conversionArrays:[],
+            databaseEntities:[],
+            ImportEntityChoice:"",
 
-        ImportEntity:{
-            '1. PrimaryKinshipCaregiver':{importCollectionName:"PrimaryKinshipCaregiver",importParentCollectionName:""},
-            '1.1 PrimaryKinshipCaregiverIncome':{importCollectionName:"PrimaryKinshipCaregiverIncome",importParentCollectionName:"PrimaryKinshipCaregiver"},
-            '1.2 PrimaryKinshipCaregiverOtherInhousehold':{importCollectionName:"OtherInHousehold",importParentCollectionName:"PrimaryKinshipCaregiver"},
-            '1.2.1 PrimaryKinshipCaregiverOtherInhouseholdIncome':{importCollectionName:"OtherInHouseholdIncome",importParentCollectionName:"OtherInHousehold"},
-            '1.3 PrimaryKinshipCaregiverContact':{importCollectionName:"PrimaryKinshipCaregiverContact",importParentCollectionName:"PrimaryKinshipCaregiver"},
-            '1.4 PrimaryKinshipCaregiverFamilyAdvocacyCasePlan':{importCollectionName:"FamilyAdvocacyCasePlan",importParentCollectionName:"PrimaryKinshipCaregiver"},
-            '1.4.1 PrimaryKinshipCaregiverFamilyAdvocacyCasePlanFamilyAdvocacyGuardianship':{importCollectionName:"FamilyAdvocacyGuardianship",importParentCollectionName:"FamilyAdvocacyCasePlan"},
-            '1.4.2 PrimaryKinshipCaregiverFamilyAdvocacyCasePlanFamilyAdvocacyTanfDetail':{importCollectionName:"FamilyAdvocacyTanfDetail",importParentCollectionName:"FamilyAdvocacyCasePlan"},
-            '1.5 PrimaryKinshipCaregiverFundsDispersed':{importCollectionName:"PrimaryKinshipCaregiverFundsDispersed",importParentCollectionName:"PrimaryKinshipCaregiver"},
-            '1.6 KinshipChild':{importCollectionName:"KinshipChild",importParentCollectionName:"PrimaryKinshipCaregiver"},
-            '1.6.1 KinshipChildIncome':{importCollectionName:"KinshipChildIncome",importParentCollectionName:"KinshipChild"},
-            '1.6.2 KinshipChildCustodyStatus':{importCollectionName:"KinshipChildCustodyStatus",importParentCollectionName:"KinshipChild"},
-        }
-    };
-  },
-  computed:{
-  },
-  methods:{
-    createConversionArray(dataArray){
-        let conversionArray = {};
-
-        // create array to convert old ids to firestore ids
-        for (let key  of Object.keys(dataArray)){
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-            // create the random Id's
-            conversionArray[dataArray[key].docId] = "";
-            for (let i2 = 0; i2 < 20; i2++) {
-                conversionArray[dataArray[key].docId] += chars.charAt(Math.floor(Math.random() * chars.length));
+            ImportEntity:{
+                '1. PrimaryKinshipCaregiver':{importCollectionName:"PrimaryKinshipCaregiver",importParentCollectionName:""},
+                '1.1 PrimaryKinshipCaregiverIncome':{importCollectionName:"PrimaryKinshipCaregiverIncome",importParentCollectionName:"PrimaryKinshipCaregiver"},
+                '1.2 PrimaryKinshipCaregiverOtherInhousehold':{importCollectionName:"OtherInHousehold",importParentCollectionName:"PrimaryKinshipCaregiver"},
+                '1.2.1 PrimaryKinshipCaregiverOtherInhouseholdIncome':{importCollectionName:"OtherInHouseholdIncome",importParentCollectionName:"OtherInHousehold"},
+                '1.3 PrimaryKinshipCaregiverContact':{importCollectionName:"PrimaryKinshipCaregiverContact",importParentCollectionName:"PrimaryKinshipCaregiver"},
+                '1.4 PrimaryKinshipCaregiverFamilyAdvocacyCasePlan':{importCollectionName:"FamilyAdvocacyCasePlan",importParentCollectionName:"PrimaryKinshipCaregiver"},
+                '1.4.1 PrimaryKinshipCaregiverFamilyAdvocacyCasePlanFamilyAdvocacyGuardianship':{importCollectionName:"FamilyAdvocacyGuardianship",importParentCollectionName:"FamilyAdvocacyCasePlan"},
+                '1.4.2 PrimaryKinshipCaregiverFamilyAdvocacyCasePlanFamilyAdvocacyTanfDetail':{importCollectionName:"FamilyAdvocacyTanfDetail",importParentCollectionName:"FamilyAdvocacyCasePlan"},
+                '1.5 PrimaryKinshipCaregiverFundsDispersed':{importCollectionName:"PrimaryKinshipCaregiverFundsDispersed",importParentCollectionName:"PrimaryKinshipCaregiver"},
+                '1.6 KinshipChild':{importCollectionName:"KinshipChild",importParentCollectionName:"PrimaryKinshipCaregiver"},
+                '1.6.1 KinshipChildIncome':{importCollectionName:"KinshipChildIncome",importParentCollectionName:"KinshipChild"},
+                '1.6.2 KinshipChildCustodyStatus':{importCollectionName:"KinshipChildCustodyStatus",importParentCollectionName:"KinshipChild"},
             }
-        }
-        return conversionArray;     
+        };
     },
-    importFile(){
-        function clickElem(elem) {
-            // Thx user1601638 on Stack Overflow (6/6/2018 - https://stackoverflow.com/questions/13405129/javascript-create-and-save-file )
-            var eventMouse = document.createEvent("MouseEvents")
-            eventMouse.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
-            elem.dispatchEvent(eventMouse)
-        }
-        function openFile(func) {
-            var readFile = function(e) {
-                var file = e.target.files[0];
-                if (!file) {
-                    return;
+    computed:{
+    },
+    methods:{
+        createConversionArray(dataArray){
+            let conversionArray = {};
+
+            // create array to convert old ids to firestore ids
+            for (let key  of Object.keys(dataArray)){
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+                // create the random Id's
+                conversionArray[dataArray[key].docId] = "";
+                for (let i2 = 0; i2 < 20; i2++) {
+                    conversionArray[dataArray[key].docId] += chars.charAt(Math.floor(Math.random() * chars.length));
                 }
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    var contents = e.target.result;
-                    fileInput.func(contents)
-                    document.body.removeChild(fileInput)
-                }
-                reader.readAsText(file)
             }
-            var fileInput = document.createElement("input")
-            fileInput.type='file'
-            fileInput.style.display='none'
-            fileInput.onchange=readFile
-            fileInput.func=func
-            document.body.appendChild(fileInput)
-            console.log(fileInput);
-            clickElem(fileInput)
-        }
-        openFile(this.parseFile);
-    },
-    parseFile(contents) {
-        console.log(contents);
+            return conversionArray;     
+        },
+        importFile(){
+            function clickElem(elem) {
+                // Thx user1601638 on Stack Overflow (6/6/2018 - https://stackoverflow.com/questions/13405129/javascript-create-and-save-file )
+                var eventMouse = document.createEvent("MouseEvents")
+                eventMouse.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+                elem.dispatchEvent(eventMouse)
+            }
+            function openFile(func) {
+                var readFile = function(e) {
+                    var file = e.target.files[0];
+                    if (!file) {
+                        return;
+                    }
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        var contents = e.target.result;
+                        fileInput.func(contents)
+                        document.body.removeChild(fileInput)
+                    }
+                    reader.readAsText(file)
+                }
+                var fileInput = document.createElement("input")
+                fileInput.type='file'
+                fileInput.style.display='none'
+                fileInput.onchange=readFile
+                fileInput.func=func
+                document.body.appendChild(fileInput)
+                console.log(fileInput);
+                clickElem(fileInput)
+            }
+            openFile(this.parseFile);
+        },
+        parseFile(contents) {
+            console.log(contents);
 
-        let currentImportCollectionName = this.ImportEntity[this.ImportEntityChoice]['importCollectionName'];
-        let currentImportParentCollectionName = this.ImportEntity[this.ImportEntityChoice]['importParentCollectionName'];
+            let currentImportCollectionName = this.ImportEntity[this.ImportEntityChoice]['importCollectionName'];
+            let currentImportParentCollectionName = this.ImportEntity[this.ImportEntityChoice]['importParentCollectionName'];
 
-        let parsedFileContents = Papa.parse(contents, {header:true, skipEmptyLines: true, dynamicTyping:true});
+            let parsedFileContents = Papa.parse(contents, {header:true, skipEmptyLines: true, dynamicTyping:true});
 
-        console.log(parsedFileContents);
-        
-        // create the entity conversion array if not already created
-        if (!this.conversionArrays[currentImportCollectionName]){
-            this.conversionArrays[currentImportCollectionName] = this.createConversionArray(parsedFileContents.data);
-        }
+            console.log(parsedFileContents);
+            
+            // create the entity conversion array if not already created
+            if (!this.conversionArrays[currentImportCollectionName]){
+                this.conversionArrays[currentImportCollectionName] = this.createConversionArray(parsedFileContents.data);
+            }
 
-        console.log(this.conversionArrays[currentImportCollectionName]);
+            console.log(this.conversionArrays[currentImportCollectionName]);
 
 
-        (async () => {
             // Loop over the parsed database entries and give them a new firestore style docId
             for(let i=0; i<parsedFileContents.data.length; i++){
 
-            // get the original database ID
-            let oldDbId = parsedFileContents.data[i].docId;
-            // get the data object of the original database entry
-            let oldDatabaseData = parsedFileContents.data[i];
+                // get the original database ID
+                let oldDbId = parsedFileContents.data[i].docId;
 
-            // refactor any date data types
-            const monthsConversionArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; // TODO - need to verify this is the month strings used
+                // get the data object of the original database entry
+                let oldDatabaseData = parsedFileContents.data[i];
+
+                // refactor any date data types
+                const monthsConversionArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; // TODO - need to verify this is the month strings used
                 for (let oldKey in oldDatabaseData){
 
                     // convert month from obvibase format (Jun 01, 2018) to Vuetify format (2018-06-01)
@@ -163,7 +166,7 @@ export default {
                 // get the converted ID
                 let newDocId = this.conversionArrays[currentImportCollectionName][oldDbId];
                 console.log(newDocId, currentImportCollectionName, oldDbId);
-        
+
 
                 // put the data in entities by firestore docId as key
                 let newEntity =  parsedFileContents.data[i];
@@ -171,14 +174,15 @@ export default {
                 // Also tag the entity with the original database id
                 newEntity.origDbId = oldDbId;
                 
-                // Delete the header docId
+                // Delete the header docId 
                 delete newEntity.docId;
 
+                let oldParentDbId = "";
 
                 // If this is a child of a parent entity
                 if(currentImportParentCollectionName){
                     // get the original parent id from the parsed file column
-                    let oldParentDbId = parsedFileContents.data[i].parentDocId;
+                    oldParentDbId = parsedFileContents.data[i].parentDocId;
 
                     // add the ParentType & ParentCollectionId
                     newEntity.ParentType = currentImportParentCollectionName;
@@ -187,45 +191,64 @@ export default {
                     // Also tag the entity with the original database id
                     newEntity.origParentDbId = oldParentDbId;
 
-                    // update the parent to know about the new child
-                    let NestedCollection = {};
-                    NestedCollection[currentImportCollectionName] = {};
-                    NestedCollection[currentImportCollectionName][newDocId] = 1;
-
-                    let NestedCollectionsUpdate = {};
-                    NestedCollectionsUpdate['NestedCollections.' + currentImportCollectionName + "." + newDocId] = 1;
-
-                    await firebase.firestore().collection(newEntity.ParentType).doc(newEntity.ParentCollectionId ).update(NestedCollectionsUpdate)
-                        .then(function() {    
-                            console.log('firestore add call complete. added child to parent with typeID: ' + newEntity.ParentType + newEntity.ParentCollectionId);
-                            console.log('NestedCollectionsUpdate');
-                            console.log(NestedCollectionsUpdate);
-                        })
-                        .catch(function(error) {
-                            console.error("Error writing document: ", error);
-                        });  
+                    // Delete the header parentDocId 
+                    delete newEntity.parentDocId;
 
                 }
 
-                // save the entity to the firestore 
+                console.log('saving entity' , currentImportCollectionName, newDocId);
+                // save the entity  
                 // - this must come after updating the parent above as the child link to the parent is set within
-                await firebase.firestore().collection(currentImportCollectionName).doc(newDocId).set(newEntity)
-                    .then(function() {    
-                        console.log('firestore add call complete. added entity with ID: ' + newDocId);
-                    })
-                    .catch(function(error) {
-                        console.error("Error writing document: ", error);
-                    });  
+                if(!this.databaseEntities[currentImportCollectionName]) 
+                this.databaseEntities[currentImportCollectionName] = {};
+                if(!this.databaseEntities[currentImportCollectionName][newDocId]) 
+                this.databaseEntities[currentImportCollectionName][newDocId] = newEntity;
+
+
+                // If this is a child of a parent entity
+                // - update the parent entity with the child info
+                if(currentImportParentCollectionName){
+                    console.log('updating parent entity', newEntity.ParentType, newEntity.ParentCollectionId)
+                    if(!this.databaseEntities[newEntity.ParentType][newEntity.ParentCollectionId].NestedCollections) 
+                        this.databaseEntities[newEntity.ParentType][newEntity.ParentCollectionId].NestedCollections = {};
+                    if(!this.databaseEntities[newEntity.ParentType][newEntity.ParentCollectionId].NestedCollections[currentImportCollectionName]) 
+                        this.databaseEntities[newEntity.ParentType][newEntity.ParentCollectionId].NestedCollections[currentImportCollectionName] = {};
+                    if(!this.databaseEntities[newEntity.ParentType][newEntity.ParentCollectionId].NestedCollections[currentImportCollectionName][newDocId]) 
+                        this.databaseEntities[newEntity.ParentType][newEntity.ParentCollectionId].NestedCollections[currentImportCollectionName][newDocId] = 1;
                 }
-        })(); // immediately invoked async arrow function
 
 
-       
-    }
-  },
-  created(){
-    //console.log(this.PrimaryKinshipCaregiver_ID_ConversionArray);
-  },
+
+            }
+
+
+            console.log('databaseEntities');
+            console.log(this.databaseEntities);
+
+
+        },
+        fCommit(){
+            (async () => {
+                for (let collectionName in this.databaseEntities){
+                    console.log('collectionName',collectionName);
+                    for (let docId in this.databaseEntities[collectionName]){
+                        console.log('docId', docId);
+                        await firebase.firestore().collection(collectionName).doc(docId).set(this.databaseEntities[collectionName][docId])
+                            .then(function() {    
+                                console.log('firestore add call complete. added entity' , collectionName ,  docId);
+                            })
+                            .catch(function(error) {
+                                console.error("Error writing document: ", error);
+                            });  
+                    }
+                }
+            })(); // immediately invoked async arrow function
+        }
+
+    },
+    created(){
+        //console.log(this.PrimaryKinshipCaregiver_ID_ConversionArray);
+    },
 };
 </script>
  
