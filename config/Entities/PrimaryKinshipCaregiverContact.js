@@ -1,5 +1,3 @@
-// "parentDocId","docId","DateAdded","ContactDate","ContactLocation","ContactType","ContactNotes","FosterKinshipEmployee","TimeSpentMinutes"
-
 export const PrimaryKinshipCaregiverContact = {
     title:'Contacts',
     toolbarTitle:"Contacts With Caregiver", 

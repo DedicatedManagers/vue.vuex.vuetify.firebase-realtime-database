@@ -47,17 +47,29 @@ export default {
             ImportEntityChoice:"",
 
             ImportEntity:{
+                // PrimaryKinshipCaregiver: "docId","NavigatorProgram","FamilyAdvocacy","DateAdded","FollowUpDate","SpanishFollowUpNeeded","CaseComplete","FirstName","LastName","Gender","Birthdate","PrimaryPhoneNumber","SecondaryPhoneNumber","EmailAddress","StreetAddress1","City","State","ZipCode","ClientTypeAtIntake","Diversion","PrimaryReasonForKinshipCare","SecondaryReasonForKinshipCare","ThirdReasonForKinshipCare","MaritalStatus","HousingType","TransportationType","HasMedicalConditions","MedicalConditions","Ethnicity","PrimaryLanguageSpoken","ReferredBy","ReferralNotes","AttendedDFSKinshipInfoSession","FederalPovertyLevel","Below200FPL","Below275","GrantFundsUsed","HUDSection8Median"
                 '1. PrimaryKinshipCaregiver':{importCollectionName:"PrimaryKinshipCaregiver",importParentCollectionName:""},
+                // PrimaryKinshipCaregiverIncome: "parentDocId","docId","DateAdded","IncomeSource","IncomePerMonth","Notes"
                 '1.1 PrimaryKinshipCaregiverIncome':{importCollectionName:"PrimaryKinshipCaregiverIncome",importParentCollectionName:"PrimaryKinshipCaregiver"},
+                // OtherInHousehold: "parentDocId","docId","DateAdded","FirstName","LastName","Birthdate","Age","Gender","RelationToCaregiver","Email","Notes"
                 '1.2 PrimaryKinshipCaregiverOtherInhousehold':{importCollectionName:"OtherInHousehold",importParentCollectionName:"PrimaryKinshipCaregiver"},
+                // OtherInHouseholdIncome: "parentDocId","docId","DateAdded","IncomeSource","IncomePerMonth","Notes"
                 '1.2.1 PrimaryKinshipCaregiverOtherInhouseholdIncome':{importCollectionName:"OtherInHouseholdIncome",importParentCollectionName:"OtherInHousehold"},
+                // PrimaryKinshipCaregiverContact: "parentDocId","docId","DateAdded","ContactDate","ContactLocation","ContactType","ContactNotes","FosterKinshipEmployee","TimeSpentMinutes"
                 '1.3 PrimaryKinshipCaregiverContact':{importCollectionName:"PrimaryKinshipCaregiverContact",importParentCollectionName:"PrimaryKinshipCaregiver"},
+                // FamilyAdvocacyCasePlan: "parentDocId","docId","CommunityConnectionNeeded","ListReferralsProvided","CommunityAchieved","PreTest","DateAdded","LegalNeeded","LegalGoal","LegalStatus","LegalAchieved","FinancialAssistanceNeeded","TANFStatus","KinshipLicensing","SNAPStatus","SSI","MedicaidStatus","FinancialAchieved","EmotionalSupportNeeded","EmotionalAchieved","PostTest"
                 '1.4 PrimaryKinshipCaregiverFamilyAdvocacyCasePlan':{importCollectionName:"FamilyAdvocacyCasePlan",importParentCollectionName:"PrimaryKinshipCaregiver"},
+                // "parentDocId","GuardianshipAdoptionType","docId","DateAdded","PaperworkProvided","PaperworkCompleted","PaperworkSubmitted","CourtDate"
                 '1.4.1 PrimaryKinshipCaregiverFamilyAdvocacyCasePlanFamilyAdvocacyGuardianship':{importCollectionName:"FamilyAdvocacyGuardianship",importParentCollectionName:"FamilyAdvocacyCasePlan"},
+                // FamilyAdvocacyTanfDetail: "parentDocId","docId","DateAdded","ApplicationCompleted","ApplicationSubmitted","ApplicationApprovalDenial","DenialReasons","ResubmitAppeal","AppealInfo","LocationOfDenial","WorkerName"
                 '1.4.2 PrimaryKinshipCaregiverFamilyAdvocacyCasePlanFamilyAdvocacyTanfDetail':{importCollectionName:"FamilyAdvocacyTanfDetail",importParentCollectionName:"FamilyAdvocacyCasePlan"},
+                // PrimaryKinshipCaregiverFundsDispersed: "parentDocId","docId","DateAdded","DateGiven","TypeOfAssistance","AssistanceCategory","Value","ResourceProvided","ReceiptReceived","Notes"
                 '1.5 PrimaryKinshipCaregiverFundsDispersed':{importCollectionName:"PrimaryKinshipCaregiverFundsDispersed",importParentCollectionName:"PrimaryKinshipCaregiver"},
+                // KinshipChild: "parentDocId","docId","DateAdded","FirstName","LastName","Birthdate","RelationOfCaregiver","FamilySideOfCaregiver","FatherOnBirthCertificate","BioFatherInvolved","BioMotherInvolved","CPSInvolved","Gender","AgeYears"
                 '1.6 KinshipChild':{importCollectionName:"KinshipChild",importParentCollectionName:"PrimaryKinshipCaregiver"},
+                // KinshipChildIncome: "parentDocId","docId","DateAdded","IncomeSource","IncomePerMonth","Notes"
                 '1.6.1 KinshipChildIncome':{importCollectionName:"KinshipChildIncome",importParentCollectionName:"KinshipChild"},
+                // KinshipChildCustodyStatus: "parentDocId","docId","DateAdded","CustodyStartDate","CustodyStatus","Notes"
                 '1.6.2 KinshipChildCustodyStatus':{importCollectionName:"KinshipChildCustodyStatus",importParentCollectionName:"KinshipChild"},
             }
         };

@@ -6,10 +6,6 @@ import {PrimaryKinshipCaregiverContact} from '@/../config/Entities/PrimaryKinshi
 import {PrimaryKinshipCaregiverFundsDispersed} from '@/../config/Entities/PrimaryKinshipCaregiverFundsDispersed.js';
 
 
-
-//Import Columns:
-// "docId","NavigatorProgram","FamilyAdvocacy","DateAdded","FollowUpDate","SpanishFollowUpNeeded","CaseComplete","FirstName","LastName","Gender","Birthdate","PrimaryPhoneNumber","SecondaryPhoneNumber","EmailAddress","StreetAddress1","City","State","Zip Code","ClientTypeAtIntake","Diversion","PrimaryReasonForKinshipCare","SecondaryReasonForKinshipCare","ThirdReasonForKinshipCare","MaritalStatus","HousingType","TransportationType","HasMedicalConditions","MedicalConditions","Ethnicity","PrimaryLanguageSpoken","ReferredBy","ReferralNotes","AttendedDFSKinshipInfoSession","FederalPovertyLevel","Below200FPL","Below275","GrantFundsUsed","HUDSection8Median"
-
 export const RootEntity = {
   collectionId:"PrimaryKinshipCaregiver",
   title:'Primary Kinship Caregiver',

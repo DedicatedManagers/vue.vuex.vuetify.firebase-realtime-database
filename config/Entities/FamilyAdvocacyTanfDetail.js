@@ -1,5 +1,3 @@
-// "parentDocId","docId","DateAdded","ApplicationCompleted","ApplicationSubmitted","ApplicationApprovalDenial","DenialReasons","ResubmitAppeal","AppealInfo","LocationOfDenial","WorkerName"
-
 export const FamilyAdvocacyTanfDetail = {
     title:'TANF Details',
     toolbarTitle:"TANF Details", 

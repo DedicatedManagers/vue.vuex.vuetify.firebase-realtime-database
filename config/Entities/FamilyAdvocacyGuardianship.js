@@ -1,5 +1,3 @@
-// "parentDocId","GuardianshipAdoptionType","docId","DateAdded","PaperworkProvided","PaperworkCompleted","PaperworkSubmitted","CourtDate"
-
 export const FamilyAdvocacyGuardianship = {
     title:'Guardianship',
     toolbarTitle:"Guardianship", 

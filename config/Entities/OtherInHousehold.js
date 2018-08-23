@@ -1,7 +1,5 @@
 import {OtherInHouseholdIncome} from '@/../config/Entities/OtherInHouseholdIncome.js';
 
-// "parentDocId","docId","DateAdded","FirstName","LastName","Birthdate","Age","Gender","RelationToCaregiver","Email","Notes"
-
 export const OtherInHousehold = {
     title:'Other In Household',
     toolbarTitle:"Others In Household", 

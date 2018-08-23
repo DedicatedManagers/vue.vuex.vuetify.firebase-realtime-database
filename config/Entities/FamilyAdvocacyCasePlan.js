@@ -1,10 +1,6 @@
 import {FamilyAdvocacyGuardianship} from '@/../config/Entities/FamilyAdvocacyGuardianship.js';
 import {FamilyAdvocacyTanfDetail} from '@/../config/Entities/FamilyAdvocacyTanfDetail.js';
 
-
-// "parentDocId","docId","CommunityConnectionNeeded","ListReferralsProvided","CommunityAchieved","PreTest","DateAdded","LegalNeeded","LegalGoal","LegalStatus","LegalAchieved","FinancialAssistanceNeeded","TANFStatus","KinshipLicensing","SNAPStatus","SSI","MedicaidStatus","FinancialAchieved","EmotionalSupportNeeded","EmotionalAchieved","PostTest"
-
-
 export const FamilyAdvocacyCasePlan = {
     title:'Case Plan',
     toolbarTitle:"Case Plan", 

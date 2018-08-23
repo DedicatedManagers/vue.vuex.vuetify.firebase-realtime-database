@@ -1,5 +1,3 @@
-// "parentDocId","docId","DateAdded","DateGiven","TypeOfAssistance","AssistanceCategory","Value","ResourceProvided","ReceiptReceived","Notes"
-
 export const PrimaryKinshipCaregiverFundsDispersed = {
     title:'FK Funds & Resources Dispersed',
     toolbarTitle:"FK Funds & Resources Dispersed", 

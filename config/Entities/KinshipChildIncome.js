@@ -1,5 +1,3 @@
-// "parentDocId","docId","DateAdded","IncomeSource","IncomePerMonth","Notes"
-
 export const KinshipChildIncome = {
     title:'Income',
     toolbarTitle:"Income", 

@@ -1,6 +1,3 @@
-//"parentDocId","docId","DateAdded","CustodyStartDate","CustodyStatus","Notes"
-
-
 export const KinshipChildCustodyStatus = {
     title:'Custody Status',
     toolbarTitle:"Custody Status", 
