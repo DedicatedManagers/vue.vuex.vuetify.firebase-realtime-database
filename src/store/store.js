@@ -15,7 +15,7 @@ export const store = new Vuex.Store({
         userIsAuthenticated:false,
         entityListeners:null,
         currentEntity:null,
-        currentPrimaryKinshipCaregivers:false,
+        currentPrimaryKinshipCaregivers:null,
         entityDebouncers:null,
         localUpdateId:null,
     },
@@ -414,10 +414,21 @@ export const store = new Vuex.Store({
                 }); 
         },
 
-        getPrimaryKinshipCaregivers(context){
-            console.log('getPrimaryKinshipCaregivers');
+        getRootEntityRecent(context, optionsObject){
+            console.log('getRootEntityRecent');
             console.log(context.state.currentPrimaryKinshipCaregivers);
-            firebase.firestore().collection('PrimaryKinshipCaregiver').orderBy('LastName').limit(30).onSnapshot(function(querySnapshot){
+            let baseQuery = firebase.firestore().collection('PrimaryKinshipCaregiver').orderBy('CreatedAt', 'desc');
+            if(optionsObject.uId){
+                baseQuery = baseQuery.where('CreatedAtUid', "==", optionsObject.uId);
+            }
+
+            let limit=10;
+            if(typeof optionsObject.limit == 'number' && optionsObject.limit > 0){
+                limit = optionsObject.limit;
+            }
+            baseQuery = baseQuery.limit(limit);
+
+            baseQuery.onSnapshot(function(querySnapshot){
                 console.log(querySnapshot);
                 console.log(querySnapshot.docChanges());
                 // if not connected, the promise still apparently resolves (hence this .then is called) but the query is empty 
@@ -425,13 +436,15 @@ export const store = new Vuex.Store({
                 // TODO:  verify the issue and figure out how to tell the difference
                 // TODO - verify .empty is a documented property - found it when viewing the querySnapshot object via console.log; documentations shows to use isEmpty() function, but doing so returns an error that its an invalid function
                 //if(!querySnapshot.empty){  
-                    let PrimaryKinshipCaregiverOBJ = {};
+                    let rootObj = {};
                     querySnapshot.forEach(function(doc){
-                        //console.log(doc);
-                        PrimaryKinshipCaregiverOBJ[doc.id] = doc.data();
+                        console.log(doc.data());
+                        rootObj[doc.id] = doc.data();
                     });
                     context.commit('setLoadingIndicator', false);
-                    context.state.currentPrimaryKinshipCaregivers=PrimaryKinshipCaregiverOBJ;    
+                    if(!context.state.currentPrimaryKinshipCaregivers) context.state.currentPrimaryKinshipCaregivers = {};
+                    // TODO: below needs to be a mutation
+                    context.state.currentPrimaryKinshipCaregivers[optionsObject.queryId]=rootObj;    // TODO - need to verify queryId
                 // }
                 // else{
                 //     // TODO: need better error handling

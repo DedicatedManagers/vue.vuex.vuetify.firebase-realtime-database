@@ -47,7 +47,7 @@ export default {
   },
   computed:{
     clients(){
-      return this.$store.state.currentPrimaryKinshipCaregivers;
+      return this.$store.state.currentPrimaryKinshipCaregivers['userRecent'];
     }
   },
   methods:{
@@ -62,7 +62,7 @@ export default {
   created(){
     console.log('created function in dashboard.vue');
     this.$store.commit('setLoadingIndicator', true);
-    this.$store.dispatch('getPrimaryKinshipCaregivers');
+    this.$store.dispatch('getRootEntityRecent',{uId:this.$store.state.user.uid, limit:20, queryId:'userRecent'});
   },
 };
 </script>
