@@ -28,6 +28,7 @@ export default {
     return {
       RootEntity:RootEntity,
       EntitySearchMyRecent:{
+        collectionId:RootEntity.collectionId,
         where:{
           fieldName:'CreatedAtUid',
           testOperator:'==',
@@ -37,7 +38,7 @@ export default {
           fieldPath:'CreatedAt',
           directionStr:'desc',
         },
-        limit:1, 
+        limit:2, 
         queryId:'myRecent',
         routeBase:'/db/' + RootEntity.collectionId + '/',
         title:"My Recent Caregivers"

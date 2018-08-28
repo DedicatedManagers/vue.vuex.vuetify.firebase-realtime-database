@@ -4,7 +4,6 @@ import firebase from 'firebase/app';
 import router from '@/router';
 import merge from 'deepmerge';
 import debounce from 'debounce';
-import {RootEntity} from '@/../config/Entities/RootEntity.js';
 
 Vue.use(Vuex);
 
@@ -17,6 +16,7 @@ export const store = new Vuex.Store({
         entityListeners:null,
         currentEntity:null,
         currentRootEntities:null,
+        searchListeners:null,
         entityDebouncers:null,
         localUpdateId:null,
     },
@@ -41,7 +41,7 @@ export const store = new Vuex.Store({
         },
         
 
-        // queryId: optionsObject.queryId,
+        // queryId: searchParams.queryId,
         // data: queryResultDocsFound,
         // pageBackwardDoc:querySnapshot.docs[0],
         // pageForwardDoc:querySnapshot.docs[querySnapshot.docs.length-1],
@@ -49,11 +49,6 @@ export const store = new Vuex.Store({
             if(!state.currentRootEntities) state.currentRootEntities = {};
             if(!state.currentRootEntities.hasOwnProperty([searchObj.queryId])) Vue.set(state.currentRootEntities, searchObj.queryId, {});
             
-            if(typeof state.currentRootEntities[searchObj.queryId].queryListener == 'function'){
-                state.currentRootEntities[searchObj.queryId].queryListener();
-            }
-            state.currentRootEntities[searchObj.queryId].queryListener = searchObj.queryListener;
-
             Vue.set(state.currentRootEntities[searchObj.queryId], 'results', searchObj.results);            
             Vue.set(state.currentRootEntities[searchObj.queryId], 'pageBackwardDoc', searchObj.pageBackwardDoc);
             Vue.set(state.currentRootEntities[searchObj.queryId], 'pageForwardDoc', searchObj.pageForwardDoc);
@@ -437,61 +432,69 @@ export const store = new Vuex.Store({
                 }); 
         },
 
-        getRootEntityRecent(context, optionsObject){
-
 // TODO
 // TODO
 // TODO
 // TODO
 // TODO: Need to protect the end cases where the search returns and empty array
 
+        getRootEntityRecent(context, searchParams){
             console.log('getRootEntityRecent');
             console.log(context.state.currentRootEntities);
+
+            // initialize listener holder if not already initialized
+            if(!context.state.searchListeners) context.state.searchListeners = {};
+
+            // If we've already got a listener for this queryId, execute it to remove it
+            if(typeof context.state.searchListeners[searchParams.queryId] == 'function'){
+                context.state.searchListeners[searchParams.queryId]();
+            }
+
             // Start the query
-            let baseQuery = firebase.firestore().collection(RootEntity.collectionId);
+            let baseQuery = firebase.firestore().collection(searchParams.collectionId);
 
             // Set "orderBy, if defined
-            if(optionsObject.orderBy){
+            if(searchParams.orderBy){
                 // if the call is to paginate backward
-                if(optionsObject.paginateDirection == 'backward'){
+                if(searchParams.paginateDirection == 'backward'){
                     // reverse the query from the configured orderBy (trick to query backward)
-                    baseQuery = baseQuery.orderBy(optionsObject.orderBy.fieldPath, optionsObject.orderBy.directionStr=='desc'?'asc':'desc');   // reverse the ordering                 
+                    baseQuery = baseQuery.orderBy(searchParams.orderBy.fieldPath, searchParams.orderBy.directionStr=='desc'?'asc':'desc');   // reverse the ordering                 
                 }
                 else{
                     // the call is to paginate forward or its an initial call (no tricks - just set the orderBy according to the configuration)
-                    baseQuery = baseQuery.orderBy(optionsObject.orderBy.fieldPath, optionsObject.orderBy.directionStr=='desc'?'desc':'asc');
+                    baseQuery = baseQuery.orderBy(searchParams.orderBy.fieldPath, searchParams.orderBy.directionStr=='desc'?'desc':'asc');
                 }
             }
             // Set "where", if defined
-            if(optionsObject.where){
-                baseQuery = baseQuery.where(optionsObject.where.fieldName, optionsObject.where.testOperator, optionsObject.where.testVal);
+            if(searchParams.where){
+                baseQuery = baseQuery.where(searchParams.where.fieldName, searchParams.where.testOperator, searchParams.where.testVal);
             }
 
             // If the call is to paginate in the forward direction 
-            if(optionsObject.paginateDirection == 'forward'){
+            if(searchParams.paginateDirection == 'forward'){
                 // Get the query cursor that was saved as the marker for the forward search starting point
                 //  then set the query to start after that cursor point
-                let lastRootEntity = context.state.currentRootEntities[optionsObject.queryId].pageForwardDoc;
+                let lastRootEntity = context.state.currentRootEntities[searchParams.queryId].pageForwardDoc;
                 baseQuery = baseQuery.startAfter(lastRootEntity);
             }
 
             // If the call is to paginate in the backward direction
-            if(optionsObject.paginateDirection == 'backward'){
+            if(searchParams.paginateDirection == 'backward'){
                 // Get the query cursor that was saved as the marker for the backward search starting point 
                 //  then set the query to start after that cursor point (the query has been reversed in the where clause)
-                let lastRootEntity = context.state.currentRootEntities[optionsObject.queryId].pageBackwardDoc;
+                let lastRootEntity = context.state.currentRootEntities[searchParams.queryId].pageBackwardDoc;
                 baseQuery = baseQuery.startAfter(lastRootEntity);
             }
 
             // Set "limit", if defined, otherwise default to 10
             let limit=10;
-            if(typeof optionsObject.limit == 'number' && optionsObject.limit > 0){
-                limit = optionsObject.limit;
+            if(typeof searchParams.limit == 'number' && searchParams.limit > 0){
+                limit = searchParams.limit;
             }
             baseQuery = baseQuery.limit(limit);
-
-            // Run the query and save to a listener
-            let queryListener = baseQuery.onSnapshot(function(querySnapshot){
+            
+            // Run the query and save to a listener and store the listener removal/cancel function 
+            context.state.searchListeners[searchParams.queryId] = baseQuery.onSnapshot(function(querySnapshot){
                 console.log(querySnapshot);
                 console.log(querySnapshot.docChanges());
                 console.log(querySnapshot.query);
@@ -517,18 +520,17 @@ export const store = new Vuex.Store({
                     let pageForwardDoc = querySnapshot.docs[querySnapshot.docs.length-1];
 
                     // Things are backwards for the reverse direction - modify the results to coincide with a forward search from a page-backwards point of view
-                    if(optionsObject.paginateDirection == 'backward'){
+                    if(searchParams.paginateDirection == 'backward'){
                         queryResultDocsFound = queryResultDocsFound.reverse();  // reverse the order of the returned documents
                         pageForwardDoc = querySnapshot.docs[0]; // the first doc is acually the last doc in the set of a foward search
                         pageBackwardDoc = querySnapshot.docs[querySnapshot.docs.length-1]; // the last doc is actually the first doc in the set of a forward search
                     }
 
                     let searchObj= {
-                        queryId: optionsObject.queryId,
+                        queryId: searchParams.queryId,
                         results: queryResultDocsFound,
                         pageBackwardDoc:pageBackwardDoc,
                         pageForwardDoc:pageForwardDoc,
-                        queryListener:queryListener,
                     }
                     context.commit('setCurrentRootEntitiesBySearchObj', searchObj)
                     context.commit('setLoadingIndicator', false);
