@@ -1,68 +1,69 @@
 <template>
   <v-slide-y-transition mode="out-in">
-    <v-container fluid v-if="!this.$store.state.loadingIndicator">
+    <v-container fluid>
         <v-layout row wrap>
-          <v-flex xs12 md4>
-            <v-card>
-              <v-toolbar color="blue" dark>
-                <v-toolbar-title>Primary Kinship Caregivers</v-toolbar-title>
-              </v-toolbar>
-              <v-card-title>
-                <v-layout row wrap>
-                  <v-flex xs12>
-                    <v-list  v-for="(client, id) in clients" :key="id">
-                      <v-list-tile  :to="'/db/' + RootEntity.collectionId + '/' + id">
-                          <v-list-tile-action>
-                          <v-icon>{{RootEntity.icon}}</v-icon>
-                        </v-list-tile-action>
 
-                        <v-list-tile-content>
-                          <v-list-tile-title>{{client.LastName}}, {{client.FirstName}} {{client.MiddleName}}</v-list-tile-title>
-                        </v-list-tile-content>
-                      </v-list-tile>
-                    </v-list>
-                    <div class="text-xs-right">
-                      <v-btn color="success" @click="addNewClient">{{RootEntity.addButtonText}}<v-icon right>{{RootEntity.addIcon}}</v-icon></v-btn>
-                    </div>
-                  </v-flex>
-                </v-layout>
-              </v-card-title>
-            </v-card>              
-          </v-flex>
+          <entity-search :searchParams="EntitySearchMyRecent"></entity-search>
+
         </v-layout>
+
+        <div>
+          <v-btn color="success" @click="addNewClient">{{RootEntity.addButtonText}}<v-icon right>{{RootEntity.addIcon}}</v-icon></v-btn>
+        </div>
     </v-container>
   </v-slide-y-transition>
 </template>
 
 
 <script>
+import EntitySearch from '@/components/shared/EntitySearch.vue';
 import {RootEntity} from '@/../config/Entities/RootEntity.js';
 
 export default {
   name: 'Dashboard',
+  components:{
+    'entity-search':EntitySearch,
+  },
   data() {
     return {
       RootEntity:RootEntity,
+      EntitySearchMyRecent:{
+        where:{
+          fieldName:'CreatedAtUid',
+          testOperator:'==',
+          testVal:this.$store.state.user.uid,
+        },
+        orderBy:{
+          fieldPath:'CreatedAt',
+          directionStr:'asc',
+        },
+        limit:2, 
+        queryId:'myRecent',
+        routeBase:'/db/' + RootEntity.collectionId + '/',
+        title:"My Recent Caregivers"
+      }
     };
   },
   computed:{
-    clients(){
-      return this.$store.state.currentPrimaryKinshipCaregivers['userRecent'];
-    }
   },
   methods:{
     addNewClient(){
       this.$store.commit('setLoadingIndicator', true);
       this.$store.dispatch('fcreateEntity', {docId:'add', collectionId:RootEntity.collectionId}).then(createdDocId=>{
-          console.log( 'addEntity received: ' + createdDocId  );
-          this.$router.push('/db/' + RootEntity.collectionId + '/' + createdDocId);
+        console.log( 'addEntity received: ' + createdDocId  );
+        this.$router.push('/db/' + RootEntity.collectionId + '/' + createdDocId);
       });
     }
   },
+  beforeDestroy(){
+    console.log('beforeDestroy function in dashboard.vue');
+  },
+  destroyed(){
+    console.log('destroyed function in dashboard.vue');
+  },
   created(){
+    //this.$store.commit('setLoadingIndicator', true);
     console.log('created function in dashboard.vue');
-    this.$store.commit('setLoadingIndicator', true);
-    this.$store.dispatch('getRootEntityRecent',{uId:this.$store.state.user.uid, limit:20, queryId:'userRecent'});
   },
 };
 </script>

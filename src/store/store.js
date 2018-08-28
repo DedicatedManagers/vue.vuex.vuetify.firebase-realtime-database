@@ -4,6 +4,7 @@ import firebase from 'firebase/app';
 import router from '@/router';
 import merge from 'deepmerge';
 import debounce from 'debounce';
+import {RootEntity} from '@/../config/Entities/RootEntity.js';
 
 Vue.use(Vuex);
 
@@ -15,7 +16,7 @@ export const store = new Vuex.Store({
         userIsAuthenticated:false,
         entityListeners:null,
         currentEntity:null,
-        currentPrimaryKinshipCaregivers:null,
+        currentRootEntities:null,
         entityDebouncers:null,
         localUpdateId:null,
     },
@@ -33,11 +34,28 @@ export const store = new Vuex.Store({
         setUser(state, replace){
             state.user = replace;
         },
+
         setLoadingIndicator(state,replace){
             console.log('setLoadingIndicator: ' + replace);
             state.loadingIndicator = replace;
         },
         
+
+        // queryId: optionsObject.queryId,
+        // data: dataObj,
+        // pageBackwardDoc:querySnapshot.docs[0],
+        // pageForwardDoc:querySnapshot.docs[querySnapshot.docs.length-1],
+        setCurrentRootEntitiesBySearchObj(state, searchObj){
+            if(!state.currentRootEntities) state.currentRootEntities = {};
+            if(!state.currentRootEntities.hasOwnProperty([searchObj.queryId])) Vue.set(state.currentRootEntities, searchObj.queryId, {});
+            
+            Vue.set(state.currentRootEntities[searchObj.queryId], 'data', searchObj.data);            
+            Vue.set(state.currentRootEntities[searchObj.queryId], 'pageBackwardDoc', searchObj.pageBackwardDoc);
+            Vue.set(state.currentRootEntities[searchObj.queryId], 'pageForwardDoc', searchObj.pageForwardDoc);
+
+
+        },
+
         // Delete Entity from currentEntity
         // Receives collectionContainer: {docId:'', collectionId:''}
         deleteEntityFromCurrentEntity(state, collectionContainer){
@@ -416,35 +434,55 @@ export const store = new Vuex.Store({
 
         getRootEntityRecent(context, optionsObject){
             console.log('getRootEntityRecent');
-            console.log(context.state.currentPrimaryKinshipCaregivers);
-            let baseQuery = firebase.firestore().collection('PrimaryKinshipCaregiver').orderBy('CreatedAt', 'desc');
-            if(optionsObject.uId){
-                baseQuery = baseQuery.where('CreatedAtUid', "==", optionsObject.uId);
+            console.log(context.state.currentRootEntities);
+            let baseQuery = firebase.firestore().collection(RootEntity.collectionId);
+            if(optionsObject.orderBy){
+                console.log(optionsObject.orderBy.directionStr);
+                baseQuery = baseQuery.orderBy(optionsObject.orderBy.fieldPath, optionsObject.orderBy.directionStr=='desc'?'desc':'asc');
+            }
+            if(optionsObject.where){
+                baseQuery = baseQuery.where(optionsObject.where.fieldName, optionsObject.where.testOperator, optionsObject.where.testVal);
             }
 
             let limit=10;
             if(typeof optionsObject.limit == 'number' && optionsObject.limit > 0){
                 limit = optionsObject.limit;
             }
+
+            if(optionsObject.paginateDirection == 'forward'){
+                console.log(context.state.currentRootEntities);
+                let lastRootEntity = context.state.currentRootEntities[optionsObject.queryId].pageForwardDoc;
+                console.log('next forward.  last entity', lastRootEntity);
+                baseQuery = baseQuery.startAfter(lastRootEntity);
+            }
+
             baseQuery = baseQuery.limit(limit);
 
             baseQuery.onSnapshot(function(querySnapshot){
                 console.log(querySnapshot);
                 console.log(querySnapshot.docChanges());
+                console.log(querySnapshot.query);
                 // if not connected, the promise still apparently resolves (hence this .then is called) but the query is empty 
                 // however it the database is empty, it also returns an empty querySnapshot.
                 // TODO:  verify the issue and figure out how to tell the difference
                 // TODO - verify .empty is a documented property - found it when viewing the querySnapshot object via console.log; documentations shows to use isEmpty() function, but doing so returns an error that its an invalid function
                 //if(!querySnapshot.empty){  
-                    let rootObj = {};
-                    querySnapshot.forEach(function(doc){
+                    let dataObj = [];
+                    querySnapshot.forEach(function(doc){ // doc = QueryDocumentSnapshot
                         console.log(doc.data());
-                        rootObj[doc.id] = doc.data();
+                        let data = doc.data();
+                        data.docId = doc.id;
+                        dataObj.push(doc.data());
                     });
+
+                    let searchObj= {
+                        queryId: optionsObject.queryId,
+                        data: dataObj,
+                        pageBackwardDoc:querySnapshot.docs[0],
+                        pageForwardDoc:querySnapshot.docs[querySnapshot.docs.length-1],
+                    }
+                    context.commit('setCurrentRootEntitiesBySearchObj', searchObj)
                     context.commit('setLoadingIndicator', false);
-                    if(!context.state.currentPrimaryKinshipCaregivers) context.state.currentPrimaryKinshipCaregivers = {};
-                    // TODO: below needs to be a mutation
-                    context.state.currentPrimaryKinshipCaregivers[optionsObject.queryId]=rootObj;    // TODO - need to verify queryId
                 // }
                 // else{
                 //     // TODO: need better error handling
