@@ -37,7 +37,7 @@ export default {
           fieldPath:'CreatedAt',
           directionStr:'asc',
         },
-        limit:2, 
+        limit:1, 
         queryId:'myRecent',
         routeBase:'/db/' + RootEntity.collectionId + '/',
         title:"My Recent Caregivers"

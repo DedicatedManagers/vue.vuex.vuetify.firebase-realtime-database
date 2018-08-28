@@ -49,6 +49,11 @@ export const store = new Vuex.Store({
             if(!state.currentRootEntities) state.currentRootEntities = {};
             if(!state.currentRootEntities.hasOwnProperty([searchObj.queryId])) Vue.set(state.currentRootEntities, searchObj.queryId, {});
             
+            if(typeof state.currentRootEntities[searchObj.queryId].queryListener == 'function'){
+                state.currentRootEntities[searchObj.queryId].queryListener();
+            }
+            state.currentRootEntities[searchObj.queryId].queryListener = searchObj.queryListener;
+
             Vue.set(state.currentRootEntities[searchObj.queryId], 'data', searchObj.data);            
             Vue.set(state.currentRootEntities[searchObj.queryId], 'pageBackwardDoc', searchObj.pageBackwardDoc);
             Vue.set(state.currentRootEntities[searchObj.queryId], 'pageForwardDoc', searchObj.pageForwardDoc);
@@ -438,7 +443,12 @@ export const store = new Vuex.Store({
             let baseQuery = firebase.firestore().collection(RootEntity.collectionId);
             if(optionsObject.orderBy){
                 console.log(optionsObject.orderBy.directionStr);
-                baseQuery = baseQuery.orderBy(optionsObject.orderBy.fieldPath, optionsObject.orderBy.directionStr=='desc'?'desc':'asc');
+                if(optionsObject.paginateDirection == 'backward'){
+                    baseQuery = baseQuery.orderBy(optionsObject.orderBy.fieldPath, optionsObject.orderBy.directionStr=='desc'?'asc':'desc');   // reverse the ordering                 
+                }
+                else{
+                    baseQuery = baseQuery.orderBy(optionsObject.orderBy.fieldPath, optionsObject.orderBy.directionStr=='desc'?'desc':'asc');
+                }
             }
             if(optionsObject.where){
                 baseQuery = baseQuery.where(optionsObject.where.fieldName, optionsObject.where.testOperator, optionsObject.where.testVal);
@@ -455,10 +465,16 @@ export const store = new Vuex.Store({
                 console.log('next forward.  last entity', lastRootEntity);
                 baseQuery = baseQuery.startAfter(lastRootEntity);
             }
+            if(optionsObject.paginateDirection == 'backward'){
+                console.log(context.state.currentRootEntities);
+                let lastRootEntity = context.state.currentRootEntities[optionsObject.queryId].pageBackwardDoc;
+                console.log('next backward.  last entity', lastRootEntity);
+                baseQuery = baseQuery.startAfter(lastRootEntity);
+            }
 
             baseQuery = baseQuery.limit(limit);
 
-            baseQuery.onSnapshot(function(querySnapshot){
+            let queryListener = baseQuery.onSnapshot(function(querySnapshot){
                 console.log(querySnapshot);
                 console.log(querySnapshot.docChanges());
                 console.log(querySnapshot.query);
@@ -475,11 +491,22 @@ export const store = new Vuex.Store({
                         dataObj.push(doc.data());
                     });
 
+                    let pageBackwardDoc = querySnapshot.docs[0];
+                    let pageForwardDoc = querySnapshot.docs[querySnapshot.docs.length-1];
+
+                    // Things are backwards for the reverse direction
+                    if(optionsObject.paginateDirection == 'backward'){
+                        dataObj = dataObj.reverse();
+                        pageForwardDoc = querySnapshot.docs[0];
+                        pageBackwardDoc = querySnapshot.docs[querySnapshot.docs.length-1];
+                    }
+
                     let searchObj= {
                         queryId: optionsObject.queryId,
                         data: dataObj,
-                        pageBackwardDoc:querySnapshot.docs[0],
-                        pageForwardDoc:querySnapshot.docs[querySnapshot.docs.length-1],
+                        pageBackwardDoc:pageBackwardDoc,
+                        pageForwardDoc:pageForwardDoc,
+                        queryListener:queryListener,
                     }
                     context.commit('setCurrentRootEntitiesBySearchObj', searchObj)
                     context.commit('setLoadingIndicator', false);
