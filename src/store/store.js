@@ -42,7 +42,7 @@ export const store = new Vuex.Store({
         
 
         // queryId: optionsObject.queryId,
-        // data: dataObj,
+        // data: queryResultDocsFound,
         // pageBackwardDoc:querySnapshot.docs[0],
         // pageForwardDoc:querySnapshot.docs[querySnapshot.docs.length-1],
         setCurrentRootEntitiesBySearchObj(state, searchObj){
@@ -54,7 +54,7 @@ export const store = new Vuex.Store({
             }
             state.currentRootEntities[searchObj.queryId].queryListener = searchObj.queryListener;
 
-            Vue.set(state.currentRootEntities[searchObj.queryId], 'data', searchObj.data);            
+            Vue.set(state.currentRootEntities[searchObj.queryId], 'results', searchObj.results);            
             Vue.set(state.currentRootEntities[searchObj.queryId], 'pageBackwardDoc', searchObj.pageBackwardDoc);
             Vue.set(state.currentRootEntities[searchObj.queryId], 'pageForwardDoc', searchObj.pageForwardDoc);
 
@@ -438,42 +438,59 @@ export const store = new Vuex.Store({
         },
 
         getRootEntityRecent(context, optionsObject){
+
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO: Need to protect the end cases where the search returns and empty array
+
             console.log('getRootEntityRecent');
             console.log(context.state.currentRootEntities);
+            // Start the query
             let baseQuery = firebase.firestore().collection(RootEntity.collectionId);
+
+            // Set "orderBy, if defined
             if(optionsObject.orderBy){
-                console.log(optionsObject.orderBy.directionStr);
+                // if the call is to paginate backward
                 if(optionsObject.paginateDirection == 'backward'){
+                    // reverse the query from the configured orderBy (trick to query backward)
                     baseQuery = baseQuery.orderBy(optionsObject.orderBy.fieldPath, optionsObject.orderBy.directionStr=='desc'?'asc':'desc');   // reverse the ordering                 
                 }
                 else{
+                    // the call is to paginate forward or its an initial call (no tricks - just set the orderBy according to the configuration)
                     baseQuery = baseQuery.orderBy(optionsObject.orderBy.fieldPath, optionsObject.orderBy.directionStr=='desc'?'desc':'asc');
                 }
             }
+            // Set "where", if defined
             if(optionsObject.where){
                 baseQuery = baseQuery.where(optionsObject.where.fieldName, optionsObject.where.testOperator, optionsObject.where.testVal);
             }
 
+            // If the call is to paginate in the forward direction 
+            if(optionsObject.paginateDirection == 'forward'){
+                // Get the query cursor that was saved as the marker for the forward search starting point
+                //  then set the query to start after that cursor point
+                let lastRootEntity = context.state.currentRootEntities[optionsObject.queryId].pageForwardDoc;
+                baseQuery = baseQuery.startAfter(lastRootEntity);
+            }
+
+            // If the call is to paginate in the backward direction
+            if(optionsObject.paginateDirection == 'backward'){
+                // Get the query cursor that was saved as the marker for the backward search starting point 
+                //  then set the query to start after that cursor point (the query has been reversed in the where clause)
+                let lastRootEntity = context.state.currentRootEntities[optionsObject.queryId].pageBackwardDoc;
+                baseQuery = baseQuery.startAfter(lastRootEntity);
+            }
+
+            // Set "limit", if defined, otherwise default to 10
             let limit=10;
             if(typeof optionsObject.limit == 'number' && optionsObject.limit > 0){
                 limit = optionsObject.limit;
             }
-
-            if(optionsObject.paginateDirection == 'forward'){
-                console.log(context.state.currentRootEntities);
-                let lastRootEntity = context.state.currentRootEntities[optionsObject.queryId].pageForwardDoc;
-                console.log('next forward.  last entity', lastRootEntity);
-                baseQuery = baseQuery.startAfter(lastRootEntity);
-            }
-            if(optionsObject.paginateDirection == 'backward'){
-                console.log(context.state.currentRootEntities);
-                let lastRootEntity = context.state.currentRootEntities[optionsObject.queryId].pageBackwardDoc;
-                console.log('next backward.  last entity', lastRootEntity);
-                baseQuery = baseQuery.startAfter(lastRootEntity);
-            }
-
             baseQuery = baseQuery.limit(limit);
 
+            // Run the query and save to a listener
             let queryListener = baseQuery.onSnapshot(function(querySnapshot){
                 console.log(querySnapshot);
                 console.log(querySnapshot.docChanges());
@@ -483,27 +500,32 @@ export const store = new Vuex.Store({
                 // TODO:  verify the issue and figure out how to tell the difference
                 // TODO - verify .empty is a documented property - found it when viewing the querySnapshot object via console.log; documentations shows to use isEmpty() function, but doing so returns an error that its an invalid function
                 //if(!querySnapshot.empty){  
-                    let dataObj = [];
+
+                    // Set up the results by retrieving each data from each resultant document
+                    //  each result is put in an object with properties "id" & "data"
+                    //  each object is then added to a parent array to preserve the search result order
+                    let queryResultDocsFound = [];
                     querySnapshot.forEach(function(doc){ // doc = QueryDocumentSnapshot
-                        console.log(doc.data());
-                        let data = doc.data();
-                        data.docId = doc.id;
-                        dataObj.push(doc.data());
+                        let resultObj = {};
+                        resultObj.data = doc.data(); 
+                        resultObj.docId = doc.id;
+                        queryResultDocsFound.push(resultObj); // {data: <doc data>, id: <docId>}
                     });
 
+                    // Store query cursors for forward pagination
                     let pageBackwardDoc = querySnapshot.docs[0];
                     let pageForwardDoc = querySnapshot.docs[querySnapshot.docs.length-1];
 
-                    // Things are backwards for the reverse direction
+                    // Things are backwards for the reverse direction - modify the results to coincide with a forward search from a page-backwards point of view
                     if(optionsObject.paginateDirection == 'backward'){
-                        dataObj = dataObj.reverse();
-                        pageForwardDoc = querySnapshot.docs[0];
-                        pageBackwardDoc = querySnapshot.docs[querySnapshot.docs.length-1];
+                        queryResultDocsFound = queryResultDocsFound.reverse();  // reverse the order of the returned documents
+                        pageForwardDoc = querySnapshot.docs[0]; // the first doc is acually the last doc in the set of a foward search
+                        pageBackwardDoc = querySnapshot.docs[querySnapshot.docs.length-1]; // the last doc is actually the first doc in the set of a forward search
                     }
 
                     let searchObj= {
                         queryId: optionsObject.queryId,
-                        data: dataObj,
+                        results: queryResultDocsFound,
                         pageBackwardDoc:pageBackwardDoc,
                         pageForwardDoc:pageForwardDoc,
                         queryListener:queryListener,

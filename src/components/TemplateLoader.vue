@@ -193,6 +193,9 @@ export default {
       return crumbs;
     },
   },
+  mounted(){
+    console.log('mounted function in TemplateLoader.vue');
+  },
   created(){
     this.$store.commit('setLoadingIndicator', true);
     console.log('created function in TemplateLoader.vue');

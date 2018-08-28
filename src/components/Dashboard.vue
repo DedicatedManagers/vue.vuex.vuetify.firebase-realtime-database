@@ -35,7 +35,7 @@ export default {
         },
         orderBy:{
           fieldPath:'CreatedAt',
-          directionStr:'asc',
+          directionStr:'desc',
         },
         limit:1, 
         queryId:'myRecent',
