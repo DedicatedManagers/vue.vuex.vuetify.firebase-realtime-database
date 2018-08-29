@@ -254,7 +254,7 @@ export const store = new Vuex.Store({
                     // if its not a local update, then update the entity (otherwise it was already updated locally via updateCurrentEntity)
                     // Determine if changes should be updated locally
                     if( 
-                        // if there is no LocalUpdateId, then we're initializing, so commit the changes locally
+                        // if there is no LocalUpdateId on the local global storage for the entity, then we're initializing, so commit the changes locally
                         !((((context.state.currentEntity||{})[entityContainer.collectionId]||{})[entityContainer.docId]||{}).data||{}).hasOwnProperty('LocalUpdateId') 
                         || // OR
                         // If the LocalUpdateId has changed, its an update from somewhere else, so commit the changes locally
