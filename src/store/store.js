@@ -434,12 +434,6 @@ export const store = new Vuex.Store({
                 }); 
         },
 
-// TODO
-// TODO
-// TODO
-// TODO
-// TODO: Need to protect the end cases where the search returns and empty array
-
         getRootEntityRecent(context, searchParams){
             console.log('getRootEntityRecent');
             console.log(context.state.currentRootEntities);
