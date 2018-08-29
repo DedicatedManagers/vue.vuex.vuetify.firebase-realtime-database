@@ -484,12 +484,16 @@ export const store = new Vuex.Store({
             if(typeof searchParams.limit == 'number' && searchParams.limit > 0){
                 limit = searchParams.limit;
             }
-            baseQuery = baseQuery.limit(limit);
+            baseQuery = baseQuery.limit(limit + 1);
+
+            let randomTrack = Math.floor(Math.random() * 1000); 
             
             // Run the query and save to a listener and store the listener removal/cancel function 
             // TODO:  need to handle the case where, at the end of all pagination forward (next is disabled), all the entities are deleted.  onSnapshot will return an empty array - errors will ensue
             context.state.searchListeners[searchParams.queryId] = baseQuery.onSnapshot(async function(querySnapshot){
-
+                console.log('randomTrack', randomTrack);
+                console.log(querySnapshot);
+                console.log(querySnapshot.docChanges());
                 // if not connected, the promise still apparently resolves (hence this .then is called) but the query is empty 
                 // however it the database is empty, it also returns an empty querySnapshot.
                 // TODO:  verify the issue and figure out how to tell the difference
@@ -509,32 +513,40 @@ export const store = new Vuex.Store({
 
                     // Store query cursors for forward pagination
                     let pageBackwardDoc = querySnapshot.docs[0];
-                    let pageForwardDoc = querySnapshot.docs[querySnapshot.docs.length-1];
+                    let pageForwardDoc = querySnapshot.docs[querySnapshot.docs.length-2];  // since an extra entity was added to the search limit, pagination should come from the actual limit point
 
-                    // run a duplicate query, one futher from the last end of the last search to see if we are at the end of the search
-                    //  this is the same regardless of the search direction - forward or backward - as we still want to go one futher
-                    //  if there are no further results, then set the flag to disable the prev/next buttons
+
+                    // Start off with Prev/Next Buttons enabled
                     let disablePrevButton = false;
                     let disableNextButton = false;
-                    if(!searchParams.hasOwnProperty('paginateDirection')) disablePrevButton = true; // no paginate, so its the initial search - the previous button should be disabled
-                    await querySnapshot.query.startAfter(pageForwardDoc).limit(1).get().then(function(subquerySnapshot){  // async/await required or the results don't come back until after the commit below
-                        // if there's no results in the continued search, we have hit the end of the results
-                        //  depending on direction, disable either the prev or next button
-                        if(subquerySnapshot.empty){
-                            if(searchParams.paginateDirection == 'backward'){
-                                disablePrevButton = true;
-                            }
-                            else{
-                                disableNextButton = true;
-                            }
-                        }
-                    });
+
+                    // If not paginating, its an initial search - disable the previous button
+                    if(!searchParams.hasOwnProperty('paginateDirection')) disablePrevButton = true; 
+
+                    // Check results to see if there's enough results for another page  
+                    if(querySnapshot.docs.length == limit + 1 ){
+                        // The full result set exists AND there is another page
+                        //  Remove the last result from the display as its more than the requested limit, so it shouldn't be shown
+                        queryResultDocsFound.pop();
+                        //  If paginating, set the associated button to be clickable based on the direction of the search
+                        if(searchParams.paginateDirection == 'backward') disablePrevButton = false; // enable previous button
+                        else if(searchParams.paginateDirection == 'forward') disableNextButton = false; // enable next button
+                    }
+                    else{
+                        // There weren't enough results to paginate in the direction of the search
+                        if(searchParams.paginateDirection == 'backward') disablePrevButton = true; // disable previous button
+                        else if(searchParams.paginateDirection == 'forward') disableNextButton = true; // disable next button
+                        // not enough results, so set the page forward reference to the last entity found - NOTE:  this may not need to be done as the user can't page foward in this state anyway
+                        pageForwardDoc = querySnapshot.docs[querySnapshot.docs.length-1]; 
+                    }
+
                     
                     // Things are backwards for the reverse direction - modify the results to coincide with a forward search from a page-backwards point of view
                     if(searchParams.paginateDirection == 'backward'){
                         queryResultDocsFound = queryResultDocsFound.reverse();  // reverse the order of the returned documents
-                        pageForwardDoc = querySnapshot.docs[0]; // the first doc is acually the last doc in the set of a foward search
-                        pageBackwardDoc = querySnapshot.docs[querySnapshot.docs.length-1]; // the last doc is actually the first doc in the set of a forward search
+                        let pageForwardTemp = pageForwardDoc;
+                        pageForwardDoc = pageBackwardDoc // the first doc is acually the last doc in the set of a foward search
+                        pageBackwardDoc = pageForwardTemp; // the last doc is actually the first doc in the set of a forward search
                     }
 
                     // set up the parameters to be commited to storage
