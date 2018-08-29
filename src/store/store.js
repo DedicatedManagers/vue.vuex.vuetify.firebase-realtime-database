@@ -46,12 +46,14 @@ export const store = new Vuex.Store({
         // pageBackwardDoc:querySnapshot.docs[0],
         // pageForwardDoc:querySnapshot.docs[querySnapshot.docs.length-1],
         setCurrentRootEntitiesBySearchObj(state, searchObj){
+            console.log('setCurrentRootEntitiesBySearchObj - searchObj:', searchObj);
             if(!state.currentRootEntities) state.currentRootEntities = {};
-            if(!state.currentRootEntities.hasOwnProperty([searchObj.queryId])) Vue.set(state.currentRootEntities, searchObj.queryId, {});
+            //if(!state.currentRootEntities.hasOwnProperty([searchObj.queryId])) Vue.set(state.currentRootEntities, searchObj.queryId, {});
             
-            Vue.set(state.currentRootEntities[searchObj.queryId], 'results', searchObj.results);            
-            Vue.set(state.currentRootEntities[searchObj.queryId], 'pageBackwardDoc', searchObj.pageBackwardDoc);
-            Vue.set(state.currentRootEntities[searchObj.queryId], 'pageForwardDoc', searchObj.pageForwardDoc);
+            Vue.set(state.currentRootEntities, searchObj.queryId, searchObj);
+            // Vue.set(state.currentRootEntities[searchObj.queryId], 'results', searchObj.results);            
+            // Vue.set(state.currentRootEntities[searchObj.queryId], 'pageBackwardDoc', searchObj.pageBackwardDoc);
+            // Vue.set(state.currentRootEntities[searchObj.queryId], 'pageForwardDoc', searchObj.pageForwardDoc);
 
 
         },
@@ -494,10 +496,9 @@ export const store = new Vuex.Store({
             baseQuery = baseQuery.limit(limit);
             
             // Run the query and save to a listener and store the listener removal/cancel function 
-            context.state.searchListeners[searchParams.queryId] = baseQuery.onSnapshot(function(querySnapshot){
-                console.log(querySnapshot);
-                console.log(querySnapshot.docChanges());
-                console.log(querySnapshot.query);
+            // TODO:  need to handle the case where, at the end of all pagination forward (next is disabled), all the entities are deleted.  onSnapshot will return an empty array - errors will ensue
+            context.state.searchListeners[searchParams.queryId] = baseQuery.onSnapshot(async function(querySnapshot){
+
                 // if not connected, the promise still apparently resolves (hence this .then is called) but the query is empty 
                 // however it the database is empty, it also returns an empty querySnapshot.
                 // TODO:  verify the issue and figure out how to tell the difference
@@ -519,6 +520,25 @@ export const store = new Vuex.Store({
                     let pageBackwardDoc = querySnapshot.docs[0];
                     let pageForwardDoc = querySnapshot.docs[querySnapshot.docs.length-1];
 
+                    // run a duplicate query, one futher from the last end of the last search to see if we are at the end of the search
+                    //  this is the same regardless of the search direction - forward or backward - as we still want to go one futher
+                    //  if there are no further results, then set the flag to disable the prev/next buttons
+                    let disablePrevButton = false;
+                    let disableNextButton = false;
+                    if(!searchParams.hasOwnProperty('paginateDirection')) disablePrevButton = true; // no paginate, so its the initial search - the previous button should be disabled
+                    await querySnapshot.query.startAfter(pageForwardDoc).limit(1).get().then(function(subquerySnapshot){  // async/await required or the results don't come back until after the commit below
+                        // if there's no results in the continued search, we have hit the end of the results
+                        //  depending on direction, disable either the prev or next button
+                        if(subquerySnapshot.empty){
+                            if(searchParams.paginateDirection == 'backward'){
+                                disablePrevButton = true;
+                            }
+                            else{
+                                disableNextButton = true;
+                            }
+                        }
+                    });
+                    
                     // Things are backwards for the reverse direction - modify the results to coincide with a forward search from a page-backwards point of view
                     if(searchParams.paginateDirection == 'backward'){
                         queryResultDocsFound = queryResultDocsFound.reverse();  // reverse the order of the returned documents
@@ -526,11 +546,15 @@ export const store = new Vuex.Store({
                         pageBackwardDoc = querySnapshot.docs[querySnapshot.docs.length-1]; // the last doc is actually the first doc in the set of a forward search
                     }
 
+                    // set up the parameters to be commited to storage
                     let searchObj= {
                         queryId: searchParams.queryId,
                         results: queryResultDocsFound,
                         pageBackwardDoc:pageBackwardDoc,
                         pageForwardDoc:pageForwardDoc,
+                        disablePrevButton:disablePrevButton,
+                        disableNextButton:disableNextButton,
+
                     }
                     context.commit('setCurrentRootEntitiesBySearchObj', searchObj)
                     context.commit('setLoadingIndicator', false);

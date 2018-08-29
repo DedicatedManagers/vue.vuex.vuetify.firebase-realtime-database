@@ -7,18 +7,18 @@
             <v-card-title>
             <v-layout row wrap>
                 <v-flex xs12>
-                <v-list  v-for="(searchResult, id) in searchResults" :key="id">
-                    <v-list-tile @click="loadEntity(searchResult.docId)" >
-                        <v-list-tile-action>
-                        <v-icon>{{RootEntity.icon}}</v-icon>
-                    </v-list-tile-action>
+                    <v-list  v-for="(searchResult, id) in searchResults.results" :key="id">
+                        <v-list-tile @click="loadEntity(searchResult.docId)" >
+                            <v-list-tile-action>
+                            <v-icon>{{RootEntity.icon}}</v-icon>
+                        </v-list-tile-action>
 
-                    <v-list-tile-content>
-                        <v-list-tile-title>{{searchResult.data.LastName}}, {{searchResult.data.FirstName}} {{searchResult.data.MiddleName}}</v-list-tile-title>
-                    </v-list-tile-content>
-                    </v-list-tile>
-                </v-list>
-                    <v-btn @click="paginate('backward')">&laquo; Prev</v-btn><v-btn @click="paginate('forward')">Next &raquo;</v-btn>
+                        <v-list-tile-content>
+                            <v-list-tile-title>{{searchResult.data.LastName}}, {{searchResult.data.FirstName}} {{searchResult.data.MiddleName}}</v-list-tile-title>
+                        </v-list-tile-content>
+                        </v-list-tile>
+                    </v-list>
+                    <v-btn :disabled="searchResults.disablePrevButton" @click="paginate('backward')">&laquo; Prev</v-btn><v-btn :disabled="searchResults.disableNextButton" @click="paginate('forward')">Next &raquo;</v-btn><br>
                 </v-flex>
             </v-layout>
             </v-card-title>
@@ -45,7 +45,7 @@ export default {
     searchResults(){
         if(!this.$store.state.currentRootEntities) return {};
         if(!this.$store.state.currentRootEntities[this.searchParams.queryId]) return {};
-        return this.$store.state.currentRootEntities[this.searchParams.queryId].results;
+        return this.$store.state.currentRootEntities[this.searchParams.queryId];
     }
   },
   methods:{
