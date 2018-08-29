@@ -36,7 +36,7 @@ export default {
         },
         orderBy:{
           fieldPath:'CreatedAt',
-          directionStr:'asc',
+          directionStr:'desc',
         },
         limit:2, 
         queryId:'myRecent',
@@ -63,6 +63,7 @@ export default {
     console.log('destroyed function in dashboard.vue');
   },
   created(){
+    this.$store.commit('deleteAllCurrentEntitesAndListeners');
     //this.$store.commit('setLoadingIndicator', true);
     console.log('created function in dashboard.vue');
   },
