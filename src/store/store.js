@@ -15,8 +15,8 @@ export const store = new Vuex.Store({
         userIsAuthenticated:false,
         entityListeners:null,
         currentEntity:null,
-        currentRootEntities:null,
-        searchListeners:null,
+        fsearchEntities:null,
+        fsearchListeners:null,
         entityDebouncers:null,
         localUpdateId:null,
     },
@@ -40,22 +40,11 @@ export const store = new Vuex.Store({
             state.loadingIndicator = replace;
         },
         
-
-        // queryId: searchParams.queryId,
-        // data: queryResultDocsFound,
-        // pageBackwardDoc:querySnapshot.docs[0],
-        // pageForwardDoc:querySnapshot.docs[querySnapshot.docs.length-1],
-        setCurrentRootEntitiesBySearchObj(state, searchObj){
-            console.log('setCurrentRootEntitiesBySearchObj - searchObj:', searchObj);
-            if(!state.currentRootEntities) state.currentRootEntities = {};
-            //if(!state.currentRootEntities.hasOwnProperty([searchObj.queryId])) Vue.set(state.currentRootEntities, searchObj.queryId, {});
-            
-            Vue.set(state.currentRootEntities, searchObj.queryId, searchObj);
-            // Vue.set(state.currentRootEntities[searchObj.queryId], 'results', searchObj.results);            
-            // Vue.set(state.currentRootEntities[searchObj.queryId], 'pageBackwardDoc', searchObj.pageBackwardDoc);
-            // Vue.set(state.currentRootEntities[searchObj.queryId], 'pageForwardDoc', searchObj.pageForwardDoc);
-
-
+        // set search configuration & results - used in conjunction with EntitySearch.vue
+        setSearchEntity(state, searchObj){
+            console.log('setSearchEntity - searchObj:', searchObj);
+            if(!state.fsearchEntities) state.fsearchEntities = {};            
+            Vue.set(state.fsearchEntities, searchObj.queryId, searchObj);
         },
 
         // Delete Entity from currentEntity
@@ -433,14 +422,14 @@ export const store = new Vuex.Store({
 
         getRootEntityRecent(context, searchParams){
             console.log('getRootEntityRecent');
-            console.log(context.state.currentRootEntities);
+            console.log(context.state.fsearchEntities);
 
             // initialize listener holder if not already initialized
-            if(!context.state.searchListeners) context.state.searchListeners = {};
+            if(!context.state.fsearchListeners) context.state.fsearchListeners = {};
 
             // If we've already got a listener for this queryId, execute it to remove it
-            if(typeof context.state.searchListeners[searchParams.queryId] == 'function'){
-                context.state.searchListeners[searchParams.queryId]();
+            if(typeof context.state.fsearchListeners[searchParams.queryId] == 'function'){
+                context.state.fsearchListeners[searchParams.queryId]();
             }
 
             // Start the query
@@ -467,7 +456,7 @@ export const store = new Vuex.Store({
             if(searchParams.paginateDirection == 'forward'){
                 // Get the query cursor that was saved as the marker for the forward search starting point
                 //  then set the query to start after that cursor point
-                let lastRootEntity = context.state.currentRootEntities[searchParams.queryId].pageForwardDoc;
+                let lastRootEntity = context.state.fsearchEntities[searchParams.queryId].pageForwardDoc;
                 baseQuery = baseQuery.startAfter(lastRootEntity);
             }
 
@@ -475,7 +464,7 @@ export const store = new Vuex.Store({
             if(searchParams.paginateDirection == 'backward'){
                 // Get the query cursor that was saved as the marker for the backward search starting point 
                 //  then set the query to start after that cursor point (the query has been reversed in the where clause)
-                let lastRootEntity = context.state.currentRootEntities[searchParams.queryId].pageBackwardDoc;
+                let lastRootEntity = context.state.fsearchEntities[searchParams.queryId].pageBackwardDoc;
                 baseQuery = baseQuery.startAfter(lastRootEntity);
             }
 
@@ -490,7 +479,7 @@ export const store = new Vuex.Store({
             
             // Run the query and save to a listener and store the listener removal/cancel function 
             // TODO:  need to handle the case where, at the end of all pagination forward/backard (next/prev is disabled) and all the displayed entities are deleted.  onSnapshot will return an empty array - errors will ensue
-            context.state.searchListeners[searchParams.queryId] = baseQuery.onSnapshot(async function(querySnapshot){
+            context.state.fsearchListeners[searchParams.queryId] = baseQuery.onSnapshot(async function(querySnapshot){
                 console.log('randomTrack', randomTrack);
                 console.log(querySnapshot);
                 console.log(querySnapshot.docChanges());
@@ -559,7 +548,7 @@ export const store = new Vuex.Store({
                         disableNextButton:disableNextButton,
 
                     }
-                    context.commit('setCurrentRootEntitiesBySearchObj', searchObj)
+                    context.commit('setSearchEntity', searchObj)
                     context.commit('setLoadingIndicator', false);
                 // }
                 // else{

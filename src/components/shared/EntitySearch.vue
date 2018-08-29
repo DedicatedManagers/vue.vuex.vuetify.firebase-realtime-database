@@ -43,9 +43,9 @@ export default {
   },
   computed:{
     searchResults(){
-        if(!this.$store.state.currentRootEntities) return {};
-        if(!this.$store.state.currentRootEntities[this.searchParams.queryId]) return {};
-        return this.$store.state.currentRootEntities[this.searchParams.queryId];
+        if(!this.$store.state.fsearchEntities) return {};
+        if(!this.$store.state.fsearchEntities[this.searchParams.queryId]) return {};
+        return this.$store.state.fsearchEntities[this.searchParams.queryId];
     }
   },
   methods:{
@@ -67,7 +67,7 @@ export default {
   created(){
     console.log('created function in EntitySearch.vue');
     // If the search has not yet been initialized for the session - initialize the search
-    if(!(this.$store.state.currentRootEntities && this.$store.state.currentRootEntities[this.searchParams.queryId])){
+    if(!(this.$store.state.fsearchEntities && this.$store.state.fsearchEntities[this.searchParams.queryId])){
         console.log('running search in EntitySearch.vue');
         this.$store.commit('setLoadingIndicator', true);
         this.$store.dispatch('getRootEntityRecent',this.searchParams);
