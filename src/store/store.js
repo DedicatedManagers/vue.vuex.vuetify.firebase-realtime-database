@@ -227,9 +227,6 @@ export const store = new Vuex.Store({
                     }
 
                 }
-                // Always update - whether setting locally or receiving new data asynchronously from the firebase server. 
-                // - commits to firebase from our app will also call this listener and it got difficult to try and ingnore the listner when new entites were added 
-                // - if this becomes an issue look into setting some kind of flag passed when it should be ignored locally (as opposed to checking when it shouldn't be ignored)
                 else{
                     // look for nested collections on the loaded entity and load them if they aren't already loaded
                     let NestedCollections = doc.data()['NestedCollections']; 
