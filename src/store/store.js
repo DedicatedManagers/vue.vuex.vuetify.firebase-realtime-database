@@ -489,7 +489,7 @@ export const store = new Vuex.Store({
             let randomTrack = Math.floor(Math.random() * 1000); 
             
             // Run the query and save to a listener and store the listener removal/cancel function 
-            // TODO:  need to handle the case where, at the end of all pagination forward (next is disabled), all the entities are deleted.  onSnapshot will return an empty array - errors will ensue
+            // TODO:  need to handle the case where, at the end of all pagination forward/backard (next/prev is disabled) and all the displayed entities are deleted.  onSnapshot will return an empty array - errors will ensue
             context.state.searchListeners[searchParams.queryId] = baseQuery.onSnapshot(async function(querySnapshot){
                 console.log('randomTrack', randomTrack);
                 console.log(querySnapshot);
