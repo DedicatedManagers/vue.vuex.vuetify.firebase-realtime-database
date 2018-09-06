@@ -4,6 +4,8 @@
         <v-layout row wrap>
 
           <entity-search :searchParams="EntitySearchMyRecent"></entity-search>
+          <entity-search :searchParams="EntitySearchAllRecent"></entity-search>
+         
 
         </v-layout>
 
@@ -36,13 +38,29 @@ export default {
         },
         orderBy:{
           fieldPath:'CreatedAt',
-          directionStr:'desc',
+          directionStr:'asc',
         },
         limit:2, 
         queryId:'myRecent',
         routeBase:'/db/' + RootEntity.collectionId + '/',
         title:"My Recent Caregivers"
-      }
+      },
+      EntitySearchAllRecent:{
+        collectionId:RootEntity.collectionId,
+        // where:{
+        //   fieldName:'CreatedAtUid',
+        //   testOperator:'==',
+        //   testVal:this.$store.state.user.uid,
+        // },
+        orderBy:{
+          fieldPath:'CreatedAt',
+          directionStr:'asc',
+        },
+        limit:2, 
+        queryId:'allRecent',
+        routeBase:'/db/' + RootEntity.collectionId + '/',
+        title:"All Recent Caregivers"
+      },
     };
   },
   computed:{
@@ -63,7 +81,7 @@ export default {
     console.log('destroyed function in dashboard.vue');
   },
   created(){
-    this.$store.commit('deleteAllCurrentEntitesAndListeners');
+    //this.$store.commit('deleteAllCurrentEntitesAndListeners');
     //this.$store.commit('setLoadingIndicator', true);
     console.log('created function in dashboard.vue');
   },
