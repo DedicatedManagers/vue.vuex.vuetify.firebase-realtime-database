@@ -1,5 +1,5 @@
 <template >
-    <v-flex xs12 md4 v-if="!this.$store.state.loadingIndicator">
+    <v-flex xs12 md4 px-1 v-if="!this.$store.state.loadingIndicator">
         <v-card>
             <v-toolbar color="blue" dark>
             <v-toolbar-title>{{searchParams.title}}</v-toolbar-title>
