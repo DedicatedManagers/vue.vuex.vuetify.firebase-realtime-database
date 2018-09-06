@@ -479,7 +479,7 @@ export const store = new Vuex.Store({
             
             // Run the query and save to a listener and store the listener removal/cancel function 
             // TODO:  need to handle the case where, at the end of all pagination forward/backard (next/prev is disabled) and all the displayed entities are deleted.  onSnapshot will return an empty array - errors will ensue
-            context.state.fsearchListeners[searchParams.queryId] = baseQuery.onSnapshot(async function(querySnapshot){
+            context.state.fsearchListeners[searchParams.queryId] = baseQuery.onSnapshot({includeMetadataChanges:true}, function(querySnapshot){
                 console.log('randomTrack', randomTrack);
                 console.log(querySnapshot);
                 console.log(querySnapshot.docChanges());
@@ -489,6 +489,8 @@ export const store = new Vuex.Store({
                 // TODO - verify .empty is a documented property - found it when viewing the querySnapshot object via console.log; documentations shows to use isEmpty() function, but doing so returns an error that its an invalid function
                 //if(!querySnapshot.empty){  
 
+                // skip any cached results as other listeners with similar query will interfere and give "weird" flashing/temporary results
+                if (querySnapshot.metadata.fromCache == false){
                     // Set up the results by retrieving each data from each resultant document
                     //  each result is put in an object with properties "id" & "data"
                     //  each object is then added to a parent array to preserve the search result order
@@ -550,6 +552,7 @@ export const store = new Vuex.Store({
                     }
                     context.commit('setSearchEntity', searchObj)
                     context.commit('setLoadingIndicator', false);
+                }
                 // }
                 // else{
                 //     // TODO: need better error handling
