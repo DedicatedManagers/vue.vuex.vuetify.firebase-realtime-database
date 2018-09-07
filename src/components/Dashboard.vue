@@ -31,15 +31,15 @@ export default {
       RootEntity:RootEntity,
       EntitySearchMyRecent:{
         collectionId:RootEntity.collectionId,
-        where:{
+        where:[{
           fieldName:'CreatedAtUid',
           testOperator:'==',
           testVal:this.$store.state.user.uid,
-        },
-        orderBy:{
+        }],
+        orderBy:[{
           fieldPath:'CreatedAt',
           directionStr:'asc',
-        },
+        }],
         limit:2, 
         queryId:'myRecent',
         routeBase:'/db/' + RootEntity.collectionId + '/',
@@ -47,15 +47,23 @@ export default {
       },
       EntitySearchAllRecent:{
         collectionId:RootEntity.collectionId,
-        // where:{
-        //   fieldName:'CreatedAtUid',
-        //   testOperator:'==',
-        //   testVal:this.$store.state.user.uid,
-        // },
-        orderBy:{
-          fieldPath:'CreatedAt',
-          directionStr:'asc',
-        },
+        where:[
+          {
+            fieldName:'CreatedAtUid',
+            testOperator:'>',
+            testVal:this.$store.state.user.uid,
+          },
+        ],
+        orderBy:[
+          {
+            fieldPath:'CreatedAtUid',
+            directionStr:'asc',
+          },
+          {
+            fieldPath:'CreatedAt',
+            directionStr:'asc',
+          }
+        ],
         limit:2, 
         queryId:'allRecent',
         routeBase:'/db/' + RootEntity.collectionId + '/',

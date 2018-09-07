@@ -437,19 +437,24 @@ export const store = new Vuex.Store({
 
             // Set "orderBy, if defined
             if(searchParams.orderBy){
-                // if the call is to paginate backward
-                if(searchParams.paginateDirection == 'backward'){
-                    // reverse the query from the configured orderBy (trick to query backward)
-                    baseQuery = baseQuery.orderBy(searchParams.orderBy.fieldPath, searchParams.orderBy.directionStr=='desc'?'asc':'desc');   // reverse the ordering                 
-                }
-                else{
-                    // the call is to paginate forward or its an initial call (no tricks - just set the orderBy according to the configuration)
-                    baseQuery = baseQuery.orderBy(searchParams.orderBy.fieldPath, searchParams.orderBy.directionStr=='desc'?'desc':'asc');
+                for (let orderByObj of searchParams.orderBy){
+                    // if the call is to paginate backward
+                    if(searchParams.paginateDirection == 'backward'){
+                        // reverse the query from the configured orderBy (trick to query backward)
+                        baseQuery = baseQuery.orderBy(orderByObj.fieldPath, orderByObj.directionStr=='desc'?'asc':'desc');   // reverse the ordering                 
+                    }
+                    else{
+                        // the call is to paginate forward or its an initial call (no tricks - just set the orderBy according to the configuration)
+                        baseQuery = baseQuery.orderBy(orderByObj.fieldPath, orderByObj.directionStr=='desc'?'desc':'asc');
+                    }
                 }
             }
             // Set "where", if defined
+            // Expects and array of "where" objects
             if(searchParams.where){
-                baseQuery = baseQuery.where(searchParams.where.fieldName, searchParams.where.testOperator, searchParams.where.testVal);
+                for (let whereObj of searchParams.where){
+                    baseQuery = baseQuery.where(whereObj.fieldName, whereObj.testOperator, whereObj.testVal);
+                }
             }
 
             // If the call is to paginate in the forward direction 
