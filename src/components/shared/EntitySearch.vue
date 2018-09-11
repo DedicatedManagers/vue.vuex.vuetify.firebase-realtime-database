@@ -18,7 +18,9 @@
                         </v-list-tile-content>
                         </v-list-tile>
                     </v-list>
-                    <v-btn :disabled="searchResults.disablePrevButton" @click="paginate('backward')">&laquo; Prev</v-btn><v-btn :disabled="searchResults.disableNextButton" @click="paginate('forward')">Next &raquo;</v-btn><br>
+                    <div v-if="searchResults.results">
+                        <v-btn :disabled="searchResults.disablePrevButton" @click="paginate('backward')">&laquo; Prev</v-btn><v-btn :disabled="searchResults.disableNextButton" @click="paginate('forward')">Next &raquo;</v-btn><br>
+                    </div>
                 </v-flex>
             </v-layout>
             </v-card-title>

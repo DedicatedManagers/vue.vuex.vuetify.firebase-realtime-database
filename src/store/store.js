@@ -532,6 +532,9 @@ export const store = new Vuex.Store({
                         // There weren't enough results to paginate in the direction of the search
                         if(searchParams.paginateDirection == 'backward') disablePrevButton = true; // disable previous button
                         else if(searchParams.paginateDirection == 'forward') disableNextButton = true; // disable next button
+                        // If not paginating, its an initial search - disable the next button
+                        else if(!searchParams.hasOwnProperty('paginateDirection')) disableNextButton = true; 
+
                         // not enough results, so set the page forward reference to the last entity found - NOTE:  this may not need to be done as the user can't page foward in this state anyway
                         pageForwardDoc = querySnapshot.docs[querySnapshot.docs.length-1]; 
                     }
