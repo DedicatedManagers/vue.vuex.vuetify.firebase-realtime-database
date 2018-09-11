@@ -40,31 +40,31 @@ export default {
           fieldPath:'CreatedAt',
           directionStr:'asc',
         }],
-        limit:2, 
+        limit:5, 
         queryId:'myRecent',
         routeBase:'/db/' + RootEntity.collectionId + '/',
         title:"My Recent Caregivers"
       },
       EntitySearchAllRecent:{
         collectionId:RootEntity.collectionId,
-        where:[
-          {
-            fieldName:'CreatedAtUid',
-            testOperator:'>',
-            testVal:this.$store.state.user.uid,
-          },
-        ],
+        // where:[
+        //   {
+        //     fieldName:'CreatedAtUid',
+        //     testOperator:'>',
+        //     testVal:this.$store.state.user.uid,
+        //   },
+        // ],
         orderBy:[
-          {
-            fieldPath:'CreatedAtUid',
-            directionStr:'asc',
-          },
+          // {
+          //   fieldPath:'CreatedAtUid',
+          //   directionStr:'asc',
+          // },
           {
             fieldPath:'CreatedAt',
             directionStr:'asc',
           }
         ],
-        limit:2, 
+        limit:5, 
         queryId:'allRecent',
         routeBase:'/db/' + RootEntity.collectionId + '/',
         title:"All Recent Caregivers"
