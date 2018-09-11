@@ -14,7 +14,7 @@
                         </v-list-tile-action>
 
                         <v-list-tile-content>
-                            <v-list-tile-title>{{searchResult.data.LastName}}, {{searchResult.data.FirstName}} {{searchResult.data.MiddleName}}</v-list-tile-title>
+                            <v-list-tile-title>{{searchResult.data.ListDisplayText}}</v-list-tile-title>
                         </v-list-tile-content>
                         </v-list-tile>
                     </v-list>
@@ -45,6 +45,7 @@ export default {
   },
   computed:{
     searchResults(){
+        // no results or haven't reached out to database yet - return an empty object
         if(!this.$store.state.fsearchEntities) return {};
         if(!this.$store.state.fsearchEntities[this.searchParams.queryId]) return {};
         return this.$store.state.fsearchEntities[this.searchParams.queryId];

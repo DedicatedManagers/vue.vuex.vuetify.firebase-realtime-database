@@ -504,6 +504,20 @@ export const store = new Vuex.Store({
                         let resultObj = {};
                         resultObj.data = doc.data(); 
                         resultObj.docId = doc.id;
+
+                        // Set the entity's display based on config displayFunction
+                        if( searchParams.hasOwnProperty('displayFunction')  ) {
+                            // evaluate the display function
+                            try {
+                                let entityFormFields = resultObj.data;
+                                resultObj.data.ListDisplayText = eval(searchParams.displayFunction);
+                            }
+                            catch(err) {
+                                alert('There was an error evaluating the list display text in an EntitySearch result for query id: ' + searchParams.queryId);
+                                alert(err);
+                            }
+                        }
+                
                         queryResultDocsFound.push(resultObj); // {data: <doc data>, id: <docId>}
                     });
 

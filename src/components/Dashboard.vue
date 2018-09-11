@@ -43,7 +43,8 @@ export default {
         limit:5, 
         queryId:'myRecent',
         routeBase:'/db/' + RootEntity.collectionId + '/',
-        title:"My Recent Caregivers"
+        title:"My Recent Caregivers",
+        displayFunction:'(entityFormFields.LastName||"") + ", " + (entityFormFields.FirstName||"") + " " + (entityFormFields.MiddleName||"")' ,
       },
       EntitySearchAllRecent:{
         collectionId:RootEntity.collectionId,
@@ -67,7 +68,8 @@ export default {
         limit:5, 
         queryId:'allRecent',
         routeBase:'/db/' + RootEntity.collectionId + '/',
-        title:"All Recent Caregivers"
+        title:"All Recent Caregivers",
+        displayFunction:'(entityFormFields.LastName||"") + ", " + (entityFormFields.FirstName||"") + " " + (entityFormFields.MiddleName||"")' ,
       },
     };
   },
