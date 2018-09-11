@@ -115,13 +115,14 @@ export const store = new Vuex.Store({
                 entityPropertyContainer.propertiesObject['LastUpdated'] = firebase.firestore.FieldValue.serverTimestamp();
                 entityPropertyContainer.propertiesObject['LastUpdatedUid'] = firebase.auth().currentUser.uid;
 
-                if(!state.localUpdateId) state.localUpdateId = Math.floor(Math.random() * 1000); // set a random id for this current instance to help alleviate timing issue with firestore listener callback (with timestamps enabled)
+                // set a random id for this current instance to help alleviate timing issue with firestore listener callback (with timestamps enabled)
+                if(!state.localUpdateId) state.localUpdateId = Math.floor(Math.random() * 1000); 
                 entityPropertyContainer.propertiesObject['LocalUpdateId'] = state.localUpdateId;
 
                 // Loop through the key/value pairs sent in the properties object and set them on the collection
                 for (var key in entityPropertyContainer.propertiesObject) {
                     if (entityPropertyContainer.propertiesObject.hasOwnProperty(key)) { // only look at key's we set, not any javascript object helper keys on the object
-                        // If thisis the first time we've set this property on the entity, add the property using Vue.set so that its reactive
+                        // If this is the first time we've set this property on the entity, add the property using Vue.set so that its reactive
                         if(!state.currentEntity[entityPropertyContainer.collectionId][entityPropertyContainer.docId].data.hasOwnProperty(key)){
                             Vue.set(state.currentEntity[entityPropertyContainer.collectionId][entityPropertyContainer.docId].data, key, entityPropertyContainer.propertiesObject[key]);
                         }
@@ -273,7 +274,7 @@ export const store = new Vuex.Store({
             // Undebounced
             //context.dispatch('fcommitEntity', {docId:entityPropertyContainer.docId,collectionId:entityPropertyContainer.collectionId});
 
-            // if the debouncer for this entity
+            // if the debouncer for this entity doesn't exist
             if ( typeof (((context.state||{}).entityDebouncers||{})[entityPropertyContainer.collectionId]||{})[entityPropertyContainer.docId] !== 'function' ){
                 // initialize function holder for this specific entity if not initialized already
                 if(context.state.entityDebouncers === null) context.state.entityDebouncers = {}; // initialize entityDebouncers if not already an object
@@ -355,6 +356,7 @@ export const store = new Vuex.Store({
             // update if the entity still exists
             // - it's possible the entity has been deleted at the server or by another real-time client
             if( (((context.state.currentEntity||{})[collectionContainer.collectionId]||{})[collectionContainer.docId]||{}).hasOwnProperty('data') ){
+                // Update the entity in the database/Firestore
                 firebase.firestore().collection(collectionContainer.collectionId).doc(context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId].id).update(context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId].data)
                 .then(function() {
                     console.log("Document successfully written!");
