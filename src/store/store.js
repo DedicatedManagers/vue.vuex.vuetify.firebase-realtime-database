@@ -111,6 +111,10 @@ export const store = new Vuex.Store({
                 console.log('mutateCurrentEntity - entity no longer exists.   object passed in: ' + JSON.stringify(entityPropertyContainer));
             }
             else{
+                // Add the propertiesObject if not defined
+                // -- This could just be an update to change the modification time (ie a child entity had an update and called to update the parent with a new timestamp)
+                if(  !entityPropertyContainer.hasOwnProperty('propertiesObject')  ) entityPropertyContainer.propertiesObject = {};
+                
                 // Add/adjust the LastUpdated
                 entityPropertyContainer.propertiesObject['LastUpdated'] = firebase.firestore.FieldValue.serverTimestamp();
                 entityPropertyContainer.propertiesObject['LastUpdatedUid'] = firebase.auth().currentUser.uid;
@@ -356,14 +360,24 @@ export const store = new Vuex.Store({
             // update if the entity still exists
             // - it's possible the entity has been deleted at the server or by another real-time client
             if( (((context.state.currentEntity||{})[collectionContainer.collectionId]||{})[collectionContainer.docId]||{}).hasOwnProperty('data') ){
+                let entityToCommit = context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId];
+
                 // Update the entity in the database/Firestore
-                firebase.firestore().collection(collectionContainer.collectionId).doc(context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId].id).update(context.state.currentEntity[collectionContainer.collectionId][collectionContainer.docId].data)
+                firebase.firestore().collection(collectionContainer.collectionId).doc(entityToCommit.id).update(entityToCommit.data)
                 .then(function() {
                     console.log("Document successfully written!");
                 })
                 .catch(function(error) {
                     console.error("Error writing document: ", error);
                 });    
+
+                // if the entity has a parent - update the parent's modification time (because an update to a child entity is an update to a parent entity)
+                if(  entityToCommit.data.hasOwnProperty('ParentCollectionId') &&  entityToCommit.data.hasOwnProperty('ParentType')  ){
+                    console.log("This entity has a parent.  Updating the parent's modification time by sending empty mutateCurrentEntity commit to the parent.");
+                    let entityContainer = {docId: entityToCommit.data.ParentCollectionId, collectionId: entityToCommit.data.ParentType};
+                    context.commit('mutateCurrentEntity',  entityContainer);
+                    context.dispatch('fcommitEntity',  entityContainer);
+                }
             }
             // the entity no longer exists
             else{

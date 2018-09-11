@@ -38,12 +38,12 @@ export default {
         }],
         orderBy:[{
           fieldPath:'CreatedAt',
-          directionStr:'asc',
+          directionStr:'desc',
         }],
         limit:5, 
         queryId:'myRecent',
         routeBase:'/db/' + RootEntity.collectionId + '/',
-        title:"My Recent Caregivers",
+        title:"My New Caregivers",
         displayFunction:'(entityFormFields.LastName||"") + ", " + (entityFormFields.FirstName||"") + " " + (entityFormFields.MiddleName||"")' ,
       },
       EntitySearchAllRecent:{
@@ -61,14 +61,14 @@ export default {
           //   directionStr:'asc',
           // },
           {
-            fieldPath:'CreatedAt',
-            directionStr:'asc',
+            fieldPath:'LastUpdated',
+            directionStr:'desc',
           }
         ],
         limit:5, 
         queryId:'allRecent',
         routeBase:'/db/' + RootEntity.collectionId + '/',
-        title:"All Recent Caregivers",
+        title:"All Recently Updated Caregivers",
         displayFunction:'(entityFormFields.LastName||"") + ", " + (entityFormFields.FirstName||"") + " " + (entityFormFields.MiddleName||"")' ,
       },
     };
