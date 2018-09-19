@@ -1,6 +1,6 @@
 <template>
     <v-menu ref="searchMenuRef" max-height="400" v-model="searchMenuVisibility" :close-on-content-click="false"  nudge-bottom="10" lazy transition="scale-transition" offset-y full-width min-width="290px">
-        <v-text-field slot="activator" @keyup="searchMenuVisibility=true" v-model="searchQuery" label="Search" append-icon="search" single-line hide-details ></v-text-field>
+        <v-text-field slot="activator" @keyup="searchMenuVisibility=true" v-model="searchQuery" label="Quick Search" append-icon="search" single-line hide-details ></v-text-field>
         <v-layout row wrap>
             <v-flex xs6>
                 <ais-index :app-id="algoliaCredentials.appId" :api-key="algoliaCredentials.apiKey" :index-name="algoliaCredentials.indexName1" :query="searchQuery">

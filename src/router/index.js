@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import Vue from 'vue';
 import Dashboard from '@/components/Dashboard';
 import Login from '@/components/Login';
+import Search from '@/components/Search';
 import Import from '@/components/Import';
 //import {store} from '@/store/store'
 import TemplateLoader from '@/components/TemplateLoader';
@@ -39,6 +40,14 @@ const router = new Router({
       path: '/dashboard',
       name: 'Dashboard',
       component: Dashboard,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/search',
+      name: 'Search',
+      component: Search,
       meta: {
         requiresAuth: true,
       },
