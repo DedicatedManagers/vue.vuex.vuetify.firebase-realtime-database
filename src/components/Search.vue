@@ -43,6 +43,7 @@
                             </v-list-tile>                
                         </template>
                     </ais-results>
+                    <ais-pagination></ais-pagination>
                     </v-list>
                     <ais-no-results>
                         <template slot-scope="props">
@@ -118,4 +119,8 @@ export default {
 <style>
 .ais-index {background-color:white;}
 .ais-index em {background-color:rgb(236, 230, 178);}
+
+
+ul.ais-pagination li {display:inline;}
+ul.ais-pagination li a {text-decoration:none;}
 </style>
