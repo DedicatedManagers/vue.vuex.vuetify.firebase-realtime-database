@@ -1,8 +1,8 @@
 <template>
   <v-app>
     <v-toolbar app clipped>
-      <v-btn icon to="/dashboard">
-        <v-icon>dashboard</v-icon>
+      <v-btn icon @click="navOpen=!navOpen">
+        <v-icon>menu</v-icon>
       </v-btn>
       <v-toolbar-title>Foster Kinship Client Database</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -14,6 +14,26 @@
       </v-toolbar-items>
     </v-toolbar>
 
+    <v-navigation-drawer dark  :value="navOpen" class="blue darken-2" app >
+      <v-list>
+        <v-list-tile @click="routeLink('/dashboard')">
+          <v-list-tile-action>
+            <v-icon>dashboard</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Dashboard</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+        <v-list-tile  @click="routeLink('/search')">
+          <v-list-tile-action>
+            <v-icon>search</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Search</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+    </v-navigation-drawer>
 
     <v-content>
       <template v-if="this.$store.state.loadingIndicator">
@@ -45,6 +65,7 @@ export default {
   },
   data() {
     return {
+      navOpen:false,
     };
   },
   computed:{
@@ -58,6 +79,9 @@ export default {
     },
     logout(){
       this.$store.dispatch('logout');
+    },
+    routeLink(loc){
+      router.push(loc)
     },
   },
 };
