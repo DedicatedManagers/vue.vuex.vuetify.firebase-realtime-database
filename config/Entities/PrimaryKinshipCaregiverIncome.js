@@ -35,6 +35,7 @@ export const PrimaryKinshipCaregiverIncome = {
         rules:[
           "v => !!v || 'Required'",
         ] ,
+        subTotals:['houseHoldIncome'],
       },
       {
         fieldType:'text',

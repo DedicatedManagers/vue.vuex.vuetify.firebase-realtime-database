@@ -362,6 +362,9 @@ export const RootEntity = {
     },
 
   ],
+  subTotals:{
+    houseHoldIncome:true,
+  },
   subEntities:{
     PrimaryKinshipCaregiverIncome:PrimaryKinshipCaregiverIncome,
     KinshipChild:KinshipChild,

@@ -9,6 +9,10 @@
           <v-flex xs12 sm6 md4 px-1>
 
             <v-layout row wrap>
+              <v-flex xs12>
+                <entity-subtotals :entityConfig="entityConfig"></entity-subtotals>
+              </v-flex>
+
               <v-flex xs12 hidden-sm-and-up>
                 &nbsp;
               </v-flex>
@@ -19,6 +23,7 @@
                   &nbsp;
                 </v-flex>
               </v-flex>
+
 
             </v-layout>
           </v-flex>
@@ -39,6 +44,7 @@
 </template>
 
 <script>
+import EntitySubtotals from '@/components/shared/EntitySubtotals.vue';
 import DialogConfirm from '@/components/shared/DialogConfirm';
 import SubEntityList from '@/components/shared/SubEntityList';
 import EntityForm from '@/components/shared/EntityForm';
@@ -50,6 +56,7 @@ export default {
     'dialog-confirm':DialogConfirm,
     'subentity-list':SubEntityList,
     'entity-form':EntityForm,
+    'entity-subtotals':EntitySubtotals,
   },
   data() {
     return {

@@ -35,6 +35,7 @@ export const KinshipChildIncome = {
         rules:[
           "v => !!v || 'Required'",
         ] ,
+        subTotals:['houseHoldIncome'],
       },
       {
         fieldType:'text',
