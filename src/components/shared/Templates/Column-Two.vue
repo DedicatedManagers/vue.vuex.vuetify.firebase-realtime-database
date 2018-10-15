@@ -9,7 +9,7 @@
           <v-flex xs12 sm6 md4 px-1>
 
             <v-layout row wrap>
-              <v-flex xs12>
+              <v-flex xs12 v-if="entityConfig.subTotals">
                 <entity-subtotals :entityConfig="entityConfig"></entity-subtotals>
                 <v-flex>
                   &nbsp;

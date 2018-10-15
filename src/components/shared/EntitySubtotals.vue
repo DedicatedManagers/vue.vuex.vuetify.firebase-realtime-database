@@ -9,20 +9,20 @@
             <v-list-group v-model="listVisibility">
             <v-list-tile  v-for="(entitySubtotal, entitySubtotalName) in entitySubtotals" :key="entitySubtotalName">
                 <v-list-tile-action>
-                <v-icon>{{entitySubtotal.icon}}</v-icon>
+                    <v-icon>{{entitySubtotal.icon}}</v-icon>
                 </v-list-tile-action>
                 <v-list-tile-content>
-                <v-list-tile-title>{{entitySubtotal.listDisplayText}}{{entitySubtotal.valPrepend}}{{entitySubtotal.val}}{{entitySubtotal.valAppend}}</v-list-tile-title>
+                    <v-list-tile-title>{{entitySubtotal.listDisplayText}}{{entitySubtotal.valPrepend}}{{entitySubtotal.val}}{{entitySubtotal.valAppend}}</v-list-tile-title>
                 </v-list-tile-content>
             </v-list-tile>
             </v-list-group>
             <v-list-group :value="!listVisibility">
             <v-list-tile @click="listVisibility=!listVisibility">
                 <v-list-tile-action>
-                <v-icon>{{entityConfig.subTotalsConfig.hiddenItemsIcon}}</v-icon>
+                    <v-icon>{{entityConfig.subTotalsConfig.hiddenItemsIcon}}</v-icon>
                 </v-list-tile-action>
                 <v-list-tile-content>
-                <v-list-tile-title>{{Object.keys(entitySubtotals).length}} Hidden (click to show)</v-list-tile-title>
+                    <v-list-tile-title>{{Object.keys(entitySubtotals).length}} Hidden (click to show)</v-list-tile-title>
                 </v-list-tile-content>                            
             </v-list-tile>
             </v-list-group>
