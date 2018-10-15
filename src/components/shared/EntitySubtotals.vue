@@ -80,24 +80,28 @@ export default {
                         
                         if(  !(  this.$store.state.currentEntity||{})[parentEntityConfig.collectionId]  ) return false; 
 
+                        // Get the object that holds all the entities for this entity type 
                         let loopCurrentEntities = this.$store.state.currentEntity[parentEntityConfig.collectionId];
                         
-                        
+                        // Loop over the entities for this entity type
                         for (let loopCurrentEntity in loopCurrentEntities){
+                            // initialize
                             if (!this.calculatedEntitySubtotals) this.calculatedEntitySubtotals = {};
                             if (!this.calculatedEntitySubtotals[subTotalName]) this.calculatedEntitySubtotals[subTotalName] = {};
                             if (!this.calculatedEntitySubtotals[subTotalName].val) this.calculatedEntitySubtotals[subTotalName].val = 0;
+
+                            // perform the subtotal calculation
                             this.calculatedEntitySubtotals[subTotalName].val += parseFloat(loopCurrentEntities[loopCurrentEntity].data[formFieldName].trim());
 
+                            // add the meta information
                             this.calculatedEntitySubtotals[subTotalName].icon = this.entityConfig.subTotals.ids[subTotalName].icon;
                             this.calculatedEntitySubtotals[subTotalName].listDisplayText = this.entityConfig.subTotals.ids[subTotalName].listDisplayText;
                             this.calculatedEntitySubtotals[subTotalName].valPrepend = this.entityConfig.subTotals.ids[subTotalName].valPrepend;
                             this.calculatedEntitySubtotals[subTotalName].valAppend = this.entityConfig.subTotals.ids[subTotalName].valAppend;
 
-                            console.log('adding formField', formFieldName, loopCurrentEntities[loopCurrentEntity].data[formFieldName]);
                         }
                         
-
+                        // A DIFFERENT WAY OF DOING THE ABOVE USING Vue.set BUT IT DOESN'T APPEAR TO BE NEEDED
                         // for (let loopCurrentEntity in loopCurrentEntities){
                         //     console.log('adding formField', formFieldName, loopCurrentEntities[loopCurrentEntity].data[formFieldName]);
                         //     if (!this.calculatedEntitySubtotals) this.calculatedEntitySubtotals = {};
