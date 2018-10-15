@@ -1,7 +1,7 @@
 <template>
-<v-card class="customListExpandable" v-if="!this.$store.state.loadingIndicator && entityConfig.subTotalsConfig">
+<v-card class="customListExpandable" v-if="!this.$store.state.loadingIndicator && entityConfig.subTotals.config">
     <v-toolbar color="blue" dark  @click="listVisibility=!listVisibility">
-    <v-toolbar-title>{{entityConfig.subTotalsConfig.title}}</v-toolbar-title><v-spacer></v-spacer><v-btn v-if="entitySubtotals" icon><v-icon >{{listVisibility?'expand_less':'expand_more'}}</v-icon></v-btn>
+    <v-toolbar-title>{{entityConfig.subTotals.config.title}}</v-toolbar-title><v-spacer></v-spacer><v-btn v-if="entitySubtotals" icon><v-icon >{{listVisibility?'expand_less':'expand_more'}}</v-icon></v-btn>
     </v-toolbar>
     <v-layout row wrap>
         <v-flex xs12>
@@ -19,7 +19,7 @@
             <v-list-group :value="!listVisibility">
             <v-list-tile @click="listVisibility=!listVisibility">
                 <v-list-tile-action>
-                    <v-icon>{{entityConfig.subTotalsConfig.hiddenItemsIcon}}</v-icon>
+                    <v-icon>{{entityConfig.subTotals.config.hiddenItemsIcon}}</v-icon>
                 </v-list-tile-action>
                 <v-list-tile-content>
                     <v-list-tile-title>{{Object.keys(entitySubtotals).length}} Hidden (click to show)</v-list-tile-title>
@@ -89,10 +89,10 @@ export default {
                             if (!this.calculatedEntitySubtotals[subTotalName].val) this.calculatedEntitySubtotals[subTotalName].val = 0;
                             this.calculatedEntitySubtotals[subTotalName].val += parseFloat(loopCurrentEntities[loopCurrentEntity].data[formFieldName].trim());
 
-                            this.calculatedEntitySubtotals[subTotalName].icon = this.entityConfig.subTotals[subTotalName].icon;
-                            this.calculatedEntitySubtotals[subTotalName].listDisplayText = this.entityConfig.subTotals[subTotalName].listDisplayText;
-                            this.calculatedEntitySubtotals[subTotalName].valPrepend = this.entityConfig.subTotals[subTotalName].valPrepend;
-                            this.calculatedEntitySubtotals[subTotalName].valAppend = this.entityConfig.subTotals[subTotalName].valAppend;
+                            this.calculatedEntitySubtotals[subTotalName].icon = this.entityConfig.subTotals.ids[subTotalName].icon;
+                            this.calculatedEntitySubtotals[subTotalName].listDisplayText = this.entityConfig.subTotals.ids[subTotalName].listDisplayText;
+                            this.calculatedEntitySubtotals[subTotalName].valPrepend = this.entityConfig.subTotals.ids[subTotalName].valPrepend;
+                            this.calculatedEntitySubtotals[subTotalName].valAppend = this.entityConfig.subTotals.ids[subTotalName].valAppend;
 
                             console.log('adding formField', formFieldName, loopCurrentEntities[loopCurrentEntity].data[formFieldName]);
                         }
@@ -134,11 +134,9 @@ export default {
 
             // Check if there are any SubTotal calculations to display
             if (  !this.entityConfig.hasOwnProperty('subTotals')  ) return false;
-
-            if(  !(  this.$store.state.currentEntity||{})[this.entityConfig.collectionId]  ) return false; 
             
             // Loop over the SubTotals to display and calculate their totals
-            for (let subTotalName in this.entityConfig.subTotals){
+            for (let subTotalName in this.entityConfig.subTotals.ids){
 
                 // Loop over all the subEntities
                 for (let subEntityName in this.entityConfig.subEntities){

@@ -362,22 +362,24 @@ export const RootEntity = {
     },
 
   ],
-  subTotalsConfig:{
-    title:"Totals",
-    hiddenItemsIcon:"add"
-  },
   subTotals:{
-    houseHoldIncome:{
-      listDisplayText:"Total Household Incomes: ",
-      icon: "monetization_on",
-      valPrepend:"$",
-      valAppendx:"",
+    config:{
+      title:"Totals",
+      hiddenItemsIcon:"add"
     },
-    caregiverFundsDispersed:{
-      listDisplayText:"Total Funds Dispersed: ",
-      icon: "monetization_on",
-      valPrepend:"$",
-      valAppendx:"",
+    ids:{
+      houseHoldIncome:{
+        listDisplayText:"Total Household Incomes: ",
+        icon: "monetization_on",
+        valPrepend:"$",
+        valAppendx:"",
+      },
+      caregiverFundsDispersed:{
+        listDisplayText:"Total Funds Dispersed: ",
+        icon: "monetization_on",
+        valPrepend:"$",
+        valAppendx:"",
+      },  
     },
   },
   subEntities:{
