@@ -11,6 +11,9 @@
             <v-layout row wrap>
               <v-flex xs12>
                 <entity-subtotals :entityConfig="entityConfig"></entity-subtotals>
+                <v-flex>
+                  &nbsp;
+                </v-flex>
               </v-flex>
 
               <v-flex xs12 hidden-sm-and-up>

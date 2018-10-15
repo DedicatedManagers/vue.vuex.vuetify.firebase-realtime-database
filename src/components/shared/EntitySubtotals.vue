@@ -1,10 +1,41 @@
 <template>
-  <div>
-   {{entitySubtotals}}
-  </div>
+<v-card class="customListExpandable" v-if="!this.$store.state.loadingIndicator && entityConfig.subTotalsConfig">
+    <v-toolbar color="blue" dark  @click="listVisibility=!listVisibility">
+    <v-toolbar-title>{{entityConfig.subTotalsConfig.title}}</v-toolbar-title><v-spacer></v-spacer><v-btn v-if="entitySubtotals" icon><v-icon >{{listVisibility?'expand_less':'expand_more'}}</v-icon></v-btn>
+    </v-toolbar>
+    <v-layout row wrap>
+        <v-flex xs12>
+        <v-list v-if="entitySubtotals" subheader>
+            <v-list-group v-model="listVisibility">
+            <v-list-tile  v-for="(entitySubtotal, entitySubtotalName) in entitySubtotals" :key="entitySubtotalName">
+                <v-list-tile-action>
+                <v-icon>{{entitySubtotal.icon}}</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                <v-list-tile-title>{{entitySubtotal.listDisplayText}}{{entitySubtotal.valPrepend}}{{entitySubtotal.val}}{{entitySubtotal.valAppend}}</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+            </v-list-group>
+            <v-list-group :value="!listVisibility">
+            <v-list-tile @click="listVisibility=!listVisibility">
+                <v-list-tile-action>
+                <v-icon>{{entityConfig.subTotalsConfig.hiddenItemsIcon}}</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                <v-list-tile-title>{{Object.keys(entitySubtotals).length}} Hidden (click to show)</v-list-tile-title>
+                </v-list-tile-content>                            
+            </v-list-tile>
+            </v-list-group>
+        </v-list>
+        </v-flex>
+    </v-layout>
+</v-card>              
+
 </template>
 
+
 <script>
+import Vue from 'vue';
 
 export default {
   name: 'EntitySubtotals',
@@ -13,7 +44,7 @@ export default {
   },
   data() {
     return {
-        calculatedEntitySubtotals:{},
+        listVisibility:true,
     };
   },
   methods:{
@@ -47,15 +78,44 @@ export default {
                     if (parentEntityConfigFormField.subTotals.includes(subTotalName) ){
                         // Get the currentEntity for this config object and add its total
                         
-                        if(  !(  (this.$store.state.currentEntity||{})[parentEntityConfig.collectionId])  ) return false; 
+                        if(  !(  this.$store.state.currentEntity||{})[parentEntityConfig.collectionId]  ) return false; 
 
                         let loopCurrentEntities = this.$store.state.currentEntity[parentEntityConfig.collectionId];
+                        
+                        
                         for (let loopCurrentEntity in loopCurrentEntities){
-                            if (!this.calculatedEntitySubtotals[subTotalName]) this.calculatedEntitySubtotals[subTotalName] = 0;
-                            this.calculatedEntitySubtotals[subTotalName] += Number(loopCurrentEntities[loopCurrentEntity].data[formFieldName]);
+                            if (!this.calculatedEntitySubtotals) this.calculatedEntitySubtotals = {};
+                            if (!this.calculatedEntitySubtotals[subTotalName]) this.calculatedEntitySubtotals[subTotalName] = {};
+                            if (!this.calculatedEntitySubtotals[subTotalName].val) this.calculatedEntitySubtotals[subTotalName].val = 0;
+                            this.calculatedEntitySubtotals[subTotalName].val += parseFloat(loopCurrentEntities[loopCurrentEntity].data[formFieldName].trim());
+
+                            this.calculatedEntitySubtotals[subTotalName].icon = this.entityConfig.subTotals[subTotalName].icon;
+                            this.calculatedEntitySubtotals[subTotalName].listDisplayText = this.entityConfig.subTotals[subTotalName].listDisplayText;
+                            this.calculatedEntitySubtotals[subTotalName].valPrepend = this.entityConfig.subTotals[subTotalName].valPrepend;
+                            this.calculatedEntitySubtotals[subTotalName].valAppend = this.entityConfig.subTotals[subTotalName].valAppend;
+
                             console.log('adding formField', formFieldName, loopCurrentEntities[loopCurrentEntity].data[formFieldName]);
                         }
                         
+
+                        // for (let loopCurrentEntity in loopCurrentEntities){
+                        //     console.log('adding formField', formFieldName, loopCurrentEntities[loopCurrentEntity].data[formFieldName]);
+                        //     if (!this.calculatedEntitySubtotals) this.calculatedEntitySubtotals = {};
+
+                        //         if (  !(  this.calculatedEntitySubtotals[subTotalName]||{}).hasOwnProperty('val')  ){
+                        //             let subTotalObject = {};
+                        //             subTotalObject.val = Number(loopCurrentEntities[loopCurrentEntity].data[formFieldName]);
+                        //             subTotalObject.icon  = 'person';
+                        //             subTotalObject.listDisplayText = subTotalName;
+
+                        //             Vue.set(this.calculatedEntitySubtotals, subTotalName, subTotalObject);
+                        //         }
+                        //         else {
+                        //             this.calculatedEntitySubtotals[subTotalName].val += Number(loopCurrentEntities[loopCurrentEntity].data[formFieldName]);
+                        //         }
+                        //     console.log('added formField', formFieldName, loopCurrentEntities[loopCurrentEntity].data[formFieldName]);
+
+                        // }
                         //this.calculatedEntitySubtotals[subTotalName][parentEntityConfigFormField.fieldName];
 
                         // this.calculatedEntitySubtotals[subTotalName] += subTotalName;
@@ -68,11 +128,14 @@ export default {
   },
   computed:{
         entitySubtotals: function(){
+
             // Reset calculated data variable
-            this.calculatedEntitySubtotals = {};
+            this.calculatedEntitySubtotals = null;
 
             // Check if there are any SubTotal calculations to display
             if (  !this.entityConfig.hasOwnProperty('subTotals')  ) return false;
+
+            if(  !(  this.$store.state.currentEntity||{})[this.entityConfig.collectionId]  ) return false; 
             
             // Loop over the SubTotals to display and calculate their totals
             for (let subTotalName in this.entityConfig.subTotals){

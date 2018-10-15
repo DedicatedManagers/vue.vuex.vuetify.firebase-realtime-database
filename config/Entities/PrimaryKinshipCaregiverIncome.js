@@ -34,6 +34,8 @@ export const PrimaryKinshipCaregiverIncome = {
         fieldLabel:"Income / Month",
         rules:[
           "v => !!v || 'Required'",
+          "v => !/ /.test(v) || 'Check for and remove errant spaces'",
+          "v => /^[0-9]*\.?[0-9]+$/.test(v) || 'Only numbers are allowed'",
         ] ,
         subTotals:['houseHoldIncome'],
       },

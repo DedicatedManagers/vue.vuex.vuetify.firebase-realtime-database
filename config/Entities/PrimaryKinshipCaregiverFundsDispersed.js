@@ -65,6 +65,12 @@ export const PrimaryKinshipCaregiverFundsDispersed = {
         fieldType:'text',
         fieldName:"Value",
         fieldLabel:"Value",
+        rules:[
+          "v => !!v || 'Required'",
+          "v => !/ /.test(v) || 'Check for and remove errant spaces'",
+          "v => /^[0-9]*\.?[0-9]+$/.test(v) || 'Only numbers are allowed'",
+        ] ,
+        subTotals:['caregiverFundsDispersed'],
       },
       {
         fieldType:'text',
