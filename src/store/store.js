@@ -310,30 +310,45 @@ export const store = new Vuex.Store({
         },
         // add new entity to firebase
         // Receives collectionContainer: {docId:'', collectionId:'', <parentCollectionId:'', parentCollectionType:''>}
-        fcreateEntity(context, collectionContainer){
-            console.log('fcreateEntity - object received: ' + JSON.stringify(collectionContainer));
-            let newSubEntityMetaLocal = {}; // empty object means it's not a sub-entity
+        // Receives entityConfigContainer: {entityConfig:{}, <subEntityCollectionId: ''>}
+        fcreateEntity(context, entityConfigContainer){
+            console.log('fcreateEntity - object received: ' + JSON.stringify(entityConfigContainer));
+
+            //this.$store.dispatch('fcreateEntity', {docId:'add', collectionId:RootEntity.collectionId}).then(createdDocId=>{
+            //this.$store.dispatch('fcreateEntity', {docId:'add', collectionId:this.entityConfig.subEntities[this.subEntityIndex].collectionId, parentCollectionId:this.entityConfig.docId, parentCollectionType:this.entityConfig.collectionId}).then(createdDocId=>{
+
+
+            let newSubEntityMetaLocal = {}; 
+
+            // set the collection name / collectionId that the new entity is potentially being added to
+            let newCollectionId = entityConfigContainer.entityConfig.collectionId;
 
             // create meta information for the new entity
             newSubEntityMetaLocal['CreatedAt'] = firebase.firestore.FieldValue.serverTimestamp();
             newSubEntityMetaLocal['CreatedAtUid'] = firebase.auth().currentUser.uid;
 
-            // if this is a child entity, set its information about its parent 
-            if(collectionContainer.hasOwnProperty('parentCollectionType') && collectionContainer.hasOwnProperty('parentCollectionId')){
-                newSubEntityMetaLocal.ParentType = collectionContainer.parentCollectionType;
-                newSubEntityMetaLocal.ParentCollectionId = collectionContainer.parentCollectionId;                    
+            // if this is a child entity, 
+            if( entityConfigContainer.hasOwnProperty( 'subEntityCollectionId') ){
+            //set its information about its parent 
+                newSubEntityMetaLocal.ParentType = entityConfigContainer.entityConfig.collectionId;
+                newSubEntityMetaLocal.ParentCollectionId = entityConfigContainer.entityConfig.docId;                    
+
+                // update the collection name / collectionId for the new subEntity that is intended to be added
+                newCollectionId = entityConfigContainer.subEntityCollectionId;
             }
 
+
+
             // add the new entity to the firestore
-            return firebase.firestore().collection(collectionContainer.collectionId).add(newSubEntityMetaLocal)
+            return firebase.firestore().collection(newCollectionId).add(newSubEntityMetaLocal)
             .then(function(docRef) {    
                 console.log('firestore add call complete. new entity has been created. docRef.id: ' + docRef.id);
 
                 // if its a sub-entity, add the child information to the parent
-                if(newSubEntityMetaLocal.hasOwnProperty('ParentCollectionId')){ // the newSubEntityMeta object is not empty therefore its a sub entity
+                if(newSubEntityMetaLocal.hasOwnProperty('ParentCollectionId')){ // the newSubEntityMeta object is a sub entity
                     let NestedCollections = {};  // holds an object of child entities by child entity type property
-                    NestedCollections[collectionContainer.collectionId] = {};
-                    NestedCollections[collectionContainer.collectionId][docRef.id] = 1;  // set the docId as a property of the collectionId object
+                    NestedCollections[newCollectionId] = {};
+                    NestedCollections[newCollectionId][docRef.id] = 1;  // set the docId as a property of the collectionId object
                     context.dispatch('updateCurrentEntity', {
                         docId:newSubEntityMetaLocal.ParentCollectionId,
                         collectionId: newSubEntityMetaLocal.ParentType,

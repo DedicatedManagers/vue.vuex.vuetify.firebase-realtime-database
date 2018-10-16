@@ -87,7 +87,7 @@ export default {
   methods:{
     addEntity(){
         this.$store.commit('setLoadingIndicator', true);
-        this.$store.dispatch('fcreateEntity', {docId:'add', collectionId:this.entityConfig.subEntities[this.subEntityIndex].collectionId, parentCollectionId:this.entityConfig.docId, parentCollectionType:this.entityConfig.collectionId}).then(createdDocId=>{
+        this.$store.dispatch('fcreateEntity', {entityConfig:this.entityConfig, subEntityCollectionId:this.subEntityIndex}).then(createdDocId=>{
             console.log( 'addEntity received: ' + createdDocId  );
             if(createdDocId){
                 this.$router.push(this.entityConfig.entityUrl + '/' + this.entityConfig.subEntities[this.subEntityIndex].collectionId + '/' + createdDocId);

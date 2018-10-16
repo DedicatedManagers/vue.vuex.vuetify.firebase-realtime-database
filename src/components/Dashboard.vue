@@ -88,7 +88,7 @@ export default {
   methods:{
     addNewClient(){
       this.$store.commit('setLoadingIndicator', true);
-      this.$store.dispatch('fcreateEntity', {docId:'add', collectionId:RootEntity.collectionId}).then(createdDocId=>{
+      this.$store.dispatch('fcreateEntity', {entityConfig:RootEntity}).then(createdDocId=>{
         console.log( 'addEntity received: ' + createdDocId  );
         this.$router.push('/db/' + RootEntity.collectionId + '/' + createdDocId);
       });
