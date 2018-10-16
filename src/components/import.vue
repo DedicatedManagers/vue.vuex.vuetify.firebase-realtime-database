@@ -19,12 +19,12 @@
                 &nbsp; &nbsp; ^ Parent entity column (if nested entity) should be named "parentDocId"<br>
                 &nbsp; &nbsp; &nbsp; &nbsp; ^ Example Header Row: "parentDocId","docId","DateAdded","FirstName","LastName",<br>
                 * Entities must be imported from top down (root entity first)<br>
-                * Import will fail if child entity is imported and referenced parent id is not found (ie data needs to be verified)
+                * Import will fail if child entity is imported and referenced parent id is not found (ie data needs to be verified)<br>
                 * All imports must be done in one render<br>
-                * Entity Names in "ImportEntity" object (this code) should match the Config>>Entities "collectionId" within the file for the object
-                &nbsp; &nbsp; ^ Do save project file or hot reload will rerender<br>
+                * Entity Names in "ImportEntity" object (this code) should match the Config>>Entities "collectionId" within the file for the object<br>
+                &nbsp; &nbsp; ^ Do NOT save andy project files during import or hot reload will rerender<br>
                 &nbsp; &nbsp; ^ The conversion arrays are renewed with each load, so firebase docId's won't match up.<br>
-                * Do not run next entity type import until importing of the previous entity is complete.(see dugger/console for output) <br>
+                * Do not run next entity type import until importing of the previous entity is complete.(see dugger/console for output to verify when completed) <br>
                 <br>
           </v-flex>
         </v-layout>
