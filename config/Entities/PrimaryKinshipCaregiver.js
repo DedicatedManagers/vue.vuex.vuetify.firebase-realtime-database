@@ -32,10 +32,10 @@ export const PrimaryKinshipCaregiver = {
       fieldLabel:"Family Advocacy",
     },
     {
-      fieldType:'text',
+      fieldType:'date',
       fieldName:"DateAdded",
       fieldLabel:"Date Added",
-      disabled:true,
+      fieldAutoFillDate:true,
     },
     {
       fieldType:'date',

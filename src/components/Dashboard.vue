@@ -42,7 +42,7 @@ export default {
           //  directionStr:'desc',
           //  }
           {
-            fieldPath:'LastName',
+            fieldPath:'CreatedAt',
             directionStr:'desc',
           }
         ],

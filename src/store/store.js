@@ -308,50 +308,83 @@ export const store = new Vuex.Store({
             // commit the parent
             context.dispatch('fcommitEntity', {docId:parentChildEntityPropertyContainer.docId, collectionId:parentChildEntityPropertyContainer.collectionId});
         },
+
         // add new entity to firebase
-        // Receives collectionContainer: {docId:'', collectionId:'', <parentCollectionId:'', parentCollectionType:''>}
         // Receives entityConfigContainer: {entityConfig:{}, <subEntityCollectionId: ''>}
         fcreateEntity(context, entityConfigContainer){
             console.log('fcreateEntity - object received: ' + JSON.stringify(entityConfigContainer));
 
-            //this.$store.dispatch('fcreateEntity', {docId:'add', collectionId:RootEntity.collectionId}).then(createdDocId=>{
-            //this.$store.dispatch('fcreateEntity', {docId:'add', collectionId:this.entityConfig.subEntities[this.subEntityIndex].collectionId, parentCollectionId:this.entityConfig.docId, parentCollectionType:this.entityConfig.collectionId}).then(createdDocId=>{
-
-
-            let newSubEntityMetaLocal = {}; 
+            // initialize the variable for meta info
+            let newEntityMeta = {}; 
 
             // set the collection name / collectionId that the new entity is potentially being added to
             let newCollectionId = entityConfigContainer.entityConfig.collectionId;
 
+            // create an entity config object for the new entity
+            let newEntityConfig = entityConfigContainer.entityConfig;
+
             // create meta information for the new entity
-            newSubEntityMetaLocal['CreatedAt'] = firebase.firestore.FieldValue.serverTimestamp();
-            newSubEntityMetaLocal['CreatedAtUid'] = firebase.auth().currentUser.uid;
+            newEntityMeta['CreatedAt'] = firebase.firestore.FieldValue.serverTimestamp();
+            newEntityMeta['CreatedAtUid'] = firebase.auth().currentUser.uid;
 
             // if this is a child entity, 
             if( entityConfigContainer.hasOwnProperty( 'subEntityCollectionId') ){
-            //set its information about its parent 
-                newSubEntityMetaLocal.ParentType = entityConfigContainer.entityConfig.collectionId;
-                newSubEntityMetaLocal.ParentCollectionId = entityConfigContainer.entityConfig.docId;                    
+                //set its information about its parent 
+                newEntityMeta.ParentType = entityConfigContainer.entityConfig.collectionId;
+                newEntityMeta.ParentCollectionId = entityConfigContainer.entityConfig.docId;                    
 
                 // update the collection name / collectionId for the new subEntity that is intended to be added
                 newCollectionId = entityConfigContainer.subEntityCollectionId;
+
+                // update the new entity config to be the child entity
+                newEntityConfig = entityConfigContainer.entityConfig.subEntities[newCollectionId];
             }
 
 
 
             // add the new entity to the firestore
-            return firebase.firestore().collection(newCollectionId).add(newSubEntityMetaLocal)
+            return firebase.firestore().collection(newCollectionId).add(newEntityMeta)
             .then(function(docRef) {    
                 console.log('firestore add call complete. new entity has been created. docRef.id: ' + docRef.id);
 
+                // auto populate any date fields that are configured as such
+                docRef.get().then(function (documentSnapshot){
+
+                    // create the date from the CreatedAt server populated timestamp
+                    let currentDate = documentSnapshot.get('CreatedAt').toDate();
+                    let date = currentDate.getDate();
+                    let month = currentDate.getMonth(); //Be careful! January is 0 not 1
+                    let year = currentDate.getFullYear();
+                    let dateString = year + "-" +(month + 1) + "-" + date;
+
+                    // loop over the fields in the entity/form
+                    for (let formField of newEntityConfig.formFields){
+                        // if there is a date field that is to be auto populated
+                        if (formField.fieldAutoFillDate){
+                            // auto populate the field with server timestamp
+                            let propertiesObject = {};
+                            propertiesObject[formField.fieldName] = dateString;
+
+                            // update the entity with the new date info
+                            context.dispatch('updateCurrentEntity', {
+                                docId:docRef.id,
+                                collectionId: newEntityConfig.collectionId,
+                                propertiesObject:propertiesObject,
+                            });
+
+                        }                    
+                    }
+
+                })
+
                 // if its a sub-entity, add the child information to the parent
-                if(newSubEntityMetaLocal.hasOwnProperty('ParentCollectionId')){ // the newSubEntityMeta object is a sub entity
+                if(newEntityMeta.hasOwnProperty('ParentCollectionId')){ // the newSubEntityMeta object is a sub entity
                     let NestedCollections = {};  // holds an object of child entities by child entity type property
                     NestedCollections[newCollectionId] = {};
                     NestedCollections[newCollectionId][docRef.id] = 1;  // set the docId as a property of the collectionId object
                     context.dispatch('updateCurrentEntity', {
-                        docId:newSubEntityMetaLocal.ParentCollectionId,
-                        collectionId: newSubEntityMetaLocal.ParentType,
+                        docId:newEntityMeta.ParentCollectionId,
+                        collectionId: newEntityMeta.ParentType,
                         propertiesObject:{
                             NestedCollections:NestedCollections,
                         }
