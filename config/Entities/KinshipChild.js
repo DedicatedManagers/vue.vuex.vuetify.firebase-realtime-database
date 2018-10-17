@@ -22,6 +22,7 @@ export const KinshipChild = {
             fieldName:"DateAdded",
             fieldLabel:"Date Added",
             disabled:true,
+            fieldAutoFillDate:true,
         },
         {
             fieldType:'text',

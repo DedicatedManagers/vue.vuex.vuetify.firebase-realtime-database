@@ -312,7 +312,7 @@ export const store = new Vuex.Store({
         // add new entity to firebase
         // Receives entityConfigContainer: {entityConfig:{}, <subEntityCollectionId: ''>}
         fcreateEntity(context, entityConfigContainer){
-            console.log('fcreateEntity - object received: ' + JSON.stringify(entityConfigContainer));
+            console.log('fcreateEntity - object received: ' , entityConfigContainer);
 
             // initialize the variable for meta info
             let newEntityMeta = {}; 
@@ -361,20 +361,19 @@ export const store = new Vuex.Store({
                     for (let formField of newEntityConfig.formFields){
                         // if there is a date field that is to be auto populated
                         if (formField.fieldAutoFillDate){
+
                             // auto populate the field with server timestamp
                             let propertiesObject = {};
                             propertiesObject[formField.fieldName] = dateString;
 
                             // update the entity with the new date info
-                            context.dispatch('updateCurrentEntity', {
+                            context.dispatch('fcommitRaw', {
                                 docId:docRef.id,
                                 collectionId: newEntityConfig.collectionId,
-                                propertiesObject:propertiesObject,
+                                data:propertiesObject,
                             });
-
                         }                    
                     }
-
                 })
 
                 // if its a sub-entity, add the child information to the parent
@@ -399,6 +398,21 @@ export const store = new Vuex.Store({
                 console.error("Error writing document: ", error);
             });  
 
+        },
+        // Commit raw data fields to firebase
+        // Receives dataContainer: { docId:'', collectionId:'', data:{} }
+        fcommitRaw(context, dataContainer){
+            // NOTE: This function currently does not update the last modification time
+            console.log('fcommitRaw ovject received: ', dataContainer);
+
+            // Update the entity in the database/Firestore
+            firebase.firestore().collection(dataContainer.collectionId).doc(dataContainer.docId).update(dataContainer.data)
+            .then(function() {
+                console.log("Document successfully written!");
+            })
+            .catch(function(error) {
+                console.error("Error writing document: ", error);
+            });  
         },
         // Commit changes to firebase
         // Receives collectionContainer: {docId:'', collectionId:''}
