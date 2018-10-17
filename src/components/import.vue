@@ -47,7 +47,7 @@ export default {
             ImportEntityChoice:"",
 
             ImportEntity:{
-                // PrimaryKinshipCaregiver: "docId","NavigatorProgram","FamilyAdvocacy","DateAdded","FollowUpDate","SpanishFollowUpNeeded","CaseComplete","FirstName","LastName","Gender","Birthdate","PrimaryPhoneNumber","SecondaryPhoneNumber","EmailAddress","StreetAddress1","City","State","ZipCode","ClientTypeAtIntake","Diversion","PrimaryReasonForKinshipCare","SecondaryReasonForKinshipCare","ThirdReasonForKinshipCare","MaritalStatus","HousingType","TransportationType","HasMedicalConditions","MedicalConditions","Ethnicity","PrimaryLanguageSpoken","ReferredBy","ReferralNotes","AttendedDFSKinshipInfoSession","FederalPovertyLevel","Below200FPL","Below275","GrantFundsUsed","HUDSection8Median"
+                // PrimaryKinshipCaregiver: "docId","NavigatorProgram","FamilyAdvocacy","DateAdded","FollowUpDate","SpanishFollowUpNeeded","CaseComplete","FirstName","LastName","Birthdate","Gender","PrimaryPhoneNumber","SecondaryPhoneNumber","EmailAddress","StreetAddress1","City","State","ZipCode","ClientTypeAtIntake","Diversion","PrimaryReasonForKinshipCare","SecondaryReasonForKinshipCare","ThirdReasonForKinshipCare","MaritalStatus","HousingType","TransportationType","PrimaryCaregiverDisabled","MedicalConditions","Ethnicity","PrimaryLanguageSpoken","ReferredBy","ReferralNotes","AttendedDFSKinshipInfoSession","FederalPovertyLevel","Below200FPL","Below275","HUDSection8Median","GrantFundsUsedFY18","GrantFundsUsedFY19"
                 '1. PrimaryKinshipCaregiver':{importCollectionName:"PrimaryKinshipCaregiver",importParentCollectionName:""},
                 // PrimaryKinshipCaregiverIncome: "parentDocId","docId","DateAdded","IncomeSource","IncomePerMonth","Notes"
                 '1.1 PrimaryKinshipCaregiverIncome':{importCollectionName:"PrimaryKinshipCaregiverIncome",importParentCollectionName:"PrimaryKinshipCaregiver"},
@@ -185,9 +185,22 @@ export default {
 
                 // Also tag the entity with the original database id
                 newEntity.origDbId = oldDbId;
-                
+                                
                 // Delete the header docId 
                 delete newEntity.docId;
+
+                // Copy the DateAdded to the CreatedAt 
+                if (parsedFileContents.data[i].hasOwnProperty('DateAdded')){
+                    let dateAdded = new Date(parsedFileContents.data[i].DateAdded + "T00:00:00");
+                    let fTimestamp = new firebase.firestore.Timestamp.fromDate(dateAdded);
+                    newEntity.CreatedAt = fTimestamp;
+
+                    console.log('DateAdded var as string from import file: ', parsedFileContents.data[i].DateAdded);
+                    console.log('DateAdded as JS Date: ', dateAdded);
+                    console.log('DateAdded as Firestore Timestamp: ', fTimestamp);
+
+                }
+
 
                 let oldParentDbId = "";
 
