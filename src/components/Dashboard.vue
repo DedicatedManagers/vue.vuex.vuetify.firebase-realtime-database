@@ -66,14 +66,14 @@ export default {
           //   fieldPath:'CreatedAtUid',
           //   directionStr:'asc',
           // },
-          // {
-          //   fieldPath:'LastUpdated',
-          //   directionStr:'desc',
-          // }
           {
-            fieldPath:'DateAdded',
+            fieldPath:'LastUpdated',
             directionStr:'desc',
           }
+          // {
+          //   fieldPath:'DateAdded',
+          //   directionStr:'desc',
+          // }
         ],
         limit:5, 
         queryId:'allRecent',

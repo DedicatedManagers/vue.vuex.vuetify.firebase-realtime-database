@@ -2,31 +2,35 @@
   <v-slide-y-transition mode="out-in">
     <v-container fluid>
         <v-layout row wrap>
-          <v-flex xs12>
-            Import<br>
-            <v-radio-group v-model="ImportEntityChoice" >
-                <v-radio :label="Key" :value="Key"  v-for="(ImportEntityChoiceLoop, Key) in ImportEntity" :key="Key"></v-radio>
-            </v-radio-group>
-            <v-btn @click="importFile">Import File</v-btn><br>
-            <br>
-            <v-btn @click="fCommit">Commit To Firebase</v-btn><br>
-            <br>
-            IMPORT NOTES:<br>
-                * Within the imported files: <br>
-                &nbsp; &nbsp; ^ File type is csv (comma separated variables)<br>
-                &nbsp; &nbsp; ^ Entity id column should be named "docId"<br>
-                &nbsp; &nbsp; &nbsp; &nbsp; ^ Example Header Row: "docId","DateAdded","FirstName","LastName",<br>
-                &nbsp; &nbsp; ^ Parent entity column (if nested entity) should be named "parentDocId"<br>
-                &nbsp; &nbsp; &nbsp; &nbsp; ^ Example Header Row: "parentDocId","docId","DateAdded","FirstName","LastName",<br>
-                * Entities must be imported from top down (root entity first)<br>
-                * Import will fail if child entity is imported and referenced parent id is not found (ie data needs to be verified)<br>
-                * All imports must be done in one render<br>
-                * Entity Names in "ImportEntity" object (this code) should match the Config>>Entities "collectionId" within the file for the object<br>
-                &nbsp; &nbsp; ^ Do NOT save andy project files during import or hot reload will rerender<br>
-                &nbsp; &nbsp; ^ The conversion arrays are renewed with each load, so firebase docId's won't match up.<br>
-                * Do not run next entity type import until importing of the previous entity is complete.(see dugger/console for output to verify when completed) <br>
+            <v-flex xs2>
+                <v-btn @click="importFile">Import File</v-btn><br>
                 <br>
-          </v-flex>
+                <v-btn @click="fCommit">Commit To Firebase</v-btn><br>
+                <br>
+            </v-flex>
+            <v-flex xs6>
+                Import<br>
+                <v-radio-group v-model="ImportEntityChoice" >
+                    <v-radio :label="Key" :value="Key"  v-for="(ImportEntityChoiceLoop, Key) in ImportEntity" :key="Key"></v-radio>
+                </v-radio-group>
+            </v-flex>
+            <v-flex xs12>
+                IMPORT NOTES:<br>
+                    * Within the imported files: <br>
+                    &nbsp; &nbsp; ^ File type is csv (comma separated variables)<br>
+                    &nbsp; &nbsp; ^ Entity id column should be named "docId"<br>
+                    &nbsp; &nbsp; &nbsp; &nbsp; ^ Example Header Row: "docId","DateAdded","FirstName","LastName",<br>
+                    &nbsp; &nbsp; ^ Parent entity column (if nested entity) should be named "parentDocId"<br>
+                    &nbsp; &nbsp; &nbsp; &nbsp; ^ Example Header Row: "parentDocId","docId","DateAdded","FirstName","LastName",<br>
+                    * Entities must be imported from top down (root entity first)<br>
+                    * Import will fail if child entity is imported and referenced parent id is not found (ie data needs to be verified)<br>
+                    * All imports must be done in one render<br>
+                    * Entity Names in "ImportEntity" object (this code) should match the Config>>Entities "collectionId" within the file for the object<br>
+                    &nbsp; &nbsp; ^ Do NOT save andy project files during import or hot reload will rerender<br>
+                    &nbsp; &nbsp; ^ The conversion arrays are renewed with each load, so firebase docId's won't match up.<br>
+                    * Do not run next entity type import until importing of the previous entity is complete.(see dugger/console for output to verify when completed) <br>
+                    <br>
+            </v-flex>
         </v-layout>
     </v-container>
   </v-slide-y-transition>
@@ -49,26 +53,37 @@ export default {
             ImportEntity:{
                 // PrimaryKinshipCaregiver: "docId","NavigatorProgram","FamilyAdvocacy","DateAdded","FollowUpDate","SpanishFollowUpNeeded","CaseComplete","FirstName","LastName","Birthdate","Gender","PrimaryPhoneNumber","SecondaryPhoneNumber","EmailAddress","StreetAddress1","City","State","ZipCode","ClientTypeAtIntake","Diversion","PrimaryReasonForKinshipCare","SecondaryReasonForKinshipCare","ThirdReasonForKinshipCare","MaritalStatus","HousingType","TransportationType","PrimaryCaregiverDisabled","MedicalConditions","Ethnicity","PrimaryLanguageSpoken","ReferredBy","ReferralNotes","AttendedDFSKinshipInfoSession","FederalPovertyLevel","Below200FPL","Below275","HUDSection8Median","GrantFundsUsedFY18","GrantFundsUsedFY19"
                 '1. PrimaryKinshipCaregiver':{importCollectionName:"PrimaryKinshipCaregiver",importParentCollectionName:""},
+                
                 // PrimaryKinshipCaregiverIncome: "parentDocId","docId","DateAdded","IncomeSource","IncomePerMonth","Notes"
                 '1.1 PrimaryKinshipCaregiverIncome':{importCollectionName:"PrimaryKinshipCaregiverIncome",importParentCollectionName:"PrimaryKinshipCaregiver"},
+                
                 // OtherInHousehold: "parentDocId","docId","DateAdded","FirstName","LastName","Birthdate","Age","Gender","RelationToCaregiver","Email","Notes"
                 '1.2 PrimaryKinshipCaregiverOtherInhousehold':{importCollectionName:"OtherInHousehold",importParentCollectionName:"PrimaryKinshipCaregiver"},
+                
                 // OtherInHouseholdIncome: "parentDocId","docId","DateAdded","IncomeSource","IncomePerMonth","Notes"
                 '1.2.1 PrimaryKinshipCaregiverOtherInhouseholdIncome':{importCollectionName:"OtherInHouseholdIncome",importParentCollectionName:"OtherInHousehold"},
+                
                 // PrimaryKinshipCaregiverContact: "parentDocId","docId","DateAdded","ContactDate","ContactLocation","ContactType","ContactNotes","FosterKinshipEmployee","TimeSpentMinutes"
                 '1.3 PrimaryKinshipCaregiverContact':{importCollectionName:"PrimaryKinshipCaregiverContact",importParentCollectionName:"PrimaryKinshipCaregiver"},
+                
                 // FamilyAdvocacyCasePlan: "parentDocId","docId","CommunityConnectionNeeded","ListReferralsProvided","CommunityAchieved","PreTest","DateAdded","LegalNeeded","LegalGoal","LegalStatus","LegalAchieved","FinancialAssistanceNeeded","TANFStatus","KinshipLicensing","SNAPStatus","SSI","MedicaidStatus","FinancialAchieved","EmotionalSupportNeeded","EmotionalAchieved","PostTest"
                 '1.4 PrimaryKinshipCaregiverFamilyAdvocacyCasePlan':{importCollectionName:"FamilyAdvocacyCasePlan",importParentCollectionName:"PrimaryKinshipCaregiver"},
-                // "parentDocId","GuardianshipAdoptionType","docId","DateAdded","PaperworkProvided","PaperworkCompleted","PaperworkSubmitted","CourtDate"
+                
+                // PrimaryKinshipCaregiverFamilyAdvocacyCasePlanFamilyAdvocacyGuardianship: "parentDocId","GuardianshipAdoptionType","docId","DateAdded","PaperworkProvided","PaperworkCompleted","PaperworkSubmitted","CourtDate"
                 '1.4.1 PrimaryKinshipCaregiverFamilyAdvocacyCasePlanFamilyAdvocacyGuardianship':{importCollectionName:"FamilyAdvocacyGuardianship",importParentCollectionName:"FamilyAdvocacyCasePlan"},
+                
                 // FamilyAdvocacyTanfDetail: "parentDocId","docId","DateAdded","ApplicationCompleted","ApplicationSubmitted","ApplicationApprovalDenial","DenialReasons","ResubmitAppeal","AppealInfo","LocationOfDenial","WorkerName"
                 '1.4.2 PrimaryKinshipCaregiverFamilyAdvocacyCasePlanFamilyAdvocacyTanfDetail':{importCollectionName:"FamilyAdvocacyTanfDetail",importParentCollectionName:"FamilyAdvocacyCasePlan"},
+                
                 // PrimaryKinshipCaregiverFundsDispersed: "parentDocId","docId","DateAdded","DateGiven","TypeOfAssistance","AssistanceCategory","Value","ResourceProvided","ReceiptReceived","Notes"
                 '1.5 PrimaryKinshipCaregiverFundsDispersed':{importCollectionName:"PrimaryKinshipCaregiverFundsDispersed",importParentCollectionName:"PrimaryKinshipCaregiver"},
+                
                 // KinshipChild: "parentDocId","docId","DateAdded","FirstName","LastName","Birthdate","RelationOfCaregiver","FamilySideOfCaregiver","FatherOnBirthCertificate","BioFatherInvolved","BioMotherInvolved","CPSInvolved","Gender","AgeYears"
                 '1.6 KinshipChild':{importCollectionName:"KinshipChild",importParentCollectionName:"PrimaryKinshipCaregiver"},
+                
                 // KinshipChildIncome: "parentDocId","docId","DateAdded","IncomeSource","IncomePerMonth","Notes"
                 '1.6.1 KinshipChildIncome':{importCollectionName:"KinshipChildIncome",importParentCollectionName:"KinshipChild"},
+                
                 // KinshipChildCustodyStatus: "parentDocId","docId","DateAdded","CustodyStartDate","CustodyStatus","Notes"
                 '1.6.2 KinshipChildCustodyStatus':{importCollectionName:"KinshipChildCustodyStatus",importParentCollectionName:"KinshipChild"},
             }
@@ -142,7 +157,7 @@ export default {
             console.log(this.conversionArrays[currentImportCollectionName]);
 
 
-            // Loop over the parsed database entries and give them a new firestore style docId
+            // Loop over the parsed database entries
             for(let i=0; i<parsedFileContents.data.length; i++){
 
                 // get the original database ID
@@ -154,6 +169,9 @@ export default {
                 // refactor any date data types
                 const monthsConversionArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; // TODO - need to verify this is the month strings used
                 for (let oldKey in oldDatabaseData){
+
+                    // TODO: remove "$ and "," from money fields?
+                    
 
                     // convert month from obvibase format (Jun 01, 2018) to Vuetify format (2018-06-01)
                     if (typeof oldDatabaseData[oldKey] === "string"){
@@ -194,10 +212,6 @@ export default {
                     let dateAdded = new Date(parsedFileContents.data[i].DateAdded + "T00:00:00");
                     let fTimestamp = new firebase.firestore.Timestamp.fromDate(dateAdded);
                     newEntity.CreatedAt = fTimestamp;
-
-                    console.log('DateAdded var as string from import file: ', parsedFileContents.data[i].DateAdded);
-                    console.log('DateAdded as JS Date: ', dateAdded);
-                    console.log('DateAdded as Firestore Timestamp: ', fTimestamp);
 
                 }
 

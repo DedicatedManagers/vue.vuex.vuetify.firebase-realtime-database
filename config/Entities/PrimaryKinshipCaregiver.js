@@ -29,7 +29,7 @@ export const PrimaryKinshipCaregiver = {
     {
       fieldType:'checkbox',
       fieldName:"FamilyAdvocacy",
-      fieldLabel:"Family Advocacy",
+      fieldLabel:"Family Advocacy (Legal, Financial, Emotional)",
     },
     {
       fieldType:'date',
@@ -63,20 +63,17 @@ export const PrimaryKinshipCaregiver = {
     },
     {
       fieldType:'text',
-      fieldName:"MiddleName",
-      fieldLabel:"Middle Name",
-      rules:[
-        "v => v.length <= 30 || 'Name must be less than 30'",
-      ] ,
-    },
-    {
-      fieldType:'text',
       fieldName:"LastName",
       fieldLabel:"Last Name",
       rules:[
         "v => !!v || 'Required'",
         "v => v.length <= 30 || 'Name must be less than 30'",
       ] ,
+    },
+    {
+      fieldType:'date',
+      fieldName:"Birthdate",
+      fieldLabel:"BirthDate",
     },
     {
       fieldType:'select',
@@ -86,11 +83,6 @@ export const PrimaryKinshipCaregiver = {
         "M",
         "F",
       ],
-    },
-    {
-      fieldType:'date',
-      fieldName:"Birthdate",
-      fieldLabel:"BirthDate",
     },
     {
       fieldType:'text',
@@ -262,8 +254,8 @@ export const PrimaryKinshipCaregiver = {
     },
     {
       fieldType:'checkbox',
-      fieldName:"HasMedicalConditions",
-      fieldLabel:"Has Medical Conditions",
+      fieldName:"PrimaryCaregiverDisabled",
+      fieldLabel:"Primary Caregiver Disabled?",
     },
     {
       fieldType:'text',
@@ -341,7 +333,18 @@ export const PrimaryKinshipCaregiver = {
     },
     {
       fieldType:'select',
-      fieldName:"GrantFundsUsed",
+      fieldName:"HUDSection8Median",
+      fieldLabel:"HUD Section 8 Median %",
+      fieldItems:[
+        "30%",
+        "50%",
+        "80%",
+        "100%",
+      ],
+    },
+    {
+      fieldType:'select',
+      fieldName:"GrantFundsUsedFY18",
       fieldLabel:"Grant Funds Used",
       fieldItems:[
         "X",
@@ -351,13 +354,12 @@ export const PrimaryKinshipCaregiver = {
     },
     {
       fieldType:'select',
-      fieldName:"HUDSection8Median",
-      fieldLabel:"HUD Section 8 Median %",
+      fieldName:"GrantFundsUsedFY19",
+      fieldLabel:"Grant Funds Used",
       fieldItems:[
-        "30%",
-        "50%",
-        "80%",
-        "100%",
+        "X",
+        "Y",
+        "Z",
       ],
     },
 

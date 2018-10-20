@@ -80,7 +80,6 @@ export default {
         {label:"State", fieldName:"State",},
         {label:"ZipCode", fieldName:"ZipCode",},
         {label:"PrimaryPhoneNumber", fieldName:"PrimaryPhoneNumber",},
-        {label:"SecondaryPhoneNumber", fieldName:"SecondaryPhoneNumber",},
       ]
     };
   },

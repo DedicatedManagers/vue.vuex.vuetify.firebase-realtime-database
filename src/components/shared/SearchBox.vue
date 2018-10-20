@@ -16,13 +16,15 @@
                                 <v-list-tile-title>
                                 <ais-highlight :result="result" attribute-name="LastName"></ais-highlight>,&nbsp;
                                 <ais-highlight :result="result" attribute-name="FirstName"></ais-highlight>&nbsp;
-                                <ais-highlight :result="result" attribute-name="MiddleName"></ais-highlight>
                                 </v-list-tile-title>
                                 <v-list-tile-sub-title>
-                                <ais-highlight :result="result" attribute-name="PrimaryStreetAddress"></ais-highlight>
+                                <ais-highlight :result="result" attribute-name="PrimaryPhoneNumber"></ais-highlight>
                                 </v-list-tile-sub-title>
                                 <v-list-tile-sub-title>
-                                <ais-highlight :result="result" attribute-name="PrimaryStreetAddress"></ais-highlight>
+                                <ais-highlight :result="result" attribute-name="StreetAddress1"></ais-highlight>
+                                </v-list-tile-sub-title>
+                                <v-list-tile-sub-title>
+                                <ais-highlight :result="result" attribute-name="EmailAddress"></ais-highlight>
                                 </v-list-tile-sub-title>
                             </v-list-tile-content>
                             </v-list-tile>                

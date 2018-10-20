@@ -4,9 +4,11 @@
       <v-btn icon @click="navOpen=!navOpen">
         <v-icon>menu</v-icon>
       </v-btn>
-      <v-toolbar-title>Foster Kinship Client Database</v-toolbar-title>
+      <v-toolbar-title class="hidden-sm-and-down">Foster Kinship Client Database</v-toolbar-title>
+      <v-toolbar-title class="hidden-md-and-up">FK</v-toolbar-title>
       <v-spacer></v-spacer>
-      <search-box></search-box>
+      <search-box v-show="$vuetify.breakpoint.smAndUp"></search-box>
+      <v-btn flat small to="/search" class="hidden-sm-and-up"><v-icon>search</v-icon></v-btn>
       <v-spacer></v-spacer>
       <v-toolbar-items>
         <v-btn flat @click='login' v-if="!userIsAuthenticated">Sign In</v-btn>

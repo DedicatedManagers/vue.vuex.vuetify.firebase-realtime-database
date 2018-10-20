@@ -49,7 +49,7 @@ export default {
   },
   methods:{
         getSubEntityTotal(parentEntityConfig, subTotalName){
-
+console.log('getSubEntityTotal begin.  Objects Received: ', parentEntityConfig, subTotalName)
             // check for and recursively call any further child entities
             if (parentEntityConfig.subEntities){
                 for (let subEntityName in parentEntityConfig.subEntities){
@@ -91,7 +91,11 @@ export default {
                             if (!this.calculatedEntitySubtotals[subTotalName].val) this.calculatedEntitySubtotals[subTotalName].val = 0;
 
                             // perform the subtotal calculation
-                            this.calculatedEntitySubtotals[subTotalName].val += parseFloat(loopCurrentEntities[loopCurrentEntity].data[formFieldName].trim());
+                            console.log('subtotal calc: ', loopCurrentEntities[loopCurrentEntity].data[formFieldName] );
+                            if( ((loopCurrentEntities[loopCurrentEntity]||{}).data||{})[formFieldName] ){
+                                this.calculatedEntitySubtotals[subTotalName].val += parseFloat(loopCurrentEntities[loopCurrentEntity].data[formFieldName].replace(/[\$,a-zA-Z]/g,'').trim());
+                                console.log('adding subtotal');
+                            }
 
                             // add the meta information
                             this.calculatedEntitySubtotals[subTotalName].icon = this.entityConfig.subTotals.ids[subTotalName].icon;
